@@ -1,0 +1,134 @@
+let scene, camera, renderer, currentMesh;
+
+function init3D(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    scene = new THREE.Scene();
+    camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+    renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    container.appendChild(renderer.domElement);
+
+    const ambientLight = new THREE.AmbientLight(0x404040);
+    scene.add(ambientLight);
+    const pointLight = new THREE.PointLight(0xffffff, 1);
+    pointLight.position.set(10, 10, 10);
+    scene.add(pointLight);
+
+    camera.position.z = 30;
+
+    // Initial load
+    update3D('VanDerPol');
+
+    animate();
+
+    // Handle resize
+    window.addEventListener('resize', () => {
+        if (!container) return;
+        const width = container.clientWidth;
+        const height = container.clientHeight;
+        renderer.setSize(width, height);
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+    });
+}
+
+function update3D(systemName) {
+    if (!systemName) systemName = document.getElementById('system-select')?.value || 'VanDerPol';
+
+    if (currentMesh) {
+        scene.remove(currentMesh);
+    }
+
+    if (systemName === 'Lorenz') {
+        // Create a particle system for Lorenz
+        const points = [];
+        let x = 0.1, y = 0, z = 0;
+        const sigma = 10, rho = 28, beta = 8/3;
+        const dt = 0.01;
+        for (let i = 0; i < 3000; i++) {
+            const dx = sigma * (y - x);
+            const dy = x * (rho - z) - y;
+            const dz = x * y - beta * z;
+            x += dx * dt;
+            y += dy * dt;
+            z += dz * dt;
+            points.push(new THREE.Vector3(x, y, z));
+        }
+
+        const geometry = new THREE.BufferGeometry().setFromPoints(points);
+        const material = new THREE.LineBasicMaterial({ color: 0x00ffcc });
+        currentMesh = new THREE.Line(geometry, material);
+        // Center it roughly
+        currentMesh.position.y = -20;
+
+    } else if (systemName === 'Pendulum') {
+        // Simple pendulum representation
+        const group = new THREE.Group();
+
+        // Pivot
+        const pivotGeo = new THREE.SphereGeometry(0.5);
+        const pivotMat = new THREE.MeshStandardMaterial({ color: 0xaaaaaa });
+        const pivot = new THREE.Mesh(pivotGeo, pivotMat);
+        group.add(pivot);
+
+        // Arm
+        const armGeo = new THREE.CylinderGeometry(0.1, 0.1, 5);
+        const armMat = new THREE.MeshStandardMaterial({ color: 0xffffff });
+        const arm = new THREE.Mesh(armGeo, armMat);
+        arm.position.y = -2.5;
+        group.add(arm);
+
+        // Bob
+        const bobGeo = new THREE.SphereGeometry(1);
+        const bobMat = new THREE.MeshStandardMaterial({ color: 0xff0066 });
+        const bob = new THREE.Mesh(bobGeo, bobMat);
+        bob.position.y = -5;
+        group.add(bob);
+
+        currentMesh = group;
+        currentMesh.scale.set(2, 2, 2);
+
+    } else {
+        // Default (VanDerPol) - Visualized as a Torus Knot?
+        // Or just a sphere
+        const geometry = new THREE.TorusKnotGeometry( 6, 2, 100, 16 );
+        const material = new THREE.MeshPhongMaterial( { color: 0x8b5cf6, wireframe: true } );
+        currentMesh = new THREE.Mesh( geometry, material );
+    }
+
+    scene.add(currentMesh);
+}
+
+function animate() {
+    requestAnimationFrame(animate);
+
+    if (currentMesh) {
+        currentMesh.rotation.y += 0.01;
+        if (currentMesh.type === 'Line') {
+             currentMesh.rotation.z += 0.005;
+        }
+    }
+
+    renderer.render(scene, camera);
+}
+
+// Hook into global functions to update 3D when system changes
+// We'll wrap the existing functions if they exist
+const _origUpdatePhase = window.updatePhasePortrait;
+window.updatePhasePortrait = function(sys) {
+    if (_origUpdatePhase) _origUpdatePhase(sys);
+    update3D(sys);
+};
+
+const _origSimulate = window.simulateSystem;
+window.simulateSystem = function(sys) {
+    if (_origSimulate) _origSimulate(sys);
+    update3D(sys);
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    init3D('3d-view');
+});

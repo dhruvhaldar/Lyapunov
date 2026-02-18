@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lyapunov Control Dashboard</title>
+    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="css/glass.css">
+    <!-- Load Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Load D3.js -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <!-- Load Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header class="glass-panel" style="margin-bottom: 2rem;">
+            <h1>Lyapunov Control Workbench</h1>
+            <p>Nonlinear Control Playground & Simulator</p>
+        </header>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+            <div class="glass-panel">
+                <h2>Phase Portrait</h2>
+                <div id="phase-portrait" style="width: 100%; height: 400px; background: rgba(0,0,0,0.2); border-radius: 8px;"></div>
+                <div class="controls">
+                    <select id="system-select">
+                        <option value="VanDerPol">Van der Pol</option>
+                        <option value="Pendulum">Pendulum</option>
+                        <option value="Lorenz">Lorenz</option>
+                    </select>
+                    <button id="update-phase">Update</button>
+                </div>
+            </div>
+
+            <div class="glass-panel">
+                <h2>Time Response</h2>
+                <div style="height: 400px;">
+                    <canvas id="time-response-chart"></canvas>
+                </div>
+                <div class="controls">
+                    <button id="simulate-btn">Simulate</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-panel">
+             <h2>3D Visualization</h2>
+             <div id="3d-view" style="width: 100%; height: 400px; background: rgba(0,0,0,0.2); border-radius: 8px;"></div>
+        </div>
+    </div>
+
+    <!-- Application Scripts -->
+    <script src="js/phase_portrait.js"></script>
+    <script src="js/time_response.js"></script>
+    <script src="js/systems_gl.js"></script>
+    <script>
+        // Main initialization
+        document.addEventListener('DOMContentLoaded', () => {
+            const systemSelect = document.getElementById('system-select');
+            const updatePhaseBtn = document.getElementById('update-phase');
+            const simulateBtn = document.getElementById('simulate-btn');
+
+            updatePhaseBtn.addEventListener('click', () => {
+                const sys = systemSelect.value;
+                if (window.updatePhasePortrait) {
+                    window.updatePhasePortrait(sys);
+                }
+            });
+
+            simulateBtn.addEventListener('click', () => {
+                const sys = systemSelect.value;
+                if (window.simulateSystem) {
+                    window.simulateSystem(sys);
+                }
+            });
+
+            // Initial load
+            if (window.updatePhasePortrait) window.updatePhasePortrait('VanDerPol');
+            if (window.simulateSystem) window.simulateSystem('VanDerPol');
+        });
+    </script>
+</body>
+</html>
