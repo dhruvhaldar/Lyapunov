@@ -19,8 +19,14 @@ button, select {
     backdrop-filter: blur(4px);
     font-family: inherit;
     margin-right: 10px;
+    transition: background 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 
-button:hover {
+button:hover, select:hover {
     background: rgba(255, 255, 255, 0.2);
+}
+
+button:focus-visible, select:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--accent-color);
 }
