@@ -73,13 +73,18 @@ def get_phase_portrait(req: PhasePortraitRequest):
 @app.post("/api/check_stability")
 def check_stability(req: StabilityRequest):
     try:
-        # parsing expression
-        expr = sp.sympify(req.expression)
+        # parsing expression safely to avoid RCE
+        from sympy.parsing.sympy_parser import parse_expr
+        allowed_names = ["Symbol", "Integer", "Float", "Rational", "Add", "Mul", "Pow", "sin", "cos", "tan", "exp", "log", "sqrt", "pi", "E"]
+        safe_dict = {name: getattr(sp, name) for name in allowed_names}
+        safe_dict["__builtins__"] = {}
+
+        expr = parse_expr(req.expression, local_dict={}, global_dict=safe_dict)
         vars_sym = [sp.symbols(v) for v in req.variables]
         is_stable = check_negative_definite(expr, variables=vars_sym)
         return {"is_negative_definite": is_stable}
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail="Invalid expression")
 
 # Mount static files for local development
 if os.path.exists("public"):

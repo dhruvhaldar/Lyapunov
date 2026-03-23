@@ -1,0 +1,4 @@
+## 2024-05-20 - RCE via sympy.sympify
+**Vulnerability:** Arbitrary Code Execution (RCE) via `sympy.sympify()`. The API endpoint `/api/check_stability` passed unsanitized user input (`req.expression`) directly to `sympy.sympify()`.
+**Learning:** `sympy.sympify()` internally uses `eval()` and `eval_expr()` from `sympy.parsing.sympy_parser` which allows evaluation of Python builtins and modules if not explicitly restricted. Passing user input to `sympify()` is inherently dangerous and behaves like an `eval()` vulnerability.
+**Prevention:** Always use `sympy.parsing.sympy_parser.parse_expr` instead of `sympy.sympify` when parsing untrusted expressions. Pass an explicit `global_dict` containing only safe mathematical functions/classes and explicitly set `{"__builtins__": {}}` to prevent execution of built-in functions or imports.
