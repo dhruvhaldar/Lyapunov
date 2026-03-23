@@ -15,25 +15,27 @@ def check_negative_definite(expr, variables=None):
         except:
             return False
 
+    # Fast vectorized evaluation using lambdify
+    func = sp.lambdify(variables, expr, "numpy")
+
     # Check origin
-    origin_subs = {v: 0 for v in variables}
+    origin_args = [0.0] * len(variables)
     try:
-        val_origin = float(expr.subs(origin_subs))
-        if val_origin > 1e-9:
+        val_origin = func(*origin_args)
+        if np.any(val_origin > 1e-9):
              return False
     except (TypeError, ValueError):
         # Could happen if expr is not real or something
         pass
 
-    # Monte Carlo check
-    for _ in range(100):
-        vals = {v: np.random.uniform(-5, 5) for v in variables}
-        try:
-            val = float(expr.subs(vals))
-            if val > 1e-9: # Tolerance
-                return False
-        except (TypeError, ValueError):
-            pass
+    # Monte Carlo check (vectorized over 100 random points)
+    pts = np.random.uniform(-5, 5, size=(len(variables), 100))
+    try:
+        vals = func(*pts)
+        if np.any(vals > 1e-9): # Tolerance
+            return False
+    except (TypeError, ValueError):
+        pass
 
     return True
 
