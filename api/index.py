@@ -72,6 +72,10 @@ def get_phase_portrait(req: PhasePortraitRequest):
 
 @app.post("/api/check_stability")
 def check_stability(req: StabilityRequest):
+    # Security: Prevent RCE through dunder methods or eval/exec imports
+    if "__" in req.expression or any("__" in v for v in req.variables):
+        raise HTTPException(status_code=400, detail="Invalid characters in expression or variables")
+
     try:
         # parsing expression safely to avoid RCE
         from sympy.parsing.sympy_parser import parse_expr
