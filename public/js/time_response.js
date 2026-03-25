@@ -28,7 +28,7 @@ function simulateSystem(systemName) {
         dt: 0.05
     };
 
-    fetch('/api/simulate', {
+    return fetch('/api/simulate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(requestData)

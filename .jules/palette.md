@@ -1,0 +1,3 @@
+## 2024-05-14 - Loading States and Focus Visible
+**Learning:** Adding `:focus-visible` to interactive elements drastically improves keyboard accessibility on visually dark, glassmorphism UI components without messing up mouse users. Furthermore, converting click events that fire API calls to explicitly use async/await and update button states (`disabled` and temporary text) is crucial for UI feedback when using JS closures inside event listeners.
+**Action:** Always include explicit focus states and ensure async frontend actions handle intermediate loading/disabled states to provide clear user feedback.

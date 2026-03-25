@@ -19,7 +19,7 @@ function updatePhasePortrait(systemName) {
         requestData.y_range = [-30, 30];
     }
 
-    fetch('/api/phase_portrait', {
+    return fetch('/api/phase_portrait', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(requestData)

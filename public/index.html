@@ -25,7 +25,7 @@
                 <h2>Phase Portrait</h2>
                 <div id="phase-portrait" style="width: 100%; height: 400px; background: rgba(0,0,0,0.2); border-radius: 8px;"></div>
                 <div class="controls">
-                    <select id="system-select">
+                    <select id="system-select" aria-label="Select dynamic system">
                         <option value="VanDerPol">Van der Pol</option>
                         <option value="Pendulum">Pendulum</option>
                         <option value="Lorenz">Lorenz</option>
@@ -62,17 +62,33 @@
             const updatePhaseBtn = document.getElementById('update-phase');
             const simulateBtn = document.getElementById('simulate-btn');
 
-            updatePhaseBtn.addEventListener('click', () => {
+            updatePhaseBtn.addEventListener('click', async () => {
                 const sys = systemSelect.value;
                 if (window.updatePhasePortrait) {
-                    window.updatePhasePortrait(sys);
+                    const originalText = updatePhaseBtn.textContent;
+                    updatePhaseBtn.textContent = 'Updating...';
+                    updatePhaseBtn.disabled = true;
+                    try {
+                        await window.updatePhasePortrait(sys);
+                    } finally {
+                        updatePhaseBtn.textContent = originalText;
+                        updatePhaseBtn.disabled = false;
+                    }
                 }
             });
 
-            simulateBtn.addEventListener('click', () => {
+            simulateBtn.addEventListener('click', async () => {
                 const sys = systemSelect.value;
                 if (window.simulateSystem) {
-                    window.simulateSystem(sys);
+                    const originalText = simulateBtn.textContent;
+                    simulateBtn.textContent = 'Simulating...';
+                    simulateBtn.disabled = true;
+                    try {
+                        await window.simulateSystem(sys);
+                    } finally {
+                        simulateBtn.textContent = originalText;
+                        simulateBtn.disabled = false;
+                    }
                 }
             });
 
