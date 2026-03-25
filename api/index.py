@@ -72,6 +72,14 @@ def get_phase_portrait(req: PhasePortraitRequest):
 
 @app.post("/api/check_stability")
 def check_stability(req: StabilityRequest):
+    # Security: Prevent RCE via dunder method payloads in sympy's parse_expr
+    if "__" in req.expression:
+        raise HTTPException(status_code=400, detail="Invalid expression")
+
+    for var in req.variables:
+        if not var.isalnum():
+            raise HTTPException(status_code=400, detail="Invalid variable name")
+
     try:
         # parsing expression safely to avoid RCE
         from sympy.parsing.sympy_parser import parse_expr
