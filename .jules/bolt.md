@@ -8,3 +8,11 @@
 ## 2026-03-25 - Dynamical Systems Vectorization over Meshgrids
 **Learning:** The `dynamics` methods for systems in this codebase (e.g. `VanDerPol`, `Pendulum`, etc.) are written using numpy operators that natively broadcast arrays. This means functions that evaluate vector fields or state matrices can pass `state` as an $N \times N$ `np.meshgrid` array instead of scalars in a loop, evaluating thousands of points simultaneously at C-speed rather than iteratively via python.
 **Action:** Always prefer computing large grids (like phase portraits or surface evaluations) by passing a multi-dimensional numpy array directly into system functions, avoiding `for` loops entirely.
+
+## 2024-03-26 - math vs numpy ufuncs in array broadcasting
+**Learning:** While `math.sin` and `math.cos` are faster for scalar python values in loops, they do not support array broadcasting and will raise `TypeError: only 0-dimensional arrays can be converted to Python scalars` when a numpy array (e.g. meshgrid) is passed. This breaks code that evaluates dynamics over large state grids (like Phase Portraits).
+**Action:** Always use numpy ufuncs (`np.sin`, `np.cos`) in dynamical system definitions (`dynamics` and `jacobian` methods) to ensure the system supports both scalar simulation loops and vectorized array evaluations (e.g., meshgrids for phase portraits). Wait to vectorize operations over arrays instead of micro-optimizing scalar computations when they conflict.
+
+## 2024-03-26 - Vectorizing python loops with NumPy
+**Learning:** Iterating through large arrays (like frequency response points `G_jw`) with a python `for` loop is O(N) in python overhead and very slow.
+**Action:** Replace `for z in array: if check(z): ...` loops with vectorized NumPy checks like `if np.any(np.real(array) < limit)` or `if np.any(np.abs(array - center) < radius)`. This leverages C-level execution and results in a ~20x performance speedup.

@@ -92,16 +92,16 @@ class Pendulum(DynamicalSystem):
         theta, omega = state
         dtheta = omega
         # u is torque input
-        # ⚡ Bolt: Using math.sin instead of np.sin for scalar theta is up to 10x faster
-        domega = - (self.g / self.l) * math.sin(theta) - (self.b / (self.m * self.l**2)) * omega + u / (self.m * self.l**2)
+        # ⚡ Bolt: Reverted math.sin to np.sin as numpy arrays are passed during meshgrid Phase Portrait generation.
+        domega = - (self.g / self.l) * np.sin(theta) - (self.b / (self.m * self.l**2)) * omega + u / (self.m * self.l**2)
         return np.array([dtheta, domega])
 
     def jacobian(self, t, state):
         theta, omega = state
-        # ⚡ Bolt: Using math.cos instead of np.cos for scalar theta is up to 10x faster
+        # ⚡ Bolt: Reverted math.cos to np.cos as numpy arrays are passed during meshgrid Phase Portrait generation.
         return np.array([
             [0, 1],
-            [-(self.g / self.l) * math.cos(theta), -(self.b / (self.m * self.l**2))]
+            [-(self.g / self.l) * np.cos(theta), -(self.b / (self.m * self.l**2))]
         ])
 
 class Lorenz(DynamicalSystem):

@@ -54,9 +54,9 @@ def circle_criterion(G_jw, alpha, beta):
         limit = -1.0/beta
         # Forbidden region is usually interpreted as the disk defined by -1/alpha and -1/beta.
         # As alpha -> 0, -1/alpha -> -inf. The disk becomes the half-plane Re(s) < -1/beta.
-        for z in G_jw:
-            if z.real < limit:
-                return False
+        # ⚡ Bolt: Vectorized check instead of python for loop for significant constant factor speedup.
+        if np.any(np.real(G_jw) < limit):
+            return False
         return True
 
     p1 = -1.0/alpha
@@ -65,10 +65,9 @@ def circle_criterion(G_jw, alpha, beta):
     center = (p1 + p2) / 2.0
     radius = abs(p1 - p2) / 2.0
 
-    for z in G_jw:
-        # Distance from center
-        dist = abs(z - center)
-        if dist < radius:
-            return False
+    # ⚡ Bolt: Vectorized distance check over the entire array using NumPy.
+    dist = np.abs(G_jw - center)
+    if np.any(dist < radius):
+        return False
 
     return True
