@@ -25,12 +25,13 @@
                 <h2>Phase Portrait</h2>
                 <div id="phase-portrait" style="width: 100%; height: 400px; background: rgba(0,0,0,0.2); border-radius: 8px;"></div>
                 <div class="controls">
+                    <label for="system-select" style="margin-right: 8px;">System Model:</label>
                     <select id="system-select">
                         <option value="VanDerPol">Van der Pol</option>
                         <option value="Pendulum">Pendulum</option>
                         <option value="Lorenz">Lorenz</option>
                     </select>
-                    <button id="update-phase">Update</button>
+                    <button id="update-phase" aria-label="Update Phase Portrait">Update</button>
                 </div>
             </div>
 
@@ -40,7 +41,7 @@
                     <canvas id="time-response-chart"></canvas>
                 </div>
                 <div class="controls">
-                    <button id="simulate-btn">Simulate</button>
+                    <button id="simulate-btn" aria-label="Simulate System Time Response">Simulate</button>
                 </div>
             </div>
         </div>
