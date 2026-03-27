@@ -73,7 +73,7 @@ def get_phase_portrait(req: PhasePortraitRequest):
 @app.post("/api/check_stability")
 def check_stability(req: StabilityRequest):
     # Reject dunder methods to prevent sandbox escape via Python builtins
-    if "__" in req.expression:
+    if "__" in req.expression or any("__" in v for v in req.variables):
         raise HTTPException(status_code=400, detail="Invalid expression: unsafe characters detected")
 
     try:
