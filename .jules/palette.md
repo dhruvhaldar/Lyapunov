@@ -1,0 +1,3 @@
+## 2026-03-27 - Added Loading State to Action Buttons
+**Learning:** Adding explicit loading states (disabled button + text change) to asynchronous fetch operations prevents user frustration, duplicate submissions, and clearly signals that an action is currently in progress, particularly for potentially slow math-heavy backend endpoints.
+**Action:** Always wrap `fetch` calls with immediate UI updates that disable submit/action buttons, change the label to indicate progress (e.g., "Updating...", "Simulating..."), and use a `.finally()` block to ensure the button is re-enabled and restored to its original text regardless of request success or failure. Also ensure CSS supports the disabled state visually.

@@ -28,6 +28,13 @@ function simulateSystem(systemName) {
         dt: 0.05
     };
 
+    const simBtn = document.getElementById('simulate-btn');
+    const originalText = simBtn ? simBtn.innerText : 'Simulate';
+    if (simBtn) {
+        simBtn.disabled = true;
+        simBtn.innerText = 'Simulating...';
+    }
+
     fetch('/api/simulate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -37,7 +44,13 @@ function simulateSystem(systemName) {
     .then(data => {
         updateChart(data.t, data.y, systemName);
     })
-    .catch(error => console.error('Error simulating system:', error));
+    .catch(error => console.error('Error simulating system:', error))
+    .finally(() => {
+        if (simBtn) {
+            simBtn.disabled = false;
+            simBtn.innerText = originalText;
+        }
+    });
 }
 
 function updateChart(times, states, systemName) {

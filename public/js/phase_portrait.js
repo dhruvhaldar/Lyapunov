@@ -19,6 +19,13 @@ function updatePhasePortrait(systemName) {
         requestData.y_range = [-30, 30];
     }
 
+    const updateBtn = document.getElementById('update-phase');
+    const originalText = updateBtn ? updateBtn.innerText : 'Update';
+    if (updateBtn) {
+        updateBtn.disabled = true;
+        updateBtn.innerText = 'Updating...';
+    }
+
     fetch('/api/phase_portrait', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -28,7 +35,13 @@ function updatePhasePortrait(systemName) {
     .then(data => {
         drawPhasePortrait(data.vectors);
     })
-    .catch(error => console.error('Error fetching phase portrait:', error));
+    .catch(error => console.error('Error fetching phase portrait:', error))
+    .finally(() => {
+        if (updateBtn) {
+            updateBtn.disabled = false;
+            updateBtn.innerText = originalText;
+        }
+    });
 }
 
 function drawPhasePortrait(vectors) {
