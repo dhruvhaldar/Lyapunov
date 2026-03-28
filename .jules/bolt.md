@@ -8,3 +8,7 @@
 ## 2026-03-25 - Dynamical Systems Vectorization over Meshgrids
 **Learning:** The `dynamics` methods for systems in this codebase (e.g. `VanDerPol`, `Pendulum`, etc.) are written using numpy operators that natively broadcast arrays. This means functions that evaluate vector fields or state matrices can pass `state` as an $N \times N$ `np.meshgrid` array instead of scalars in a loop, evaluating thousands of points simultaneously at C-speed rather than iteratively via python.
 **Action:** Always prefer computing large grids (like phase portraits or surface evaluations) by passing a multi-dimensional numpy array directly into system functions, avoiding `for` loops entirely.
+
+## 2024-05-20 - Precomputing Invariant Physical Constants
+**Learning:** Recalculating static physical constants (e.g., `self.g / self.l` or `1 / (self.m * self.l**2)`) on every invocation of `dynamics` or `jacobian` inside numerical integration solvers adds thousands of redundant arithmetic operations per simulation.
+**Action:** Always hoist invariant mathematical calculations into the class `__init__` method and store them as attributes to avoid redundant division or multiplication operations within tight simulation loops.
