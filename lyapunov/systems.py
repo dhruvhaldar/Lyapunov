@@ -87,13 +87,17 @@ class Pendulum(DynamicalSystem):
         self.m = mass
         self.b = damping
         self.g = gravity
+        # ⚡ Bolt: Precomputed constants to reduce arithmetic operations in tight simulation loop.
+        self.g_l = self.g / self.l
+        self.b_ml2 = self.b / (self.m * self.l**2)
+        self.inv_ml2 = 1.0 / (self.m * self.l**2)
 
     def dynamics(self, t, state, u=0):
         theta, omega = state
         dtheta = omega
         # u is torque input
         # ⚡ Bolt: Using np.sin instead of math.sin to support fast vectorized meshgrid evaluation
-        domega = - (self.g / self.l) * np.sin(theta) - (self.b / (self.m * self.l**2)) * omega + u / (self.m * self.l**2)
+        domega = - self.g_l * np.sin(theta) - self.b_ml2 * omega + u * self.inv_ml2
         return np.array([dtheta, domega])
 
     def jacobian(self, t, state):
@@ -101,7 +105,7 @@ class Pendulum(DynamicalSystem):
         # ⚡ Bolt: Using np.cos instead of math.cos to support fast vectorized meshgrid evaluation
         return np.array([
             [0, 1],
-            [-(self.g / self.l) * np.cos(theta), -(self.b / (self.m * self.l**2))]
+            [-self.g_l * np.cos(theta), -self.b_ml2]
         ])
 
 class Lorenz(DynamicalSystem):
