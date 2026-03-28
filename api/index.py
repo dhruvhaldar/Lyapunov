@@ -72,9 +72,15 @@ def get_phase_portrait(req: PhasePortraitRequest):
 
 @app.post("/api/check_stability")
 def check_stability(req: StabilityRequest):
+    import re
     # Reject dunder methods to prevent sandbox escape via Python builtins
     if "__" in req.expression or any("__" in v for v in req.variables):
         raise HTTPException(status_code=400, detail="Invalid expression: unsafe characters detected")
+
+    # Strict validation of variable names to prevent lambdify injection
+    for v in req.variables:
+        if not re.match(r'^[a-zA-Z_][a-zA-Z0-9_]*$', v):
+            raise HTTPException(status_code=400, detail=f"Invalid variable name: {v}")
 
     try:
         # parsing expression safely to avoid RCE
@@ -82,6 +88,12 @@ def check_stability(req: StabilityRequest):
         allowed_names = ["Symbol", "Integer", "Float", "Rational", "Add", "Mul", "Pow", "sin", "cos", "tan", "exp", "log", "sqrt", "pi", "E"]
         safe_dict = {name: getattr(sp, name) for name in allowed_names}
         safe_dict["__builtins__"] = {}
+
+        def safe_symbol(name):
+            if not isinstance(name, str) or not re.match(r'^[a-zA-Z_][a-zA-Z0-9_]*$', name):
+                raise ValueError(f"Invalid Symbol name: {name}")
+            return sp.Symbol(name)
+        safe_dict["Symbol"] = safe_symbol
 
         expr = parse_expr(req.expression, local_dict={}, global_dict=safe_dict)
         vars_sym = [sp.symbols(v) for v in req.variables]
