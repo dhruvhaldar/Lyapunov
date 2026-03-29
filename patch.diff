@@ -1,0 +1,34 @@
+--- public/index.html
++++ public/index.html
+@@ -15,8 +15,18 @@
+ <body>
+     <div class="container">
+-        <header class="glass-panel" style="margin-bottom: 2rem;">
+-            <h1>Lyapunov Control Workbench</h1>
+-            <p>Nonlinear Control Playground & Simulator</p>
++        <header class="glass-panel" style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
++            <div>
++                <h1>Lyapunov Control Workbench</h1>
++                <p>Nonlinear Control Playground & Simulator</p>
++            </div>
++            <div class="controls" style="margin-top: 0; padding-top: 0; border-top: none;">
++                <label for="system-select" style="margin-right: 8px;">System Model:</label>
++                <select id="system-select">
++                    <option value="VanDerPol">Van der Pol</option>
++                    <option value="Pendulum">Pendulum</option>
++                    <option value="Lorenz">Lorenz</option>
++                </select>
++            </div>
+         </header>
+
+         <main>
+@@ -27,10 +37,4 @@
+                 <div class="controls">
+-                    <label for="system-select" style="margin-right: 8px;">System Model:</label>
+-                    <select id="system-select">
+-                        <option value="VanDerPol">Van der Pol</option>
+-                        <option value="Pendulum">Pendulum</option>
+-                        <option value="Lorenz">Lorenz</option>
+-                    </select>
+                     <button id="update-phase" aria-label="Update Phase Portrait">Update</button>
+                 </div>

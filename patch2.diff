@@ -1,0 +1,29 @@
+--- public/index.html
++++ public/index.html
+@@ -62,20 +62,13 @@
+         document.addEventListener('DOMContentLoaded', () => {
+             const systemSelect = document.getElementById('system-select');
+-            const updatePhaseBtn = document.getElementById('update-phase');
+-            const simulateBtn = document.getElementById('simulate-btn');
+
+-            updatePhaseBtn.addEventListener('click', () => {
+-                const sys = systemSelect.value;
+-                if (window.updatePhasePortrait) {
+-                    window.updatePhasePortrait(sys);
+-                }
+-            });
+-
+-            simulateBtn.addEventListener('click', () => {
+-                const sys = systemSelect.value;
+-                if (window.simulateSystem) {
+-                    window.simulateSystem(sys);
+-                }
++            systemSelect.addEventListener('change', () => {
++                 const sys = systemSelect.value;
++                 if (window.updatePhasePortrait) {
++                     window.updatePhasePortrait(sys);
++                 }
++                 if (window.simulateSystem) {
++                     window.simulateSystem(sys);
++                 }
+             });
