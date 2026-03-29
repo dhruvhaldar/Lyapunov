@@ -49,14 +49,18 @@ def circle_criterion(G_jw, alpha, beta):
     if len(G_jw) == 0:
         return True
 
+    # ⚡ Bolt: Ensure G_jw is a numpy array to support vectorized operations
+    # safely even if a python list or tuple is passed in.
+    G_jw = np.asarray(G_jw)
+
     # Handle alpha=0 case
     if alpha == 0:
         limit = -1.0/beta
         # Forbidden region is usually interpreted as the disk defined by -1/alpha and -1/beta.
         # As alpha -> 0, -1/alpha -> -inf. The disk becomes the half-plane Re(s) < -1/beta.
-        for z in G_jw:
-            if z.real < limit:
-                return False
+        # ⚡ Bolt: Vectorize loop using NumPy to avoid slow iterative evaluation
+        if np.any(np.real(G_jw) < limit):
+            return False
         return True
 
     p1 = -1.0/alpha
@@ -65,10 +69,8 @@ def circle_criterion(G_jw, alpha, beta):
     center = (p1 + p2) / 2.0
     radius = abs(p1 - p2) / 2.0
 
-    for z in G_jw:
-        # Distance from center
-        dist = abs(z - center)
-        if dist < radius:
-            return False
+    # ⚡ Bolt: Vectorize distance check using NumPy abs and any to replace slow Python loop
+    if np.any(np.abs(G_jw - center) < radius):
+        return False
 
     return True

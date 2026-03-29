@@ -12,3 +12,7 @@
 ## 2024-05-20 - Precomputing Invariant Physical Constants
 **Learning:** Recalculating static physical constants (e.g., `self.g / self.l` or `1 / (self.m * self.l**2)`) on every invocation of `dynamics` or `jacobian` inside numerical integration solvers adds thousands of redundant arithmetic operations per simulation.
 **Action:** Always hoist invariant mathematical calculations into the class `__init__` method and store them as attributes to avoid redundant division or multiplication operations within tight simulation loops.
+
+## 2026-03-25 - Python Loop vs Numpy Vectorization
+**Learning:** Python `for` loops evaluating thousands of conditions (like checking `circle_criterion` bounds against frequency data points) represent massive performance bottlenecks compared to running operations at the C-level.
+**Action:** When evaluating mathematical conditions against arrays (e.g. `z.real < limit` inside a loop), replace iterative execution with NumPy vectorized operations (e.g. `np.any(np.real(G_jw) < limit)`). Before doing so, explicitly use `np.asarray()` on inputs to maintain compatibility and prevent `TypeError` bugs if the inputs are passed as standard Python lists rather than pure NumPy arrays.
