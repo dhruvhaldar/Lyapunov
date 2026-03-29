@@ -15,9 +15,19 @@
 </head>
 <body>
     <div class="container">
-        <header class="glass-panel" style="margin-bottom: 2rem;">
-            <h1>Lyapunov Control Workbench</h1>
-            <p>Nonlinear Control Playground & Simulator</p>
+        <header class="glass-panel" style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <h1>Lyapunov Control Workbench</h1>
+                <p>Nonlinear Control Playground & Simulator</p>
+            </div>
+            <div class="controls" style="margin-top: 0; padding-top: 0; border-top: none;">
+                <label for="system-select" style="margin-right: 8px;">System Model:</label>
+                <select id="system-select">
+                    <option value="VanDerPol">Van der Pol</option>
+                    <option value="Pendulum">Pendulum</option>
+                    <option value="Lorenz">Lorenz</option>
+                </select>
+            </div>
         </header>
 
         <main>
@@ -25,15 +35,6 @@
             <div class="glass-panel">
                 <h2>Phase Portrait</h2>
                 <div id="phase-portrait" role="img" aria-label="Interactive phase portrait showing system trajectories and vector fields" style="width: 100%; height: 400px; background: rgba(0,0,0,0.2); border-radius: 8px;"></div>
-                <div class="controls">
-                    <label for="system-select" style="margin-right: 8px;">System Model:</label>
-                    <select id="system-select">
-                        <option value="VanDerPol">Van der Pol</option>
-                        <option value="Pendulum">Pendulum</option>
-                        <option value="Lorenz">Lorenz</option>
-                    </select>
-                    <button id="update-phase" aria-label="Update Phase Portrait">Update</button>
-                </div>
             </div>
 
             <div class="glass-panel">
@@ -42,9 +43,6 @@
                     <canvas id="time-response-chart" role="img" aria-label="Interactive time response chart showing system states over time">
                         Your browser does not support the canvas element. This visualization shows the time response of the selected system.
                     </canvas>
-                </div>
-                <div class="controls">
-                    <button id="simulate-btn" aria-label="Simulate System Time Response">Simulate</button>
                 </div>
             </div>
         </div>
@@ -64,18 +62,12 @@
         // Main initialization
         document.addEventListener('DOMContentLoaded', () => {
             const systemSelect = document.getElementById('system-select');
-            const updatePhaseBtn = document.getElementById('update-phase');
-            const simulateBtn = document.getElementById('simulate-btn');
 
-            updatePhaseBtn.addEventListener('click', () => {
+            systemSelect.addEventListener('change', () => {
                 const sys = systemSelect.value;
                 if (window.updatePhasePortrait) {
                     window.updatePhasePortrait(sys);
                 }
-            });
-
-            simulateBtn.addEventListener('click', () => {
-                const sys = systemSelect.value;
                 if (window.simulateSystem) {
                     window.simulateSystem(sys);
                 }
