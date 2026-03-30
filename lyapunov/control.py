@@ -8,23 +8,21 @@ class SlidingModeController:
         self.target_state = target_state
 
     def compute(self, state, t=0):
+        # ⚡ Bolt: Removed expensive `np.zeros_like` array allocations.
+        # Direct scalar evaluation is significantly faster in Python loops.
         if self.target_state is None:
-            target = np.zeros_like(state)
+            if len(state) >= 2:
+                s = self.c * state[0] + state[1]
+            else:
+                s = state[0]
         else:
-            target = self.target_state
+            if len(state) >= 2:
+                s = self.c * (state[0] - self.target_state[0]) + (state[1] - self.target_state[1])
+            else:
+                s = state[0] - self.target_state[0]
 
-        # Assume state is [x, x_dot] (2nd order system)
-        if len(state) >= 2:
-            e = state[0] - target[0]
-            e_dot = state[1] - target[1]
-            s = self.c * e + e_dot
-        else:
-            # Fallback for 1st order?
-            e = state[0] - target[0]
-            s = e
-
-        u = -self.k * np.sign(s)
-        return u
+        # ⚡ Bolt: Fast scalar sign evaluation replacing numpy overhead
+        return -self.k if s > 0 else (self.k if s < 0 else 0.0)
 
 class FeedbackLinearization:
     def __init__(self, system, kp=1.0, kd=1.0):
