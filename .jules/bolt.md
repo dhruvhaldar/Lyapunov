@@ -16,3 +16,7 @@
 ## 2026-03-25 - Python Loop vs Numpy Vectorization
 **Learning:** Python `for` loops evaluating thousands of conditions (like checking `circle_criterion` bounds against frequency data points) represent massive performance bottlenecks compared to running operations at the C-level.
 **Action:** When evaluating mathematical conditions against arrays (e.g. `z.real < limit` inside a loop), replace iterative execution with NumPy vectorized operations (e.g. `np.any(np.real(G_jw) < limit)`). Before doing so, explicitly use `np.asarray()` on inputs to maintain compatibility and prevent `TypeError` bugs if the inputs are passed as standard Python lists rather than pure NumPy arrays.
+
+## 2025-05-15 - Numpy Overhead on Scalar Operations inside Python Loops
+**Learning:** Using numpy functions like `np.zeros_like` or `np.sign` to process python float scalars inside tight loops (like the `SlidingModeController.compute` method evaluated at every `dt`) adds an enormous amount of overhead due to internal logic and dispatching.
+**Action:** When evaluating scalar math operations inside tight loops, use native Python constructs like ternary operators (`-k if s > 0 else (k if s < 0 else 0.0)`) and simple scalar checks instead of `numpy` functions.
