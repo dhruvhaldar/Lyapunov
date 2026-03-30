@@ -5,3 +5,7 @@
 ## 2026-03-27 - Global Controls and Auto-Synchronization
 **Learning:** Placing a global control (like a system selector) inside a single localized component panel breaks the Law of Proximity and confuses users about the control's scope. Requiring manual button clicks for each individual visualization panel after changing a global setting introduces significant friction.
 **Action:** Always elevate global state controls to global UI containers (like the page header). Bind these controls to `change` events that automatically synchronize and update all dependent visual components simultaneously to create a cohesive, frictionless experience without unnecessary click paths.
+
+## 2026-03-30 - Coordinating Async State & Screen Reader Announcements
+**Learning:** When multiple visualizations update automatically in response to a single global state change (e.g., changing a dropdown), independent async requests can lead to race conditions or confused screen reader users. Simply disabling a control isn't enough; blind users need to know *why* it's disabled and when it finishes.
+**Action:** Ensure all async UI update functions return their underlying `Promise`. In the global event listener, disable the trigger control, inject a polite `aria-live` announcement (e.g., "Loading..."), and use `Promise.all()` to wait for all downstream updates to resolve before re-enabling the control and announcing completion or error states to screen readers.

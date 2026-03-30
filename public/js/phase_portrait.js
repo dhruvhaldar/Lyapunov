@@ -26,7 +26,7 @@ function updatePhasePortrait(systemName) {
         updateBtn.innerText = 'Updating...';
     }
 
-    fetch('/api/phase_portrait', {
+    return fetch('/api/phase_portrait', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(requestData)

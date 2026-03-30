@@ -119,14 +119,18 @@ function animate() {
 // We'll wrap the existing functions if they exist
 const _origUpdatePhase = window.updatePhasePortrait;
 window.updatePhasePortrait = function(sys) {
-    if (_origUpdatePhase) _origUpdatePhase(sys);
+    let result;
+    if (_origUpdatePhase) result = _origUpdatePhase(sys);
     update3D(sys);
+    return result;
 };
 
 const _origSimulate = window.simulateSystem;
 window.simulateSystem = function(sys) {
-    if (_origSimulate) _origSimulate(sys);
+    let result;
+    if (_origSimulate) result = _origSimulate(sys);
     update3D(sys);
+    return result;
 };
 
 document.addEventListener('DOMContentLoaded', () => {
