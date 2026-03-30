@@ -63,14 +63,44 @@
         document.addEventListener('DOMContentLoaded', () => {
             const systemSelect = document.getElementById('system-select');
 
+            // Add a visually hidden element for a11y announcements
+            const announcer = document.createElement('div');
+            announcer.setAttribute('aria-live', 'polite');
+            announcer.style.position = 'absolute';
+            announcer.style.width = '1px';
+            announcer.style.height = '1px';
+            announcer.style.padding = '0';
+            announcer.style.margin = '-1px';
+            announcer.style.overflow = 'hidden';
+            announcer.style.clip = 'rect(0, 0, 0, 0)';
+            announcer.style.whiteSpace = 'nowrap';
+            announcer.style.border = '0';
+            document.body.appendChild(announcer);
+
             systemSelect.addEventListener('change', () => {
                 const sys = systemSelect.value;
+                const originalText = systemSelect.options[systemSelect.selectedIndex].text;
+
+                // Set loading state
+                systemSelect.disabled = true;
+                announcer.textContent = `Loading system ${originalText}...`;
+
+                const promises = [];
                 if (window.updatePhasePortrait) {
-                    window.updatePhasePortrait(sys);
+                    promises.push(window.updatePhasePortrait(sys));
                 }
                 if (window.simulateSystem) {
-                    window.simulateSystem(sys);
+                    promises.push(window.simulateSystem(sys));
                 }
+
+                Promise.all(promises).then(() => {
+                    // Restore state and announce success
+                    systemSelect.disabled = false;
+                    announcer.textContent = `System ${originalText} loaded successfully.`;
+                }).catch(error => {
+                    systemSelect.disabled = false;
+                    announcer.textContent = `Error loading system ${originalText}.`;
+                });
             });
 
             // Initial load
