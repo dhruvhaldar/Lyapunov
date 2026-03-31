@@ -30,7 +30,7 @@
             </div>
         </header>
 
-        <main>
+        <main style="transition: opacity 0.3s ease;">
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
             <div class="glass-panel">
                 <h2>Phase Portrait</h2>
@@ -80,10 +80,17 @@
             systemSelect.addEventListener('change', () => {
                 const sys = systemSelect.value;
                 const originalText = systemSelect.options[systemSelect.selectedIndex].text;
+                const mainContent = document.querySelector('main');
 
                 // Set loading state
                 systemSelect.disabled = true;
                 announcer.textContent = `Loading system ${originalText}...`;
+
+                if (mainContent) {
+                    mainContent.style.opacity = '0.5';
+                    mainContent.style.pointerEvents = 'none';
+                    mainContent.setAttribute('aria-busy', 'true');
+                }
 
                 const promises = [];
                 if (window.updatePhasePortrait) {
@@ -94,12 +101,18 @@
                 }
 
                 Promise.all(promises).then(() => {
-                    // Restore state and announce success
-                    systemSelect.disabled = false;
+                    // Announce success
                     announcer.textContent = `System ${originalText} loaded successfully.`;
                 }).catch(error => {
-                    systemSelect.disabled = false;
                     announcer.textContent = `Error loading system ${originalText}.`;
+                }).finally(() => {
+                    // Restore state
+                    systemSelect.disabled = false;
+                    if (mainContent) {
+                        mainContent.style.opacity = '1';
+                        mainContent.style.pointerEvents = 'auto';
+                        mainContent.removeAttribute('aria-busy');
+                    }
                 });
             });
 
