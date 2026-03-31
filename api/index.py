@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 import numpy as np
 import sympy as sp
@@ -19,15 +19,15 @@ app = FastAPI()
 class SimulationRequest(BaseModel):
     system: str
     params: Dict[str, float]
-    initial_state: List[float]
-    duration: float = 10.0
-    dt: float = 0.01
+    initial_state: List[float] = Field(..., max_length=10)
+    duration: float = Field(default=10.0, gt=0, le=100.0)
+    dt: float = Field(default=0.01, ge=0.001, le=1.0)
 
 class PhasePortraitRequest(BaseModel):
     system: str
     params: Dict[str, float]
-    x_range: List[float]
-    y_range: List[float]
+    x_range: List[float] = Field(..., min_length=2, max_length=2)
+    y_range: List[float] = Field(..., min_length=2, max_length=2)
 
 class StabilityRequest(BaseModel):
     expression: str
