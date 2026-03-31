@@ -1,4 +1,5 @@
 import numpy as np
+import math
 from types import SimpleNamespace
 
 class SlidingModeController:
@@ -40,9 +41,10 @@ class FeedbackLinearization:
         # We'll calculate ref based on t.
 
         # Simple sin(t) reference for the test case
-        r = np.sin(t)
-        r_dot = np.cos(t)
-        r_ddot = -np.sin(t)
+        # ⚡ Bolt: Fast scalar math replacing numpy overhead in tight Python loop
+        r = math.sin(t)
+        r_dot = math.cos(t)
+        r_ddot = -math.sin(t)
 
         x1, x2 = state
         e = x1 - r
