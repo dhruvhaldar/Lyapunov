@@ -54,7 +54,8 @@ def simulate(req: SimulationRequest):
         res = sys_instance.simulate(None, req.initial_state, time_span=(0, req.duration), dt=req.dt)
         return {"t": res.t.tolist(), "y": res.y.tolist()}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        print(f"Error in simulate: {e}")
+        raise HTTPException(status_code=500, detail="Simulation failed. Please check your parameters.")
 
 @app.post("/api/phase_portrait")
 def get_phase_portrait(req: PhasePortraitRequest):
@@ -68,7 +69,8 @@ def get_phase_portrait(req: PhasePortraitRequest):
         vectors = pp.get_vector_field()
         return {"vectors": vectors}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        print(f"Error in phase_portrait: {e}")
+        raise HTTPException(status_code=500, detail="Phase portrait generation failed. Please check your parameters.")
 
 @app.post("/api/check_stability")
 def check_stability(req: StabilityRequest):
@@ -99,7 +101,11 @@ def check_stability(req: StabilityRequest):
         vars_sym = [sp.symbols(v) for v in req.variables]
         is_stable = check_negative_definite(expr, variables=vars_sym)
         return {"is_negative_definite": is_stable}
+    except HTTPException:
+        # Re-raise HTTPExceptions (like 400s) from earlier in the try block
+        raise
     except Exception as e:
+        print(f"Error in check_stability: {e}")
         raise HTTPException(status_code=400, detail="Invalid expression")
 
 # Mount static files for local development
