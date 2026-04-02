@@ -33,7 +33,15 @@ function updatePhasePortrait(systemName) {
     })
     .then(response => response.json())
     .then(data => {
-        drawPhasePortrait(data.vectors);
+        // ⚡ Bolt: Remap Structure of Arrays (SoA) payload back to Array of Structures
+        // to maintain d3 rendering compatibility, executing rapidly on the client side.
+        const vectorsArray = data.vectors.x.map((x, i) => ({
+            x: x,
+            y: data.vectors.y[i],
+            u: data.vectors.u[i],
+            v: data.vectors.v[i]
+        }));
+        drawPhasePortrait(vectorsArray);
     })
     .catch(error => console.error('Error fetching phase portrait:', error))
     .finally(() => {
