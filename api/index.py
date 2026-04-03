@@ -30,8 +30,8 @@ class PhasePortraitRequest(BaseModel):
     y_range: List[float] = Field(..., min_length=2, max_length=2)
 
 class StabilityRequest(BaseModel):
-    expression: str
-    variables: List[str]
+    expression: str = Field(..., max_length=256)
+    variables: List[str] = Field(..., max_length=10)
 
 SYSTEM_MAP = {
     "VanDerPol": VanDerPol,
@@ -81,6 +81,8 @@ def check_stability(req: StabilityRequest):
 
     # Strict validation of variable names to prevent lambdify injection
     for v in req.variables:
+        if len(v) > 50:
+            raise HTTPException(status_code=400, detail=f"Invalid variable name length: {v}")
         if not re.match(r'^[a-zA-Z_][a-zA-Z0-9_]*$', v):
             raise HTTPException(status_code=400, detail=f"Invalid variable name: {v}")
 
@@ -97,7 +99,7 @@ def check_stability(req: StabilityRequest):
             return sp.Symbol(name)
         safe_dict["Symbol"] = safe_symbol
 
-        expr = parse_expr(req.expression, local_dict={}, global_dict=safe_dict)
+        expr = parse_expr(req.expression, local_dict={}, global_dict=safe_dict, evaluate=False)
         vars_sym = [sp.symbols(v) for v in req.variables]
         is_stable = check_negative_definite(expr, variables=vars_sym)
         return {"is_negative_definite": is_stable}
