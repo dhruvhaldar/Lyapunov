@@ -42,7 +42,7 @@ function simulateSystem(systemName) {
     })
     .then(response => response.json())
     .then(data => {
-        updateChart(data.t, data.y, systemName);
+        updateChart(data.t, data.y, systemName, data.num_states);
     })
     .catch(error => console.error('Error simulating system:', error))
     .finally(() => {
@@ -53,7 +53,7 @@ function simulateSystem(systemName) {
     });
 }
 
-function updateChart(times, states, systemName) {
+function updateChart(times, states, systemName, numStates) {
     const canvas = document.getElementById('time-response-chart');
     if (!canvas) return;
 
@@ -67,12 +67,13 @@ function updateChart(times, states, systemName) {
     let labels = ['x1', 'x2', 'x3'];
     if (systemName === 'Pendulum') labels = ['theta', 'omega'];
 
-    const numStates = states[0].length;
-
+    // ⚡ Bolt: Remap Structure of Arrays (SoA) payload back to Array of Structures (AoS)
+    // for compatibility with Chart.js using direct math index `idx * numStates + i`.
+    // This executes rapidly on the client side while saving large backend overhead.
     for (let i = 0; i < numStates; i++) {
         datasets.push({
             label: labels[i] || `x${i+1}`,
-            data: states.map((s, idx) => ({x: times[idx], y: s[i]})),
+            data: times.map((t, idx) => ({x: t, y: states[idx * numStates + i]})),
             borderColor: colors[i % colors.length],
             backgroundColor: colors[i % colors.length],
             borderWidth: 2,
