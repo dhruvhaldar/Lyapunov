@@ -91,8 +91,6 @@
                 announcer.textContent = `Loading system ${originalText}...`;
 
                 if (mainContent) {
-                    mainContent.style.opacity = '0.5';
-                    mainContent.style.pointerEvents = 'none';
                     mainContent.setAttribute('aria-busy', 'true');
                 }
 
@@ -113,8 +111,6 @@
                     // Restore state
                     systemSelect.disabled = false;
                     if (mainContent) {
-                        mainContent.style.opacity = '1';
-                        mainContent.style.pointerEvents = 'auto';
                         mainContent.removeAttribute('aria-busy');
                     }
                 });
