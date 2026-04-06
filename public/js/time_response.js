@@ -67,12 +67,14 @@ function updateChart(times, states, systemName) {
     let labels = ['x1', 'x2', 'x3'];
     if (systemName === 'Pendulum') labels = ['theta', 'omega'];
 
-    const numStates = states[0].length;
+    // ⚡ Bolt: Remap Structure of Arrays (SoA) payload back to Array of Structures
+    // to maintain chart rendering compatibility, executing rapidly on the client side.
+    const numStates = states.length;
 
     for (let i = 0; i < numStates; i++) {
         datasets.push({
             label: labels[i] || `x${i+1}`,
-            data: states.map((s, idx) => ({x: times[idx], y: s[i]})),
+            data: states[i].map((val, idx) => ({x: times[idx], y: val})),
             borderColor: colors[i % colors.length],
             backgroundColor: colors[i % colors.length],
             borderWidth: 2,
