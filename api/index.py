@@ -30,8 +30,8 @@ class PhasePortraitRequest(BaseModel):
     y_range: List[float] = Field(..., min_length=2, max_length=2)
 
 class StabilityRequest(BaseModel):
-    expression: str
-    variables: List[str]
+    expression: str = Field(..., max_length=200)
+    variables: List[str] = Field(..., max_length=10)
 
 SYSTEM_MAP = {
     "VanDerPol": VanDerPol,
@@ -100,7 +100,7 @@ def check_stability(req: StabilityRequest):
             return sp.Symbol(name)
         safe_dict["Symbol"] = safe_symbol
 
-        expr = parse_expr(req.expression, local_dict={}, global_dict=safe_dict)
+        expr = parse_expr(req.expression, local_dict={}, global_dict=safe_dict, evaluate=False)
         vars_sym = [sp.symbols(v) for v in req.variables]
         is_stable = check_negative_definite(expr, variables=vars_sym)
         return {"is_negative_definite": is_stable}
