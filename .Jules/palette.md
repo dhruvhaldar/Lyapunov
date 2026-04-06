@@ -1,3 +1,7 @@
 ## 2026-04-02 - Glassmorphic Keyboard Shortcuts for Global Nav
 **Learning:** Adding subtle, visually appealing (glassmorphic) `<kbd>` elements to labels with global shortcuts (like 'S' for System Model) significantly improves the discoverability of keyboard interactions for power users, without cluttering the UI. Pairing it with `.focus()` logic and `aria-hidden="true"` with a visually hidden explanatory span keeps it accessible.
 **Action:** Use this pattern of `[Label Text] <kbd aria-hidden="true">Key</kbd> <span class="sr-only">Press Key to focus</span>` for other primary global controls across the application.
+
+## 2026-04-03 - CSS-Driven Async Loading States via `aria-busy`
+**Learning:** Hardcoding visual loading states (like `opacity: 0.5; pointer-events: none;`) directly in JavaScript logic creates jank and tight coupling. By instead setting `aria-busy="true"` on a container and using CSS pseudo-elements (`::after`) to render a glassmorphic spinner, the UI is decoupled from the JS logic, making the component both visually smoother and inherently more accessible.
+**Action:** Always avoid inline JavaScript style mutations for UI states; use semantic ARIA attributes to trigger CSS-based visual feedback.
