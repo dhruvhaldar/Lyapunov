@@ -35,7 +35,7 @@
         </header>
 
         <main style="position: relative; transition: opacity 0.3s ease;">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr)); gap: 2rem; margin-bottom: 2rem;">
             <div class="glass-panel">
                 <h2>Phase Portrait</h2>
                 <div id="phase-portrait" role="img" tabindex="0" aria-label="Interactive phase portrait showing system trajectories and vector fields" style="width: 100%; height: 400px; background: rgba(0,0,0,0.2); border-radius: 8px;"></div>
