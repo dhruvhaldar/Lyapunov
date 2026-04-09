@@ -93,6 +93,9 @@ def check_stability(req: StabilityRequest):
     if "__" in req.expression or any("__" in v for v in req.variables):
         raise HTTPException(status_code=400, detail="Invalid expression: unsafe characters detected")
 
+    if not re.match(r'^[a-zA-Z0-9_ \+\-\*\/\(\)\.\,]*$', req.expression):
+        raise HTTPException(status_code=400, detail="Invalid expression")
+
     # Strict validation of variable names to prevent lambdify injection
     for v in req.variables:
         if not re.match(r'^[a-zA-Z_][a-zA-Z0-9_]*$', v):
