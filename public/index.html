@@ -86,6 +86,9 @@
                 const originalText = systemSelect.options[systemSelect.selectedIndex].text;
                 const mainContent = document.querySelector('main');
 
+                // Remember focus state to restore it after loading
+                const hadFocus = document.activeElement === systemSelect;
+
                 // Set loading state
                 systemSelect.disabled = true;
                 announcer.textContent = `Loading system ${originalText}...`;
@@ -112,6 +115,10 @@
                     systemSelect.disabled = false;
                     if (mainContent) {
                         mainContent.removeAttribute('aria-busy');
+                    }
+                    // Restore focus if the user was interacting with it
+                    if (hadFocus) {
+                        systemSelect.focus();
                     }
                 });
             });
