@@ -22,3 +22,7 @@
 **Vulnerability:** Information Exposure (CWE-200). In `api/index.py`, general `Exception`s caught during execution of endpoints (`/api/simulate` and `/api/phase_portrait`) were directly returning `str(e)` in the `detail` field of `HTTPException(status_code=500)`.
 **Learning:** Returning raw exception messages to users can leak sensitive internal state information, stack traces, invalid parameters processed by backend functions, or system architectures (like revealing class attributes via `unexpected keyword argument`). It can also cause unexpected internal errors if string formatting fails on non-standard exception types or data structures.
 **Prevention:** Fail securely. Always catch unhandled exceptions, log the detailed error internally (e.g., via `print` or a logging framework) for debugging, and return a safe, generic error message (e.g., "Simulation failed") to the user.
+## 2024-04-09 - Sympy parse_expr RCE
+**Vulnerability:** Sympy's parse_expr evaluates mathematical operations by default, which can lead to RCE if inputs are not strictly validated. Checking for double underscores is insufficient.
+**Learning:** Sympy's parse_expr needs strict validation against mathematical operators regex.
+**Prevention:** Untrusted inputs must be strictly validated against regexes before processing. Expressions require a regex allowing math operators.
