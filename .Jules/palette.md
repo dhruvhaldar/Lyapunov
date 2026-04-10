@@ -8,3 +8,7 @@
 ## 2024-05-24 - [Tactile Shortcut Feedback & Focus Traps]
 **Learning:** Global keyboard shortcuts (like 's' to focus) can create an A11y focus trap if they don't explicitly ignore native interactive elements like `<select>`. Pressing the shortcut while inside a select overrides the native jump-to-letter search feature. Additionally, visually rendered `<kbd>` elements lack the tactile feedback of physical keys, making shortcut triggers feel disconnected from the UI.
 **Action:** When adding global shortcuts, ALWAYS verify `document.activeElement.tagName` against `['INPUT', 'TEXTAREA', 'SELECT']`. Furthermore, provide tactile feedback by applying a brief scale down animation (e.g., `transform: scale(0.85)`) to the corresponding `<kbd>` indicator via JS timeouts.
+
+## 2026-04-10 - Dynamic Context Synchronization for Interactive Visualizations
+**Learning:** When interactive visualizations update asynchronously via global controls (e.g., a system dropdown), static headings and `aria-label`s lose context, confusing both visual and screen reader users about what is currently displayed. Dynamically appending the active selection (e.g., "Phase Portrait: Lorenz") to both the visual `<h2>` tags and the container's `aria-label`s keeps the context synced and accessible.
+**Action:** When implementing interactive data visualizations, ensure that section headings and descriptive ARIA labels are bound to the underlying state and update dynamically alongside the data.
