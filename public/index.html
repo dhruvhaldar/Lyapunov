@@ -37,12 +37,12 @@
         <main style="position: relative; transition: opacity 0.3s ease;">
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr)); gap: 2rem; margin-bottom: 2rem;">
             <div class="glass-panel">
-                <h2>Phase Portrait</h2>
+                <h2 id="heading-phase">Phase Portrait</h2>
                 <div id="phase-portrait" role="img" tabindex="0" aria-label="Interactive phase portrait showing system trajectories and vector fields" style="width: 100%; height: 400px; background: rgba(0,0,0,0.2); border-radius: 8px;"></div>
             </div>
 
             <div class="glass-panel">
-                <h2>Time Response</h2>
+                <h2 id="heading-time">Time Response</h2>
                 <div style="height: 400px;">
                     <canvas id="time-response-chart" role="img" tabindex="0" aria-label="Interactive time response chart showing system states over time">
                         Your browser does not support the canvas element. This visualization shows the time response of the selected system.
@@ -52,7 +52,7 @@
         </div>
 
         <div class="glass-panel">
-             <h2>3D Visualization</h2>
+             <h2 id="heading-3d">3D Visualization</h2>
              <div id="3d-view" role="img" tabindex="0" aria-label="Interactive 3D visualization of the dynamical system" style="width: 100%; height: 400px; background: rgba(0,0,0,0.2); border-radius: 8px;"></div>
         </div>
         </main>
@@ -85,6 +85,20 @@
                 const sys = systemSelect.value;
                 const originalText = systemSelect.options[systemSelect.selectedIndex].text;
                 const mainContent = document.querySelector('main');
+
+                // Update headings and ARIA labels dynamically
+                document.getElementById('heading-phase').textContent = `Phase Portrait: ${originalText}`;
+                document.getElementById('heading-time').textContent = `Time Response: ${originalText}`;
+                document.getElementById('heading-3d').textContent = `3D Visualization: ${originalText}`;
+
+                const phaseContainer = document.getElementById('phase-portrait');
+                if (phaseContainer) phaseContainer.setAttribute('aria-label', `Interactive phase portrait showing system trajectories and vector fields for ${originalText}`);
+
+                const timeContainer = document.getElementById('time-response-chart');
+                if (timeContainer) timeContainer.setAttribute('aria-label', `Interactive time response chart showing system states over time for ${originalText}`);
+
+                const view3dContainer = document.getElementById('3d-view');
+                if (view3dContainer) view3dContainer.setAttribute('aria-label', `Interactive 3D visualization of the ${originalText} dynamical system`);
 
                 // Remember focus state to restore it after loading
                 const hadFocus = document.activeElement === systemSelect;
