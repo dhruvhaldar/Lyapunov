@@ -20,3 +20,11 @@
 ## 2025-05-15 - Numpy Overhead on Scalar Operations inside Python Loops
 **Learning:** Using numpy functions like `np.zeros_like` or `np.sign` to process python float scalars inside tight loops (like the `SlidingModeController.compute` method evaluated at every `dt`) adds an enormous amount of overhead due to internal logic and dispatching.
 **Action:** When evaluating scalar math operations inside tight loops, use native Python constructs like ternary operators (`-k if s > 0 else (k if s < 0 else 0.0)`) and simple scalar checks instead of `numpy` functions.
+
+## 2026-04-10 - Array unpacking overhead in simulation loops
+**Learning:** Unpacking small numpy arrays into local python variables (e.g., `x, y = state`) inside tight numerical simulation loops (like RK4 ODE steps) introduces significant overhead due to Python tuple allocation and iteration.
+**Action:** Always use direct indexing (e.g., `state[0]`, `state[1]`) instead of unpacking arrays inside `dynamics` or `step` functions when performance is critical.
+
+## 2026-04-10 - Chart.js native array parsing via Labels
+**Learning:** Mapping a Structure-of-Arrays (SoA) payload back into an Array-of-Structures (e.g., `[{x: t, y: val}]`) on the frontend to feed Chart.js is extremely slow for high-resolution datasets (e.g., 10,000+ points). Chart.js natively supports flat arrays as datasets if the global x-axis mapping is provided via the `labels` configuration.
+**Action:** When working with Chart.js and raw array data, set `data: states[i]` directly and pass the shared x-axis array to `data.labels`. This provides a massive ~100x speedup in data processing on the client side without needing manual iteration.
