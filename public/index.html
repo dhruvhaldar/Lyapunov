@@ -14,6 +14,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
+    <a href="#main-content" class="skip-to-content">Skip to main content</a>
     <div class="container">
         <header class="glass-panel" style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
             <div>
@@ -34,7 +35,7 @@
             </div>
         </header>
 
-        <main style="position: relative; transition: opacity 0.3s ease;">
+        <main id="main-content" tabindex="-1" style="position: relative; transition: opacity 0.3s ease; outline: none;">
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr)); gap: 2rem; margin-bottom: 2rem;">
             <div class="glass-panel">
                 <h2 id="heading-phase">Phase Portrait</h2>
