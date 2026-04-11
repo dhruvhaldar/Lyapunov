@@ -19,7 +19,8 @@ class DynamicalSystem:
         k2 = self.dynamics(t + dt2, state + k1 * dt2, u)
         k3 = self.dynamics(t + dt2, state + k2 * dt2, u)
         k4 = self.dynamics(t + dt, state + k3 * dt, u)
-        return state + (dt / 6.0) * (k1 + 2.0*k2 + 2.0*k3 + k4)
+        # ⚡ Bolt: Factored out 2.0 from RK4 intermediate terms (2.0*(k2 + k3)) to save one scalar-array multiplication per inner loop.
+        return state + (dt / 6.0) * (k1 + 2.0 * (k2 + k3) + k4)
 
     def simulate(self, controller, initial_state, time_span=(0, 10), dt=0.01):
         t_values = np.arange(time_span[0], time_span[1], dt)
