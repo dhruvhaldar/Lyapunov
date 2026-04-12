@@ -32,3 +32,7 @@
 ## 2026-04-10 - Algebraic Factoring of NumPy Array Operations
 **Learning:** In tight numerical loops involving NumPy arrays (like RK4 integration steps), evaluating `2.0*k2 + 2.0*k3` executes two array allocations and two scalar-array multiplications. Factoring this to `2.0 * (k2 + k3)` executes one array addition and only one scalar-array multiplication, yielding an ~18% speedup for that specific line.
 **Action:** Always algebraically factor out common scalar multipliers in operations involving NumPy arrays inside tight loops to minimize the total number of expensive array allocations and multiplication operations.
+
+## 2024-05-22 - Pre-calculating Algebraic Offsets in Rendering Loops
+**Learning:** In D3.js rendering loops or frontend visualizations, recalculating computationally expensive trigonometric functions (like `Math.atan2`, `Math.cos`, `Math.sin`) inside multiple D3 `.attr()` callbacks for the same data point creates a significant performance bottleneck.
+**Action:** When mapping array data for visualizations, pre-calculate geometric offsets during the initial data array generation. Furthermore, replace angle-based trigonometric functions with direct algebraic equivalents (e.g., instead of calculating the angle via `atan2` and then `cos(angle)`, directly use `(u / mag) * length`). This prevents redundant calculations and yields massive rendering speedups.

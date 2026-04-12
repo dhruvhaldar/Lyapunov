@@ -35,12 +35,21 @@ function updatePhasePortrait(systemName) {
     .then(data => {
         // ⚡ Bolt: Remap Structure of Arrays (SoA) payload back to Array of Structures
         // to maintain d3 rendering compatibility, executing rapidly on the client side.
-        const vectorsArray = data.vectors.x.map((x, i) => ({
-            x: x,
-            y: data.vectors.y[i],
-            u: data.vectors.u[i],
-            v: data.vectors.v[i]
-        }));
+        // Pre-calculate algebraic offsets (dx, dy) to avoid slow trig (atan2, cos, sin) per-vector during rendering
+        const vectorsArray = data.vectors.x.map((x, i) => {
+            const u = data.vectors.u[i];
+            const v = data.vectors.v[i];
+            const mag = Math.sqrt(u*u + v*v);
+            const len = 10;
+            return {
+                x: x,
+                y: data.vectors.y[i],
+                u: u,
+                v: v,
+                dx: mag >= 1e-6 ? (u / mag) * len : 0,
+                dy: mag >= 1e-6 ? (v / mag) * len : 0
+            };
+        });
         drawPhasePortrait(vectorsArray);
     })
     .catch(error => console.error('Error fetching phase portrait:', error))
@@ -96,28 +105,8 @@ function drawPhasePortrait(vectors) {
         .append("line")
         .attr("x1", d => xScale(d.x))
         .attr("y1", d => yScale(d.y))
-        .attr("x2", d => {
-            const mag = Math.sqrt(d.u*d.u + d.v*d.v);
-            if (mag < 1e-6) return xScale(d.x);
-            // Draw a small vector of fixed pixel length to show direction
-            const len = 10;
-            const angle = Math.atan2(d.v, d.u);
-            return xScale(d.x) + Math.cos(angle) * len;
-        })
-        .attr("y2", d => {
-            const mag = Math.sqrt(d.u*d.u + d.v*d.v);
-             if (mag < 1e-6) return yScale(d.y);
-             const len = 10;
-             const angle = Math.atan2(d.v, d.u);
-             // SVG y is down, so minus sin(angle) effectively, but yScale handles coordinate mapping?
-             // No, yScale maps the point. For the offset, we operate in pixel space.
-             // In pixel space, y increases downwards.
-             // atan2(v, u) gives standard math angle (CCW from +x).
-             // If v is positive, angle is > 0. Math y goes up.
-             // We want pixel y to go up (which is smaller value).
-             // So we need to subtract sin(angle) * len.
-             return yScale(d.y) - Math.sin(angle) * len;
-        })
+        .attr("x2", d => xScale(d.x) + d.dx)
+        .attr("y2", d => yScale(d.y) - d.dy)
         .attr("stroke", "rgba(0, 255, 204, 0.6)")
         .attr("stroke-width", 1.5)
         .attr("marker-end", "url(#arrow)");
