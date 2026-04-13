@@ -12,3 +12,7 @@
 ## 2026-04-10 - Dynamic Context Synchronization for Interactive Visualizations
 **Learning:** When interactive visualizations update asynchronously via global controls (e.g., a system dropdown), static headings and `aria-label`s lose context, confusing both visual and screen reader users about what is currently displayed. Dynamically appending the active selection (e.g., "Phase Portrait: Lorenz") to both the visual `<h2>` tags and the container's `aria-label`s keeps the context synced and accessible.
 **Action:** When implementing interactive data visualizations, ensure that section headings and descriptive ARIA labels are bound to the underlying state and update dynamically alongside the data.
+
+## 2025-04-13 - Improved Affordances and Disabled State Feedback
+**Learning:** Adding `cursor: pointer` to labels strongly improves perceived clickability. Additionally, disabling input elements (like a `select` dropdown) during asynchronous loading can trap users without feedback; adding a `title="Loading..."` provides native tooltip feedback explaining the disabled state.
+**Action:** When creating forms or interactive controls, always ensure labels use `cursor: pointer` and temporarily disabled controls include a descriptive `title` attribute to explain the unresponsiveness.

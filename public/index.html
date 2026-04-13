@@ -106,6 +106,7 @@
 
                 // Set loading state
                 systemSelect.disabled = true;
+                systemSelect.title = "Loading...";
                 announcer.textContent = `Loading system ${originalText}...`;
 
                 if (mainContent) {
@@ -128,6 +129,7 @@
                 }).finally(() => {
                     // Restore state
                     systemSelect.disabled = false;
+                    systemSelect.removeAttribute('title');
                     if (mainContent) {
                         mainContent.removeAttribute('aria-busy');
                     }

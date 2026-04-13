@@ -69,3 +69,7 @@ main[aria-busy="true"]::after {
         transform: rotate(360deg);
     }
 }
+
+label {
+    cursor: pointer;
+}
