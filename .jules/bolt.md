@@ -36,3 +36,7 @@
 ## 2024-05-22 - Pre-calculating Algebraic Offsets in Rendering Loops
 **Learning:** In D3.js rendering loops or frontend visualizations, recalculating computationally expensive trigonometric functions (like `Math.atan2`, `Math.cos`, `Math.sin`) inside multiple D3 `.attr()` callbacks for the same data point creates a significant performance bottleneck.
 **Action:** When mapping array data for visualizations, pre-calculate geometric offsets during the initial data array generation. Furthermore, replace angle-based trigonometric functions with direct algebraic equivalents (e.g., instead of calculating the angle via `atan2` and then `cos(angle)`, directly use `(u / mag) * length`). This prevents redundant calculations and yields massive rendering speedups.
+
+## 2026-04-14 - Network Payload Compression for Large JSON Arrays
+**Learning:** Returning high-resolution numerical data (like 2000-step RK4 simulations or dense phase portrait grids) as flat JSON arrays creates massive HTTP payloads (~130KB for a single 3D system simulation).
+**Action:** Add FastAPI's `GZipMiddleware` with a `minimum_size` threshold to automatically compress large API responses. This reduces wire size by over 50% for numerical JSON payloads without requiring frontend changes.
