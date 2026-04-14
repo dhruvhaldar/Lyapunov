@@ -33,14 +33,14 @@ async def add_security_headers(request: Request, call_next):
 
 class SimulationRequest(BaseModel):
     system: str = Field(..., max_length=100)
-    params: Dict[str, float]
+    params: Dict[str, float] = Field(..., max_length=10)
     initial_state: List[float] = Field(..., max_length=10)
     duration: float = Field(default=10.0, gt=0, le=100.0)
     dt: float = Field(default=0.01, ge=0.001, le=1.0)
 
 class PhasePortraitRequest(BaseModel):
     system: str = Field(..., max_length=100)
-    params: Dict[str, float]
+    params: Dict[str, float] = Field(..., max_length=10)
     x_range: List[float] = Field(..., min_length=2, max_length=2)
     y_range: List[float] = Field(..., min_length=2, max_length=2)
 

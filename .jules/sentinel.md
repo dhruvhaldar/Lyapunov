@@ -26,3 +26,8 @@
 **Vulnerability:** Sympy's parse_expr evaluates mathematical operations by default, which can lead to RCE if inputs are not strictly validated. Checking for double underscores is insufficient.
 **Learning:** Sympy's parse_expr needs strict validation against mathematical operators regex.
 **Prevention:** Untrusted inputs must be strictly validated against regexes before processing. Expressions require a regex allowing math operators.
+
+## 2024-04-14 - Prevent Denial of Service (DoS) via Large Dictionaries
+**Vulnerability:** Denial of Service (DoS) risk via memory exhaustion. `SimulationRequest` and `PhasePortraitRequest` endpoints allowed arbitrary numbers of items in the `params` dictionary field.
+**Learning:** Pydantic's `Field` allows restricting not only strings and lists but also dictionary sizes using the `max_length` parameter. This provides a simple but effective defense-in-depth measure.
+**Prevention:** Always define explicit `max_length` limits on `Dict` fields in Pydantic models (e.g., `params: Dict[str, float] = Field(..., max_length=10)`) when expecting a small number of parameters.
