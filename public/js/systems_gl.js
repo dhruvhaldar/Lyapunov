@@ -105,7 +105,9 @@ function update3D(systemName) {
 function animate() {
     requestAnimationFrame(animate);
 
-    if (currentMesh) {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (currentMesh && !prefersReducedMotion) {
         currentMesh.rotation.y += 0.01;
         if (currentMesh.type === 'Line') {
              currentMesh.rotation.z += 0.005;

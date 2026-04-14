@@ -16,3 +16,7 @@
 ## 2025-04-13 - Improved Affordances and Disabled State Feedback
 **Learning:** Adding `cursor: pointer` to labels strongly improves perceived clickability. Additionally, disabling input elements (like a `select` dropdown) during asynchronous loading can trap users without feedback; adding a `title="Loading..."` provides native tooltip feedback explaining the disabled state.
 **Action:** When creating forms or interactive controls, always ensure labels use `cursor: pointer` and temporarily disabled controls include a descriptive `title` attribute to explain the unresponsiveness.
+
+## 2026-04-14 - Handling `prefers-reduced-motion` in WebGL/Canvas
+**Learning:** Standard CSS `@media (prefers-reduced-motion: reduce)` media queries successfully disable CSS-based animations and transitions, but they do NOT apply to or automatically pause JavaScript-driven animations running inside `<canvas>` elements (like Three.js or D3 `requestAnimationFrame` loops). Vestibular triggering can still occur from continuous 3D rendering even if the rest of the page respects the user's OS settings.
+**Action:** When working with continuous `<canvas>` animations, explicitly query `window.matchMedia('(prefers-reduced-motion: reduce)').matches` inside the `requestAnimationFrame` render loop to pause or severely restrict the animation logic when true.
