@@ -44,21 +44,29 @@ function update3D(systemName) {
 
     if (systemName === 'Lorenz') {
         // Create a particle system for Lorenz
-        const points = [];
+        // ⚡ Bolt: Replaced iterative THREE.Vector3 object allocation with a pre-allocated Float32Array
+        // to prevent large garbage collection (GC) pauses and improve geometry initialization speed.
+        const numPoints = 3000;
+        const positions = new Float32Array(numPoints * 3);
         let x = 0.1, y = 0, z = 0;
         const sigma = 10, rho = 28, beta = 8/3;
         const dt = 0.01;
-        for (let i = 0; i < 3000; i++) {
+        for (let i = 0; i < numPoints; i++) {
             const dx = sigma * (y - x);
             const dy = x * (rho - z) - y;
             const dz = x * y - beta * z;
             x += dx * dt;
             y += dy * dt;
             z += dz * dt;
-            points.push(new THREE.Vector3(x, y, z));
+
+            const idx = i * 3;
+            positions[idx] = x;
+            positions[idx + 1] = y;
+            positions[idx + 2] = z;
         }
 
-        const geometry = new THREE.BufferGeometry().setFromPoints(points);
+        const geometry = new THREE.BufferGeometry();
+        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
         const material = new THREE.LineBasicMaterial({ color: 0x00ffcc });
         currentMesh = new THREE.Line(geometry, material);
         // Center it roughly
