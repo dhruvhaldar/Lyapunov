@@ -20,3 +20,7 @@
 ## 2026-04-14 - Handling `prefers-reduced-motion` in WebGL/Canvas
 **Learning:** Standard CSS `@media (prefers-reduced-motion: reduce)` media queries successfully disable CSS-based animations and transitions, but they do NOT apply to or automatically pause JavaScript-driven animations running inside `<canvas>` elements (like Three.js or D3 `requestAnimationFrame` loops). Vestibular triggering can still occur from continuous 3D rendering even if the rest of the page respects the user's OS settings.
 **Action:** When working with continuous `<canvas>` animations, explicitly query `window.matchMedia('(prefers-reduced-motion: reduce)').matches` inside the `requestAnimationFrame` render loop to pause or severely restrict the animation logic when true.
+
+## 2026-04-15 - Chart.js Tooltips with Hidden Points
+**Learning:** For performance reasons, high-density line charts often hide individual data points (e.g., `pointRadius: 0` in Chart.js). However, hiding points completely disables the default hover interaction that relies on intersecting the mouse with a point, effectively breaking tooltips and removing a critical layer of interactive data discovery.
+**Action:** When hiding points on a line chart for performance, ALWAYS restore tooltip accessibility by explicitly configuring the chart's interaction mode to trigger on vertical slicing rather than point intersection (e.g., `interaction: { mode: 'index', intersect: false }`).
