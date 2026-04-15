@@ -40,3 +40,7 @@
 ## 2026-04-14 - Network Payload Compression for Large JSON Arrays
 **Learning:** Returning high-resolution numerical data (like 2000-step RK4 simulations or dense phase portrait grids) as flat JSON arrays creates massive HTTP payloads (~130KB for a single 3D system simulation).
 **Action:** Add FastAPI's `GZipMiddleware` with a `minimum_size` threshold to automatically compress large API responses. This reduces wire size by over 50% for numerical JSON payloads without requiring frontend changes.
+
+## 2026-04-18 - Flat Array Geometry Initialization in Three.js
+**Learning:** Initializing high-density geometries (like attractors or large point clouds) by dynamically allocating thousands of `THREE.Vector3` objects inside a loop introduces significant object allocation overhead and triggers garbage collection (GC) pauses that degrade frontend performance.
+**Action:** When initializing dense WebGL geometries, always pre-allocate a flat `Float32Array` (e.g., `new Float32Array(numPoints * 3)`), populate it via indexed assignments (`positions[i*3] = x`, etc.), and inject it directly into a `THREE.BufferGeometry` using a `THREE.BufferAttribute`. This avoids allocating thousands of intermediate vector objects.
