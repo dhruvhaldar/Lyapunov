@@ -44,3 +44,7 @@
 ## 2026-04-18 - Flat Array Geometry Initialization in Three.js
 **Learning:** Initializing high-density geometries (like attractors or large point clouds) by dynamically allocating thousands of `THREE.Vector3` objects inside a loop introduces significant object allocation overhead and triggers garbage collection (GC) pauses that degrade frontend performance.
 **Action:** When initializing dense WebGL geometries, always pre-allocate a flat `Float32Array` (e.g., `new Float32Array(numPoints * 3)`), populate it via indexed assignments (`positions[i*3] = x`, etc.), and inject it directly into a `THREE.BufferGeometry` using a `THREE.BufferAttribute`. This avoids allocating thousands of intermediate vector objects.
+
+## 2026-04-18 - Avoid window.matchMedia in requestAnimationFrame
+**Learning:** Calling `window.matchMedia` (e.g., for `prefers-reduced-motion`) inside a tight `requestAnimationFrame` loop creates a severe performance bottleneck. It forces the browser to synchronously parse the CSS media query string and re-evaluate it 60 times a second, which generates garbage and slows down rendering.
+**Action:** When you need to check media queries in an animation loop, cache the initial `.matches` boolean value outside the loop. Use `.addEventListener('change', ...)` on the `matchMedia` object to dynamically update the cached value if the user's system preferences change while the app is running.

@@ -110,10 +110,15 @@ function update3D(systemName) {
     scene.add(currentMesh);
 }
 
+// ⚡ Bolt: Cache media query outside of animation loop to prevent synchronous string parsing 60fps
+const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+let prefersReducedMotion = reducedMotionQuery.matches;
+reducedMotionQuery.addEventListener('change', (e) => {
+    prefersReducedMotion = e.matches;
+});
+
 function animate() {
     requestAnimationFrame(animate);
-
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     if (currentMesh && !prefersReducedMotion) {
         currentMesh.rotation.y += 0.01;
