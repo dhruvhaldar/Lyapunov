@@ -119,6 +119,14 @@ def check_stability(req: StabilityRequest):
         safe_dict["Symbol"] = safe_symbol
 
         expr = parse_expr(req.expression, local_dict={}, global_dict=safe_dict, evaluate=False)
+
+        # Prevent DoS from large powers during lambdify
+        for node in sp.preorder_traversal(expr):
+            if node.func == sp.Pow:
+                if isinstance(node.exp, sp.Pow):
+                    raise HTTPException(status_code=400, detail="Expression too complex: nested powers are not allowed")
+                if isinstance(node.exp, sp.Number) and abs(node.exp) > 100:
+                    raise HTTPException(status_code=400, detail="Expression too complex: exponents cannot exceed 100")
         vars_sym = [sp.symbols(v) for v in req.variables]
         is_stable = check_negative_definite(expr, variables=vars_sym)
         return {"is_negative_definite": is_stable}

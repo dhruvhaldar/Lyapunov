@@ -31,3 +31,8 @@
 **Vulnerability:** Denial of Service (DoS) risk via memory exhaustion. `SimulationRequest` and `PhasePortraitRequest` endpoints allowed arbitrary numbers of items in the `params` dictionary field.
 **Learning:** Pydantic's `Field` allows restricting not only strings and lists but also dictionary sizes using the `max_length` parameter. This provides a simple but effective defense-in-depth measure.
 **Prevention:** Always define explicit `max_length` limits on `Dict` fields in Pydantic models (e.g., `params: Dict[str, float] = Field(..., max_length=10)`) when expecting a small number of parameters.
+
+## 2024-05-20 - DoS via Nested Exponents in Lambdify
+**Vulnerability:** Denial of Service (DoS) via CPU/Memory Exhaustion. Even when `evaluate=False` is used in `parse_expr`, if the parsed AST contains large exponents (e.g. `x**1000000`) or deeply nested powers (e.g. `9**9**9`), passing this AST to `sympy.lambdify()` causes it to attempt evaluation during NumPy code generation. This leads to the thread hanging indefinitely or crashing with a "Numerical result out of range" or "Exceeds the limit for integer string conversion" error, taking down the worker.
+**Learning:** `sympy.lambdify` is not immune to computational complexity attacks from mathematical expressions, even if the parsing step was safe.
+**Prevention:** Traverse the parsed AST (using `sympy.preorder_traversal`) before passing it to `lambdify` or any evaluation function. Explicitly check for and reject complex `sp.Pow` nodes, such as those with nested exponents (`isinstance(node.exp, sp.Pow)`) or abnormally large numerical exponents (`isinstance(node.exp, sp.Number) and abs(node.exp) > 100`).
