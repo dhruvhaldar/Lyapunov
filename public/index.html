@@ -82,12 +82,8 @@
             announcer.style.border = '0';
             document.body.appendChild(announcer);
 
-            systemSelect.addEventListener('change', () => {
-                const sys = systemSelect.value;
+            function syncContextLabels() {
                 const originalText = systemSelect.options[systemSelect.selectedIndex].text;
-                const mainContent = document.querySelector('main');
-
-                // Update headings and ARIA labels dynamically
                 document.getElementById('heading-phase').textContent = `Phase Portrait: ${originalText}`;
                 document.getElementById('heading-time').textContent = `Time Response: ${originalText}`;
                 document.getElementById('heading-3d').textContent = `3D Visualization: ${originalText}`;
@@ -100,6 +96,14 @@
 
                 const view3dContainer = document.getElementById('3d-view');
                 if (view3dContainer) view3dContainer.setAttribute('aria-label', `Interactive 3D visualization of the ${originalText} dynamical system`);
+            }
+
+            systemSelect.addEventListener('change', () => {
+                const sys = systemSelect.value;
+                const originalText = systemSelect.options[systemSelect.selectedIndex].text;
+                const mainContent = document.querySelector('main');
+
+                syncContextLabels();
 
                 // Remember focus state to restore it after loading
                 const hadFocus = document.activeElement === systemSelect;
@@ -139,6 +143,8 @@
                     }
                 });
             });
+
+            syncContextLabels();
 
             // Global keyboard shortcut
             document.addEventListener('keydown', (e) => {

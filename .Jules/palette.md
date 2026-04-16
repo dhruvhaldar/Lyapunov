@@ -24,3 +24,7 @@
 ## 2026-04-15 - Chart.js Tooltips with Hidden Points
 **Learning:** For performance reasons, high-density line charts often hide individual data points (e.g., `pointRadius: 0` in Chart.js). However, hiding points completely disables the default hover interaction that relies on intersecting the mouse with a point, effectively breaking tooltips and removing a critical layer of interactive data discovery.
 **Action:** When hiding points on a line chart for performance, ALWAYS restore tooltip accessibility by explicitly configuring the chart's interaction mode to trigger on vertical slicing rather than point intersection (e.g., `interaction: { mode: 'index', intersect: false }`).
+
+## 2026-04-16 - Dynamic Context Initialization on Load
+**Learning:** Hardcoding static text in HTML for headings or `aria-label`s that are inherently bound to dynamic state (like a default dropdown selection) is dangerous because the source of truth is split. While it visually fixes the initial render, it is brittle. Instead, extracting the context synchronization logic into a reusable function (e.g., `syncContextLabels()`) and invoking it explicitly on `DOMContentLoaded` guarantees that the UI exactly reflects the underlying interactive state from the very first paint, without hardcoded mismatches or hacky synthetic event dispatches.
+**Action:** When working with dynamic visualizations or UI sections whose titles depend on form controls, always initialize their labels via a shared state-sync function upon load, rather than hardcoding default assumptions into the static HTML.
