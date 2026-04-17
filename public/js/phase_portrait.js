@@ -50,7 +50,7 @@ function updatePhasePortrait(systemName) {
                 dy: mag >= 1e-6 ? (v / mag) * len : 0
             };
         });
-        drawPhasePortrait(vectorsArray);
+        drawPhasePortrait(vectorsArray, systemName);
     })
     .catch(error => console.error('Error fetching phase portrait:', error))
     .finally(() => {
@@ -61,7 +61,7 @@ function updatePhasePortrait(systemName) {
     });
 }
 
-function drawPhasePortrait(vectors) {
+function drawPhasePortrait(vectors, systemName) {
     const container = document.getElementById('phase-portrait');
     container.innerHTML = '';
 
@@ -121,14 +121,37 @@ function drawPhasePortrait(vectors) {
     svg.append("g")
         .attr("transform", `translate(0, ${yZero})`)
         .call(xAxis)
-        .attr("color", "rgba(255,255,255,0.5)")
+        .attr("color", "#ccc")
+        .style("font-family", "inherit")
         .select(".domain").remove();
 
     svg.append("g")
         .attr("transform", `translate(${xZero}, 0)`)
         .call(yAxis)
-        .attr("color", "rgba(255,255,255,0.5)")
+        .attr("color", "#ccc")
+        .style("font-family", "inherit")
         .select(".domain").remove();
+
+    // Contextual Labels
+    let xLabel = 'x1', yLabel = 'x2';
+    if (systemName === 'Pendulum') { xLabel = 'θ'; yLabel = 'ω'; }
+    if (systemName === 'Lorenz') { xLabel = 'x'; yLabel = 'y'; }
+
+    svg.append("text")
+        .attr("x", width - 10)
+        .attr("y", yZero - 10)
+        .attr("fill", "#ccc")
+        .style("font-family", "inherit")
+        .style("font-size", "12px")
+        .text(xLabel);
+
+    svg.append("text")
+        .attr("x", xZero + 10)
+        .attr("y", 20)
+        .attr("fill", "#ccc")
+        .style("font-family", "inherit")
+        .style("font-size", "12px")
+        .text(yLabel);
 }
 
 // Make globally available
