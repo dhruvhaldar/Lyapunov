@@ -84,6 +84,7 @@
 
             function syncContextLabels() {
                 const originalText = systemSelect.options[systemSelect.selectedIndex].text;
+                document.title = `Lyapunov Control Dashboard - ${originalText}`;
                 document.getElementById('heading-phase').textContent = `Phase Portrait: ${originalText}`;
                 document.getElementById('heading-time').textContent = `Time Response: ${originalText}`;
                 document.getElementById('heading-3d').textContent = `3D Visualization: ${originalText}`;

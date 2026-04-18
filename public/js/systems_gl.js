@@ -22,6 +22,12 @@ function init3D(containerId) {
     // Initial load
     update3D('VanDerPol');
 
+    container.title = "Interactive 3D View (Pauses on hover/focus)";
+    container.addEventListener('mouseenter', () => is3DPaused = true);
+    container.addEventListener('mouseleave', () => is3DPaused = false);
+    container.addEventListener('focus', () => is3DPaused = true);
+    container.addEventListener('blur', () => is3DPaused = false);
+
     animate();
 
     // Handle resize
@@ -113,6 +119,7 @@ function update3D(systemName) {
 // ⚡ Bolt: Cache media query outside of animation loop to prevent synchronous string parsing 60fps
 const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
 let prefersReducedMotion = reducedMotionQuery.matches;
+let is3DPaused = false;
 reducedMotionQuery.addEventListener('change', (e) => {
     prefersReducedMotion = e.matches;
 });
@@ -120,7 +127,7 @@ reducedMotionQuery.addEventListener('change', (e) => {
 function animate() {
     requestAnimationFrame(animate);
 
-    if (currentMesh && !prefersReducedMotion) {
+    if (currentMesh && !prefersReducedMotion && !is3DPaused) {
         currentMesh.rotation.y += 0.01;
         if (currentMesh.type === 'Line') {
              currentMesh.rotation.z += 0.005;
