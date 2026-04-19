@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, confloat
 from typing import List, Optional, Dict, Any
 import numpy as np
 import sympy as sp
@@ -15,11 +15,36 @@ from lyapunov.stability import check_negative_definite
 from fastapi.staticfiles import StaticFiles
 from fastapi import Request
 from fastapi.middleware.gzip import GZipMiddleware
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
 
 app = FastAPI()
 
 # ⚡ Bolt: Added GZip compression to reduce large JSON numerical payloads (e.g. simulation states, phase portraits) by >50% over the wire
 app.add_middleware(GZipMiddleware, minimum_size=1000)
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    import math
+    errors = exc.errors()
+
+    def sanitize_val(val):
+        if isinstance(val, float) and (math.isinf(val) or math.isnan(val)):
+            return str(val)
+        elif isinstance(val, list):
+            return [sanitize_val(v) for v in val]
+        elif isinstance(val, dict):
+            return {k: sanitize_val(v) for k, v in val.items()}
+        return val
+
+    # Filter out inputs from validation errors that are inf/nan since JSONResponse will crash
+    for error in errors:
+        error["input"] = sanitize_val(error.get("input"))
+
+    return JSONResponse(
+        status_code=422,
+        content={"detail": errors},
+    )
 
 @app.middleware("http")
 async def add_security_headers(request: Request, call_next):
@@ -33,16 +58,16 @@ async def add_security_headers(request: Request, call_next):
 
 class SimulationRequest(BaseModel):
     system: str = Field(..., max_length=100)
-    params: Dict[str, float] = Field(..., max_length=10)
-    initial_state: List[float] = Field(..., max_length=10)
+    params: Dict[str, confloat(allow_inf_nan=False)] = Field(..., max_length=10)
+    initial_state: List[confloat(allow_inf_nan=False)] = Field(..., max_length=10)
     duration: float = Field(default=10.0, gt=0, le=100.0)
     dt: float = Field(default=0.01, ge=0.001, le=1.0)
 
 class PhasePortraitRequest(BaseModel):
     system: str = Field(..., max_length=100)
-    params: Dict[str, float] = Field(..., max_length=10)
-    x_range: List[float] = Field(..., min_length=2, max_length=2)
-    y_range: List[float] = Field(..., min_length=2, max_length=2)
+    params: Dict[str, confloat(allow_inf_nan=False)] = Field(..., max_length=10)
+    x_range: List[confloat(allow_inf_nan=False)] = Field(..., min_length=2, max_length=2)
+    y_range: List[confloat(allow_inf_nan=False)] = Field(..., min_length=2, max_length=2)
 
 class StabilityRequest(BaseModel):
     expression: str = Field(..., max_length=200)
