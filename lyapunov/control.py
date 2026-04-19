@@ -42,9 +42,11 @@ class FeedbackLinearization:
 
         # Simple sin(t) reference for the test case
         # ⚡ Bolt: Fast scalar math replacing numpy overhead in tight Python loop
-        r = math.sin(t)
+        # ⚡ Bolt: Cache math.sin(t) call to avoid redundant trig computations
+        sin_t = math.sin(t)
+        r = sin_t
         r_dot = math.cos(t)
-        r_ddot = -math.sin(t)
+        r_ddot = -sin_t
 
         x1, x2 = state
         e = x1 - r

@@ -48,3 +48,7 @@
 ## 2026-04-18 - Avoid window.matchMedia in requestAnimationFrame
 **Learning:** Calling `window.matchMedia` (e.g., for `prefers-reduced-motion`) inside a tight `requestAnimationFrame` loop creates a severe performance bottleneck. It forces the browser to synchronously parse the CSS media query string and re-evaluate it 60 times a second, which generates garbage and slows down rendering.
 **Action:** When you need to check media queries in an animation loop, cache the initial `.matches` boolean value outside the loop. Use `.addEventListener('change', ...)` on the `matchMedia` object to dynamically update the cached value if the user's system preferences change while the app is running.
+
+## 2026-04-20 - Cache Repeated Identical Function Calls
+**Learning:** Calling the same expensive math functions (like `math.sin(t)`) multiple times within the same tight simulation or control loop introduces unnecessary redundant computation.
+**Action:** Always evaluate identical mathematical expressions or function calls once, assign the result to a local variable (e.g., `sin_t = math.sin(t)`), and reuse that variable for subsequent calculations within the loop. This pattern avoids redundant computation without sacrificing readability.
