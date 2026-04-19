@@ -1,8 +1,16 @@
 let scene, camera, renderer, currentMesh;
+let isUserPaused = false;
 
 function init3D(containerId) {
     const container = document.getElementById(containerId);
     if (!container) return;
+
+    // WCAG 2.2.2 Pause, Stop, Hide interaction
+    container.title = "Hover or focus to pause animation";
+    container.addEventListener('mouseenter', () => isUserPaused = true);
+    container.addEventListener('mouseleave', () => isUserPaused = false);
+    container.addEventListener('focus', () => isUserPaused = true);
+    container.addEventListener('blur', () => isUserPaused = false);
 
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
@@ -120,7 +128,7 @@ reducedMotionQuery.addEventListener('change', (e) => {
 function animate() {
     requestAnimationFrame(animate);
 
-    if (currentMesh && !prefersReducedMotion) {
+    if (currentMesh && !prefersReducedMotion && !isUserPaused) {
         currentMesh.rotation.y += 0.01;
         if (currentMesh.type === 'Line') {
              currentMesh.rotation.z += 0.005;
