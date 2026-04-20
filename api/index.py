@@ -1,10 +1,13 @@
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel, Field
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel, Field, confloat
 from typing import List, Optional, Dict, Any
 import numpy as np
 import sympy as sp
 import sys
 import os
+import math
 
 # Ensure lyapunov module is accessible
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -13,10 +16,35 @@ from lyapunov.systems import VanDerPol, Pendulum, Lorenz
 from lyapunov.analysis import PhasePortrait
 from lyapunov.stability import check_negative_definite
 from fastapi.staticfiles import StaticFiles
-from fastapi import Request
 from fastapi.middleware.gzip import GZipMiddleware
 
 app = FastAPI()
+
+# 🛡️ Sentinel: Custom exception handler to sanitize invalid float inputs (inf, nan)
+# that can crash the default FastAPI JSON serializer, preventing DoS.
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    def sanitize(obj):
+        if isinstance(obj, dict):
+            return {str(k): sanitize(v) for k, v in obj.items()}
+        elif isinstance(obj, (list, tuple)):
+            return [sanitize(v) for v in obj]
+        elif isinstance(obj, float):
+            if math.isnan(obj) or math.isinf(obj):
+                return str(obj)
+            return obj
+        elif isinstance(obj, (int, str, bool, type(None))):
+            return obj
+        else:
+            return str(obj)
+
+    sanitized_errors = sanitize(exc.errors())
+    sanitized_body = sanitize(exc.body) if hasattr(exc, "body") else None
+
+    return JSONResponse(
+        status_code=422,
+        content={"detail": sanitized_errors, "body": sanitized_body},
+    )
 
 # ⚡ Bolt: Added GZip compression to reduce large JSON numerical payloads (e.g. simulation states, phase portraits) by >50% over the wire
 app.add_middleware(GZipMiddleware, minimum_size=1000)
@@ -33,16 +61,16 @@ async def add_security_headers(request: Request, call_next):
 
 class SimulationRequest(BaseModel):
     system: str = Field(..., max_length=100)
-    params: Dict[str, float] = Field(..., max_length=10)
-    initial_state: List[float] = Field(..., max_length=10)
-    duration: float = Field(default=10.0, gt=0, le=100.0)
-    dt: float = Field(default=0.01, ge=0.001, le=1.0)
+    params: Dict[str, confloat(allow_inf_nan=False)] = Field(..., max_length=10)
+    initial_state: List[confloat(allow_inf_nan=False)] = Field(..., max_length=10)
+    duration: confloat(allow_inf_nan=False) = Field(default=10.0, gt=0, le=100.0)
+    dt: confloat(allow_inf_nan=False) = Field(default=0.01, ge=0.001, le=1.0)
 
 class PhasePortraitRequest(BaseModel):
     system: str = Field(..., max_length=100)
-    params: Dict[str, float] = Field(..., max_length=10)
-    x_range: List[float] = Field(..., min_length=2, max_length=2)
-    y_range: List[float] = Field(..., min_length=2, max_length=2)
+    params: Dict[str, confloat(allow_inf_nan=False)] = Field(..., max_length=10)
+    x_range: List[confloat(allow_inf_nan=False)] = Field(..., min_length=2, max_length=2)
+    y_range: List[confloat(allow_inf_nan=False)] = Field(..., min_length=2, max_length=2)
 
 class StabilityRequest(BaseModel):
     expression: str = Field(..., max_length=200)
