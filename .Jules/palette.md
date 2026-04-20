@@ -32,3 +32,7 @@
 ## 2026-04-17 - Contextual Axis Labels and High-Contrast Typography in Data Visualizations
 **Learning:** Default D3.js or Chart.js axes often lack contextual labels indicating what dimensions represent (e.g., whether axes map to generic states x1/x2 or specific physical states like angle θ/angular velocity ω), leading to cognitive load when switching datasets. Furthermore, default SVG axis colors can fail WCAG contrast checks against dark backgrounds, and standard system fonts can break design consistency.
 **Action:** Enhance D3.js data visualizations by explicitly appending contextual text labels (e.g., `x` and `y` or specific parameter names) to axes. Additionally, ensure SVG axis elements explicitly apply high-contrast colors (e.g., `.attr("color", "#ccc")`) and inherit typography (e.g., `.style("font-family", "inherit")`) in the rendering chain to meet WCAG AA contrast guidelines and match the application's overall design system.
+
+## 2026-04-18 - Pause Control for Continuous Canvas Animations
+**Learning:** For continuous `<canvas>` animations (like Three.js), implement WCAG 2.2.2 "Pause, Stop, Hide" by adding interaction handlers (e.g., pausing on `mouseenter` and `focus`, resuming on `mouseleave` and `blur`) to allow users to manually halt motion. Provide a descriptive `title` attribute explaining the interaction.
+**Action:** Always provide interaction handles for Canvas/WebGL animations to pause on hover and focus to allow users to pause continuous motion without needing to use global OS "prefers reduced motion" settings.
