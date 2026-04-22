@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel, Field, confloat
+from pydantic import BaseModel, Field, confloat, constr
 from typing import List, Optional, Dict, Any
 import numpy as np
 import sympy as sp
@@ -59,20 +59,20 @@ async def add_security_headers(request: Request, call_next):
 
 class SimulationRequest(BaseModel):
     system: str = Field(..., max_length=100)
-    params: Dict[str, confloat(allow_inf_nan=False)] = Field(..., max_length=10)
+    params: Dict[constr(max_length=50), confloat(allow_inf_nan=False)] = Field(..., max_length=10)
     initial_state: List[confloat(allow_inf_nan=False)] = Field(..., max_length=10)
     duration: float = Field(default=10.0, gt=0, le=100.0)
     dt: float = Field(default=0.01, ge=0.001, le=1.0)
 
 class PhasePortraitRequest(BaseModel):
     system: str = Field(..., max_length=100)
-    params: Dict[str, confloat(allow_inf_nan=False)] = Field(..., max_length=10)
+    params: Dict[constr(max_length=50), confloat(allow_inf_nan=False)] = Field(..., max_length=10)
     x_range: List[confloat(allow_inf_nan=False)] = Field(..., min_length=2, max_length=2)
     y_range: List[confloat(allow_inf_nan=False)] = Field(..., min_length=2, max_length=2)
 
 class StabilityRequest(BaseModel):
     expression: str = Field(..., max_length=200)
-    variables: List[str] = Field(..., max_length=10)
+    variables: List[constr(max_length=50)] = Field(..., max_length=10)
 
 SYSTEM_MAP = {
     "VanDerPol": VanDerPol,
