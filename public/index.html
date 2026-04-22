@@ -96,6 +96,8 @@
 
                 const view3dContainer = document.getElementById('3d-view');
                 if (view3dContainer) view3dContainer.setAttribute('aria-label', `Interactive 3D visualization of the ${originalText} dynamical system`);
+
+                document.title = `Lyapunov Control Dashboard - ${originalText}`;
             }
 
             systemSelect.addEventListener('change', () => {
