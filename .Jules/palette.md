@@ -36,3 +36,7 @@
 ## 2026-04-22 - Document Title Context Synchronization
 **Learning:** When dynamically updating core context in a single-page application (like swapping the mathematical model), explicitly updating `document.title` ensures screen reader users and users navigating multiple browser tabs maintain awareness of the active state.
 **Action:** When dynamically updating context, ensure `document.title` is also explicitly updated.
+
+## 2026-04-23 - Immediate Visual Feedback for Interaction-Driven Pauses
+**Learning:** When relying on hover or focus events to pause visual animations (like 3D WebGL scenes) for accessibility, a native `title` attribute is insufficient because it has an unpredictable delay before appearing. The animation stopping can also be misinterpreted as the page freezing or crashing. Providing a distinct, immediate visual indicator (like a fading-in "Paused" badge) upon interaction gives users satisfying confirmation of their action and the system's state.
+**Action:** When pausing continuous animations based on user interaction (hover/focus), always provide an immediate, custom visual indicator (e.g., using a CSS `::after` pseudo-element) rather than relying solely on native tooltips or the absence of motion.
