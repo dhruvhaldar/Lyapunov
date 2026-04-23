@@ -151,8 +151,12 @@ def check_stability(req: StabilityRequest):
             if node.func == sp.Pow:
                 if isinstance(node.exp, sp.Pow):
                     raise HTTPException(status_code=400, detail="Expression too complex: nested powers are not allowed")
-                if isinstance(node.exp, sp.Number) and abs(node.exp) > 100:
-                    raise HTTPException(status_code=400, detail="Expression too complex: exponents cannot exceed 100")
+                if node.exp.is_number:
+                    try:
+                        if abs(complex(node.exp.evalf())) > 100:
+                            raise HTTPException(status_code=400, detail="Expression too complex: exponents cannot exceed 100")
+                    except (TypeError, ValueError):
+                        raise HTTPException(status_code=400, detail="Expression too complex: invalid exponent")
         vars_sym = [sp.symbols(v) for v in req.variables]
         is_stable = check_negative_definite(expr, variables=vars_sym)
         return {"is_negative_definite": is_stable}
