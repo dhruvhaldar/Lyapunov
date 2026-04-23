@@ -73,3 +73,35 @@ main[aria-busy="true"]::after {
 label {
     cursor: pointer;
 }
+
+/* 🎨 Palette: Visual "Paused" Badge for 3D View */
+[id="3d-view"] {
+    position: relative;
+}
+
+[id="3d-view"]::after {
+    content: "⏸ Paused";
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    padding: 6px 12px;
+    color: #f8fafc;
+    font-size: 0.875rem;
+    font-weight: 500;
+    opacity: 0;
+    transform: translateY(-5px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    pointer-events: none;
+    z-index: 10;
+}
+
+[id="3d-view"]:hover::after,
+[id="3d-view"]:focus-visible::after {
+    opacity: 1;
+    transform: translateY(0);
+}
