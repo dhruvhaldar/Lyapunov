@@ -40,3 +40,7 @@
 ## 2026-04-23 - Immediate Visual Feedback for Interaction-Driven Pauses
 **Learning:** When relying on hover or focus events to pause visual animations (like 3D WebGL scenes) for accessibility, a native `title` attribute is insufficient because it has an unpredictable delay before appearing. The animation stopping can also be misinterpreted as the page freezing or crashing. Providing a distinct, immediate visual indicator (like a fading-in "Paused" badge) upon interaction gives users satisfying confirmation of their action and the system's state.
 **Action:** When pausing continuous animations based on user interaction (hover/focus), always provide an immediate, custom visual indicator (e.g., using a CSS `::after` pseudo-element) rather than relying solely on native tooltips or the absence of motion.
+
+## 2026-04-24 - Error Toast Notifications and Visual Feedback Parity
+**Learning:** When using `aria-live` for screen reader error announcements, visual users may be completely unaware of silent background fetch failures if the UI simply resets to its previous state. Implementing a transient visual error toast (with `aria-hidden="true"` to prevent double-announcement) ensures parity of feedback between visual and assistive technologies.
+**Action:** When adding accessible error announcements, ensure equivalent visual feedback is also provided (like an error toast) to keep sighted users informed of application state.
