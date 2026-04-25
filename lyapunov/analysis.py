@@ -1,5 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt
 import io
 
 class PhasePortrait:
@@ -9,6 +8,7 @@ class PhasePortrait:
         self.y_range = y_range
 
     def plot_streamlines(self, density=1.0, show=False, save_path=None):
+        import matplotlib.pyplot as plt
         x = np.linspace(self.x_range[0], self.x_range[1], 20)
         y = np.linspace(self.y_range[0], self.y_range[1], 20)
         X, Y = np.meshgrid(x, y)

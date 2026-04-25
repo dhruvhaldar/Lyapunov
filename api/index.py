@@ -4,7 +4,6 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field, confloat, constr
 from typing import List, Optional, Dict, Any
 import numpy as np
-import sympy as sp
 import sys
 import os
 import math
@@ -14,7 +13,6 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from lyapunov.systems import VanDerPol, Pendulum, Lorenz
 from lyapunov.analysis import PhasePortrait
-from lyapunov.stability import check_negative_definite
 from fastapi.staticfiles import StaticFiles
 from fastapi import Request
 from fastapi.middleware.gzip import GZipMiddleware
@@ -119,6 +117,8 @@ def get_phase_portrait(req: PhasePortraitRequest):
 @app.post("/api/check_stability")
 def check_stability(req: StabilityRequest):
     import re
+    import sympy as sp
+    from lyapunov.stability import check_negative_definite
     # Reject dunder methods to prevent sandbox escape via Python builtins
     if "__" in req.expression or any("__" in v for v in req.variables):
         raise HTTPException(status_code=400, detail="Invalid expression: unsafe characters detected")
