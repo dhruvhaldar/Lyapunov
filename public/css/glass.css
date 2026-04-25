@@ -79,8 +79,7 @@ label {
     position: relative;
 }
 
-[id="3d-view"]::after {
-    content: "⏸ Paused";
+.paused-badge {
     position: absolute;
     top: 16px;
     right: 16px;
@@ -100,8 +99,8 @@ label {
     z-index: 10;
 }
 
-[id="3d-view"]:hover::after,
-[id="3d-view"]:focus-visible::after {
+[id="3d-view"]:hover .paused-badge,
+[id="3d-view"]:focus-visible .paused-badge {
     opacity: 1;
     transform: translateY(0);
 }
