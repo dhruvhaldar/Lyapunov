@@ -44,3 +44,6 @@
 ## 2026-04-24 - Error Toast Notifications and Visual Feedback Parity
 **Learning:** When using `aria-live` for screen reader error announcements, visual users may be completely unaware of silent background fetch failures if the UI simply resets to its previous state. Implementing a transient visual error toast (with `aria-hidden="true"` to prevent double-announcement) ensures parity of feedback between visual and assistive technologies.
 **Action:** When adding accessible error announcements, ensure equivalent visual feedback is also provided (like an error toast) to keep sighted users informed of application state.
+## 2026-04-25 - Explicit HTML Elements for State Indicators Over Pseudo-Elements
+**Learning:** While CSS pseudo-elements (`::after`) provide a quick way to add visual badges (like a "Paused" indicator), injecting textual content via CSS mixes presentation with content. This approach can be less maintainable, limits DOM-level accessibility enhancements (like applying specific ARIA attributes to the badge itself), and complicates localization.
+**Action:** When implementing visual state indicators, prefer adding concrete HTML elements to the DOM and controlling their visibility via CSS rather than relying purely on CSS `content` properties.
