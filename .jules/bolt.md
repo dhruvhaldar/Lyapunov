@@ -48,3 +48,7 @@
 ## 2026-04-18 - Avoid window.matchMedia in requestAnimationFrame
 **Learning:** Calling `window.matchMedia` (e.g., for `prefers-reduced-motion`) inside a tight `requestAnimationFrame` loop creates a severe performance bottleneck. It forces the browser to synchronously parse the CSS media query string and re-evaluate it 60 times a second, which generates garbage and slows down rendering.
 **Action:** When you need to check media queries in an animation loop, cache the initial `.matches` boolean value outside the loop. Use `.addEventListener('change', ...)` on the `matchMedia` object to dynamically update the cached value if the user's system preferences change while the app is running.
+
+## 2024-05-23 - Lazy Loading Heavy Dependencies in Serverless APIs
+**Learning:** Loading heavy libraries like `sympy` and `matplotlib.pyplot` at the top level of the module (`api/index.py`, `lyapunov/stability.py`) dramatically increases the FastAPI server initialization time (by ~1s), which severely impacts cold starts in a serverless environment like Vercel.
+**Action:** When working on serverless applications, defer the import of heavy analytical libraries by moving them inside the specific API endpoints or functions that actually utilize them, ensuring rapid application bootstrapping.

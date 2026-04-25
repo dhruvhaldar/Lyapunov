@@ -1,7 +1,7 @@
-import sympy as sp
 import numpy as np
 
 def check_negative_definite(expr, variables=None):
+    import sympy as sp
     """
     Checks if a sympy expression is negative semi-definite (<= 0).
     Returns True if it appears to be negative definite/semi-definite.
