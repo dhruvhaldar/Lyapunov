@@ -52,3 +52,11 @@
 ## 2024-05-23 - Lazy Loading Heavy Dependencies in Serverless APIs
 **Learning:** Loading heavy libraries like `sympy` and `matplotlib.pyplot` at the top level of the module (`api/index.py`, `lyapunov/stability.py`) dramatically increases the FastAPI server initialization time (by ~1s), which severely impacts cold starts in a serverless environment like Vercel.
 **Action:** When working on serverless applications, defer the import of heavy analytical libraries by moving them inside the specific API endpoints or functions that actually utilize them, ensuring rapid application bootstrapping.
+
+## 2026-04-20 - Render on Demand in WebGL/Three.js loops
+**Learning:** In continuous WebGL/Three.js animation loops (`requestAnimationFrame`), calling `renderer.render(scene, camera)` on every single frame when the scene is static (e.g., paused by the user or due to reduced motion preferences) represents a massive waste of GPU cycles and battery life.
+**Action:** Implement 'Render on Demand' by tracking a `needsRender` flag. Set it to `true` on user interaction (resize, pause toggle, data update) or when the mesh is actively animating. Conditionally skip the `renderer.render()` call when `needsRender` is `false`, bringing idle GPU usage down to 0%.
+
+## 2026-04-20 - Robustness vs Micro-optimization of function signatures
+**Learning:** Attempting to micro-optimize `inspect.signature()` calls by manually introspecting `__code__.co_varnames` on functions or bound methods introduces severe regressions. It fails to properly handle decorated functions, keyword-only arguments, and `**kwargs`.
+**Action:** Do not sacrifice robustness for micro-optimizations. Always use standard library tools like `inspect.signature()` for safe parameter inspection, even if they have minor overhead, unless you are strictly parsing raw python bytecodes in a controlled environment.
