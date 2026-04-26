@@ -1,15 +1,16 @@
 let scene, camera, renderer, currentMesh;
 let isPausedByUser = false;
+let needsRender = true;
 
 function init3D(containerId) {
     const container = document.getElementById(containerId);
     if (!container) return;
 
     container.title = "Hover or focus to pause animation";
-    container.addEventListener('mouseenter', () => isPausedByUser = true);
-    container.addEventListener('focus', () => isPausedByUser = true);
-    container.addEventListener('mouseleave', () => isPausedByUser = false);
-    container.addEventListener('blur', () => isPausedByUser = false);
+    container.addEventListener('mouseenter', () => { isPausedByUser = true; needsRender = true; });
+    container.addEventListener('focus', () => { isPausedByUser = true; needsRender = true; });
+    container.addEventListener('mouseleave', () => { isPausedByUser = false; needsRender = true; });
+    container.addEventListener('blur', () => { isPausedByUser = false; needsRender = true; });
 
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
@@ -39,6 +40,7 @@ function init3D(containerId) {
         renderer.setSize(width, height);
         camera.aspect = width / height;
         camera.updateProjectionMatrix();
+        needsRender = true;
     });
 }
 
@@ -115,6 +117,7 @@ function update3D(systemName) {
     }
 
     scene.add(currentMesh);
+    needsRender = true;
 }
 
 // ⚡ Bolt: Cache media query outside of animation loop to prevent synchronous string parsing 60fps
@@ -127,14 +130,24 @@ reducedMotionQuery.addEventListener('change', (e) => {
 function animate() {
     requestAnimationFrame(animate);
 
-    if (currentMesh && !prefersReducedMotion && !isPausedByUser) {
+    // ⚡ Bolt: Skip expensive WebGL rendering when the scene is static
+    // (either due to user pause or reduced motion preference) to save battery and GPU cycles.
+    let isAnimating = currentMesh && !prefersReducedMotion && !isPausedByUser;
+
+    if (isAnimating) {
         currentMesh.rotation.y += 0.01;
         if (currentMesh.type === 'Line') {
              currentMesh.rotation.z += 0.005;
         }
+        needsRender = true;
     }
 
-    renderer.render(scene, camera);
+    if (needsRender) {
+        renderer.render(scene, camera);
+        if (!isAnimating) {
+            needsRender = false;
+        }
+    }
 }
 
 // Hook into global functions to update 3D when system changes
