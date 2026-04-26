@@ -19,3 +19,7 @@
 ## 2026-04-10 - Skip Links and Programmatic Focus Target Styling
 **Learning:** Adding a visually hidden "Skip to main content" link is a standard accessibility practice, but if the target container (like `<main>`) does not naturally receive focus, it must be given `tabindex="-1"` so it can be focused programmatically when the link is clicked. Furthermore, applying `outline: none;` to the `<main>` tag is crucial to prevent the browser from drawing an awkward, giant focus ring around the entire main content area when it receives this programmatic focus.
 **Action:** When implementing a skip link, always ensure the target container (e.g., `<main>`) has both `tabindex="-1"` and `style="outline: none;"` (or equivalent CSS) applied.
+
+## 2024-05-18 - Semantic HTML for Visualizations
+**Learning:** Using `role="region"` and `aria-labelledby` on containers that group visual elements (like charts or 3D views) makes them explicitly navigable and understandable for screen reader users. Also, interactive canvas elements should support touch events (`touchstart`, `touchend`) in addition to mouse and keyboard events to ensure mobile accessibility for features like pausing animations.
+**Action:** When creating layout panels containing visualizations, wrap them in a container with `role="region"` and associate them with their heading using `aria-labelledby`. Ensure interactive canvas features support touch events.
