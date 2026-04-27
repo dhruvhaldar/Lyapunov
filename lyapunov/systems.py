@@ -31,6 +31,9 @@ class DynamicalSystem:
         states[0] = initial_state
         current_state = np.array(initial_state)
 
+        # ⚡ Bolt: Convert t_values to a Python list for much faster scalar access in loop, avoiding numpy indexing overhead.
+        t_list = t_values.tolist() if hasattr(t_values, 'tolist') else list(t_values)
+
         # ⚡ Bolt: Hoisted controller conditional checks outside the hot simulation loop.
         if controller:
             # Determine if controller needs time argument
@@ -44,19 +47,19 @@ class DynamicalSystem:
             compute = controller.compute
             if needs_time:
                 for i in range(1, n_steps):
-                    t = t_values[i-1]
+                    t = t_list[i-1]
                     u = compute(current_state, t)
                     current_state = self.step(t, current_state, u, dt)
                     states[i] = current_state
             else:
                 for i in range(1, n_steps):
-                    t = t_values[i-1]
+                    t = t_list[i-1]
                     u = compute(current_state)
                     current_state = self.step(t, current_state, u, dt)
                     states[i] = current_state
         else:
             for i in range(1, n_steps):
-                t = t_values[i-1]
+                t = t_list[i-1]
                 current_state = self.step(t, current_state, 0.0, dt)
                 states[i] = current_state
 
