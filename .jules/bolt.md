@@ -60,3 +60,7 @@
 ## 2026-04-20 - Robustness vs Micro-optimization of function signatures
 **Learning:** Attempting to micro-optimize `inspect.signature()` calls by manually introspecting `__code__.co_varnames` on functions or bound methods introduces severe regressions. It fails to properly handle decorated functions, keyword-only arguments, and `**kwargs`.
 **Action:** Do not sacrifice robustness for micro-optimizations. Always use standard library tools like `inspect.signature()` for safe parameter inspection, even if they have minor overhead, unless you are strictly parsing raw python bytecodes in a controlled environment.
+
+## 2026-04-27 - NumPy Array Scalar Access Overhead
+**Learning:** Accessing scalar elements from a NumPy array (like `t = t_values[i-1]`) inside a tight Python loop introduces significant overhead due to NumPy's advanced indexing and Python scalar wrapping mechanics.
+**Action:** When iterating over a 1D NumPy array or accessing its scalar elements within a highly repetitive Python loop (such as numerical simulation integration steps), first convert the array to a Python list using `.tolist()` (e.g., `t_list = t_values.tolist()`) and index the list instead. This substantially accelerates inner-loop performance.
