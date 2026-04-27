@@ -37,12 +37,12 @@
 
         <main id="main-content" tabindex="-1" style="position: relative; transition: opacity 0.3s ease; outline: none;">
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr)); gap: 2rem; margin-bottom: 2rem;">
-            <div class="glass-panel">
+            <div class="glass-panel" role="region" aria-labelledby="heading-phase">
                 <h2 id="heading-phase">Phase Portrait</h2>
                 <div id="phase-portrait" role="img" tabindex="0" aria-label="Interactive phase portrait showing system trajectories and vector fields" style="width: 100%; height: 400px; background: rgba(0,0,0,0.2); border-radius: 8px;"></div>
             </div>
 
-            <div class="glass-panel">
+            <div class="glass-panel" role="region" aria-labelledby="heading-time">
                 <h2 id="heading-time">Time Response</h2>
                 <div style="height: 400px;">
                     <canvas id="time-response-chart" role="img" tabindex="0" aria-label="Interactive time response chart showing system states over time">
@@ -52,7 +52,7 @@
             </div>
         </div>
 
-        <div class="glass-panel">
+        <div class="glass-panel" role="region" aria-labelledby="heading-3d">
              <h2 id="heading-3d">3D Visualization</h2>
              <div id="3d-view" role="img" tabindex="0" aria-label="Interactive 3D visualization of the dynamical system" style="width: 100%; height: 400px; background: rgba(0,0,0,0.2); border-radius: 8px;">
                 <div class="paused-badge" aria-hidden="true">⏸ Paused</div>

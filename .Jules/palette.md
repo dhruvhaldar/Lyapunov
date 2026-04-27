@@ -47,3 +47,7 @@
 ## 2026-04-25 - Explicit HTML Elements for State Indicators Over Pseudo-Elements
 **Learning:** While CSS pseudo-elements (`::after`) provide a quick way to add visual badges (like a "Paused" indicator), injecting textual content via CSS mixes presentation with content. This approach can be less maintainable, limits DOM-level accessibility enhancements (like applying specific ARIA attributes to the badge itself), and complicates localization.
 **Action:** When implementing visual state indicators, prefer adding concrete HTML elements to the DOM and controlling their visibility via CSS rather than relying purely on CSS `content` properties.
+
+## 2026-04-26 - Semantic Landmarks for Interactive Visualizations
+**Learning:** When grouping distinct interactive visualizations (like charts or 3D views) within layout containers, applying `role="region"` and an `aria-labelledby` attribute pointing to the section's heading ID converts the containers into semantic landmarks. This significantly improves document structure and navigability for screen reader users by allowing them to quickly jump between distinct visualization zones.
+**Action:** Always apply `role="region"` and `aria-labelledby` to major visualization containers that are grouped by a specific heading.
