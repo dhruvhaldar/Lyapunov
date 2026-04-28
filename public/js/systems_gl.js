@@ -6,11 +6,14 @@ function init3D(containerId) {
     const container = document.getElementById(containerId);
     if (!container) return;
 
-    container.title = "Hover or focus to pause animation";
+    container.title = "Hover, focus, or touch to pause animation";
     container.addEventListener('mouseenter', () => { isPausedByUser = true; needsRender = true; });
     container.addEventListener('focus', () => { isPausedByUser = true; needsRender = true; });
+    container.addEventListener('touchstart', (e) => { isPausedByUser = true; needsRender = true; });
     container.addEventListener('mouseleave', () => { isPausedByUser = false; needsRender = true; });
     container.addEventListener('blur', () => { isPausedByUser = false; needsRender = true; });
+    container.addEventListener('touchend', (e) => { isPausedByUser = false; needsRender = true; });
+    container.addEventListener('touchcancel', (e) => { isPausedByUser = false; needsRender = true; });
 
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
