@@ -23,6 +23,7 @@ function updatePhasePortrait(systemName) {
     const originalText = updateBtn ? updateBtn.innerText : 'Update';
     if (updateBtn) {
         updateBtn.disabled = true;
+        updateBtn.title = 'Loading...';
         updateBtn.innerText = 'Updating...';
     }
 
@@ -56,6 +57,7 @@ function updatePhasePortrait(systemName) {
     .finally(() => {
         if (updateBtn) {
             updateBtn.disabled = false;
+            updateBtn.removeAttribute('title');
             updateBtn.innerText = originalText;
         }
     });

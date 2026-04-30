@@ -32,6 +32,7 @@ function simulateSystem(systemName) {
     const originalText = simBtn ? simBtn.innerText : 'Simulate';
     if (simBtn) {
         simBtn.disabled = true;
+        simBtn.title = 'Loading...';
         simBtn.innerText = 'Simulating...';
     }
 
@@ -48,6 +49,7 @@ function simulateSystem(systemName) {
     .finally(() => {
         if (simBtn) {
             simBtn.disabled = false;
+            simBtn.removeAttribute('title');
             simBtn.innerText = originalText;
         }
     });
