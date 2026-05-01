@@ -104,3 +104,13 @@ label {
     opacity: 1;
     transform: translateY(0);
 }
+
+.vector-line {
+    cursor: crosshair;
+    transition: stroke-width 0.2s ease, stroke 0.2s ease;
+}
+
+.vector-line:hover {
+    stroke: rgba(0, 255, 204, 1);
+    stroke-width: 3px;
+}
