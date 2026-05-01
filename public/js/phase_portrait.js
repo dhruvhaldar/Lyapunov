@@ -47,6 +47,7 @@ function updatePhasePortrait(systemName) {
                 y: data.vectors.y[i],
                 u: u,
                 v: v,
+                mag: mag,
                 dx: mag >= 1e-6 ? (u / mag) * len : 0,
                 dy: mag >= 1e-6 ? (v / mag) * len : 0
             };
@@ -101,10 +102,11 @@ function drawPhasePortrait(vectors, systemName) {
         .domain(yExtent)
         .range([height - padding, padding]);
 
-    svg.selectAll("line")
+    const lines = svg.selectAll("line")
         .data(vectors)
         .enter()
         .append("line")
+        .attr("class", "vector-line")
         .attr("x1", d => xScale(d.x))
         .attr("y1", d => yScale(d.y))
         .attr("x2", d => xScale(d.x) + d.dx)
@@ -112,6 +114,9 @@ function drawPhasePortrait(vectors, systemName) {
         .attr("stroke", "rgba(0, 255, 204, 0.6)")
         .attr("stroke-width", 1.5)
         .attr("marker-end", "url(#arrow)");
+
+    lines.append("title")
+        .text(d => `Position: (${d.x.toFixed(2)}, ${d.y.toFixed(2)})\nVector: (${d.u.toFixed(2)}, ${d.v.toFixed(2)})\nMagnitude: ${d.mag.toFixed(2)}`);
 
     // Axes
     const xAxis = d3.axisBottom(xScale).ticks(5);
