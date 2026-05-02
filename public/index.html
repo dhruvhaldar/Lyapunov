@@ -25,9 +25,8 @@
                 <label for="system-select" style="margin-right: 8px; display: inline-flex; align-items: center; gap: 8px;">
                     System Model:
                     <kbd id="kbd-s" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; padding: 2px 6px; font-size: 0.8em; font-family: monospace; color: #06b6d4; transition: transform 0.1s ease, background-color 0.1s ease;" aria-hidden="true">S</kbd>
-                    <span style="position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0;">Press S to focus</span>
                 </label>
-                <select id="system-select">
+                <select id="system-select" aria-keyshortcuts="s">
                     <option value="VanDerPol">Van der Pol</option>
                     <option value="Pendulum">Pendulum</option>
                     <option value="Lorenz">Lorenz</option>
