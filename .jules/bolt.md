@@ -64,3 +64,7 @@
 ## 2026-04-27 - NumPy Array Scalar Access Overhead
 **Learning:** Accessing scalar elements from a NumPy array (like `t = t_values[i-1]`) inside a tight Python loop introduces significant overhead due to NumPy's advanced indexing and Python scalar wrapping mechanics.
 **Action:** When iterating over a 1D NumPy array or accessing its scalar elements within a highly repetitive Python loop (such as numerical simulation integration steps), first convert the array to a Python list using `.tolist()` (e.g., `t_list = t_values.tolist()`) and index the list instead. This substantially accelerates inner-loop performance.
+
+## 2026-05-04 - Overcoming FastAPI default serializer slowness
+**Learning:** Returning very large Structure-of-Arrays (SoA) numerical JSON payloads via FastAPI's default `JSONResponse` triggers its underlying `jsonable_encoder`, which is extremely slow due to its recursive type checking (`isinstance`, `hasattr`, etc.) and data conversion logic.
+**Action:** When serializing large, flat numeric arrays for high-performance API endpoints, bypass FastAPI's default encoder entirely by using the standard library `json.dumps` directly on the payload dictionary and returning it wrapped in a standard `fastapi.responses.Response` with `media_type="application/json"`.
