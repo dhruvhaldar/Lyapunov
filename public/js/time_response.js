@@ -41,11 +41,17 @@ function simulateSystem(systemName) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(requestData)
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        return response.json();
+    })
     .then(data => {
         updateChart(data.t, data.y, systemName);
     })
-    .catch(error => console.error('Error simulating system:', error))
+    .catch(error => {
+        console.error('Error simulating system:', error);
+        throw error;
+    })
     .finally(() => {
         if (simBtn) {
             simBtn.disabled = false;

@@ -59,3 +59,7 @@
 ## 2026-05-02 - Keyboard Shortcut Screen Reader Hints
 **Learning:** Adding screen-reader-only shortcut hints inside `<label>`s is an anti-pattern. If a user focuses on the corresponding input, they will often hear the label read aloud again along with the shortcut, creating redundant and confusing auditory clutter. The `aria-keyshortcuts` attribute is specifically designed to handle this cleanly on the input itself.
 **Action:** Use the `aria-keyshortcuts` attribute directly on the interactive element (e.g., `<select>`, `<button>`) instead of injecting visually hidden text into its associated `<label>`.
+
+## 2026-05-03 - Promise Error Swallowing Breaks Global UI Error State
+**Learning:** When `fetch` calls implicitly swallow HTTP errors (by not checking `!response.ok` or by catching and not re-throwing in local `.catch()` blocks), aggregator logic like `Promise.all` in the main UI file will resolve successfully. This completely breaks global error handling (like displaying a fallback toast and announcing the error to screen readers), leading to silent UI failures and severe accessibility gaps when backend APIs return 500s.
+**Action:** When implementing `fetch` chains, ALWAYS check `!response.ok` and explicitly `throw new Error()`. If handling errors locally with `.catch()`, ensure you re-throw the error so parent calling functions are aware of the failure state.

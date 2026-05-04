@@ -32,7 +32,10 @@ function updatePhasePortrait(systemName) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(requestData)
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        return response.json();
+    })
     .then(data => {
         // ⚡ Bolt: Remap Structure of Arrays (SoA) payload back to Array of Structures
         // to maintain d3 rendering compatibility, executing rapidly on the client side.
@@ -54,7 +57,10 @@ function updatePhasePortrait(systemName) {
         });
         drawPhasePortrait(vectorsArray, systemName);
     })
-    .catch(error => console.error('Error fetching phase portrait:', error))
+    .catch(error => {
+        console.error('Error fetching phase portrait:', error);
+        throw error;
+    })
     .finally(() => {
         if (updateBtn) {
             updateBtn.disabled = false;
