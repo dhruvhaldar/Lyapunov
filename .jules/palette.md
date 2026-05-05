@@ -19,3 +19,7 @@
 ## 2026-04-10 - Skip Links and Programmatic Focus Target Styling
 **Learning:** Adding a visually hidden "Skip to main content" link is a standard accessibility practice, but if the target container (like `<main>`) does not naturally receive focus, it must be given `tabindex="-1"` so it can be focused programmatically when the link is clicked. Furthermore, applying `outline: none;` to the `<main>` tag is crucial to prevent the browser from drawing an awkward, giant focus ring around the entire main content area when it receives this programmatic focus.
 **Action:** When implementing a skip link, always ensure the target container (e.g., `<main>`) has both `tabindex="-1"` and `style="outline: none;"` (or equivalent CSS) applied.
+
+## 2026-04-12 - Preserving Focus on Supplemental Action Buttons
+**Learning:** When adding supplementary action buttons (like an icon-only "Refresh" button next to a primary select dropdown) that trigger asynchronous state changes, those buttons will be temporarily disabled during the fetch. If the user clicked the button, their focus was on it, and disabling it drops focus back to the document body, severely degrading keyboard accessibility.
+**Action:** Always track the active element (e.g., `const refreshHadFocus = document.activeElement === refreshBtn;`) before disabling controls for an async request. In the `.finally()` block, explicitly restore focus to the button (`refreshBtn.focus()`) if it previously had focus, ensuring a seamless experience for keyboard users repeatedly triggering the action.
