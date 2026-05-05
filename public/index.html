@@ -31,6 +31,11 @@
                     <option value="Pendulum">Pendulum</option>
                     <option value="Lorenz">Lorenz</option>
                 </select>
+                <button id="refresh-btn" aria-label="Restart simulation" title="Restart simulation" style="margin-left: 8px; margin-right: 0; display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; padding: 0;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.59-9.21l5.67-1.36"/>
+                    </svg>
+                </button>
             </div>
         </header>
 
@@ -101,6 +106,14 @@
                 document.title = `Lyapunov Control Dashboard - ${originalText}`;
             }
 
+            const refreshBtn = document.getElementById('refresh-btn');
+
+            if (refreshBtn) {
+                refreshBtn.addEventListener('click', () => {
+                    systemSelect.dispatchEvent(new Event('change'));
+                });
+            }
+
             systemSelect.addEventListener('change', () => {
                 const sys = systemSelect.value;
                 const originalText = systemSelect.options[systemSelect.selectedIndex].text;
@@ -110,10 +123,17 @@
 
                 // Remember focus state to restore it after loading
                 const hadFocus = document.activeElement === systemSelect;
+                const refreshHadFocus = document.activeElement === refreshBtn;
 
                 // Set loading state
                 systemSelect.disabled = true;
                 systemSelect.title = "Loading...";
+
+                if (refreshBtn) {
+                    refreshBtn.disabled = true;
+                    refreshBtn.title = "Loading...";
+                }
+
                 announcer.textContent = `Loading system ${originalText}...`;
 
                 if (mainContent) {
@@ -158,12 +178,20 @@
                     // Restore state
                     systemSelect.disabled = false;
                     systemSelect.removeAttribute('title');
+
+                    if (refreshBtn) {
+                        refreshBtn.disabled = false;
+                        refreshBtn.title = "Restart simulation";
+                    }
+
                     if (mainContent) {
                         mainContent.removeAttribute('aria-busy');
                     }
                     // Restore focus if the user was interacting with it
                     if (hadFocus) {
                         systemSelect.focus();
+                    } else if (refreshHadFocus && refreshBtn) {
+                        refreshBtn.focus();
                     }
                 });
             });
