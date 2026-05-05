@@ -1,3 +1,5 @@
+const phasePortraitCache = {};
+
 function updatePhasePortrait(systemName) {
     if (!systemName) systemName = document.getElementById('system-select').value;
 
@@ -17,6 +19,15 @@ function updatePhasePortrait(systemName) {
     if (systemName === 'Lorenz') {
         requestData.x_range = [-20, 20];
         requestData.y_range = [-30, 30];
+    }
+
+    // ⚡ Bolt: Check local cache to prevent redundant backend evaluation
+    // and network latency. Caches the fully processed vectors array to save
+    // client-side math computation on repeated views.
+    const cacheKey = JSON.stringify(requestData);
+    if (phasePortraitCache[cacheKey]) {
+        drawPhasePortrait(phasePortraitCache[cacheKey], systemName);
+        return Promise.resolve();
     }
 
     const updateBtn = document.getElementById('update-phase');
@@ -55,6 +66,7 @@ function updatePhasePortrait(systemName) {
                 dy: mag >= 1e-6 ? (v / mag) * len : 0
             };
         });
+        phasePortraitCache[cacheKey] = vectorsArray;
         drawPhasePortrait(vectorsArray, systemName);
     })
     .catch(error => {

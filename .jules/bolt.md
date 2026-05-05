@@ -68,3 +68,10 @@
 ## 2026-05-04 - Overcoming FastAPI default serializer slowness
 **Learning:** Returning very large Structure-of-Arrays (SoA) numerical JSON payloads via FastAPI's default `JSONResponse` triggers its underlying `jsonable_encoder`, which is extremely slow due to its recursive type checking (`isinstance`, `hasattr`, etc.) and data conversion logic.
 **Action:** When serializing large, flat numeric arrays for high-performance API endpoints, bypass FastAPI's default encoder entirely by using the standard library `json.dumps` directly on the payload dictionary and returning it wrapped in a standard `fastapi.responses.Response` with `media_type="application/json"`.
+## 2026-05-05 - Frontend Caching for Deterministic Backend Computations
+**Learning:** Calling the backend API every time a user switches systems re-computes expensive simulations and vector fields and adds network latency, even though the parameters for a given system are completely deterministic and unchanged.
+**Action:** Prevent redundant backend computation and reduce network latency for deterministic API responses (like simulation data or phase portraits) by implementing a simple frontend dictionary cache. Key the cache using `JSON.stringify(requestData)` and return the cached data immediately via a resolved Promise before making a `fetch` call.
+
+## 2026-05-05 - Test Module Discovery using PYTHONPATH
+**Learning:** Running `pytest` directly in the `/app` root directory fails to collect test modules due to `ModuleNotFoundError` because the local package (e.g. `lyapunov`) is not installed or available in the global python path during the test session.
+**Action:** When running the test suite, ensure local modules are discoverable by explicitly setting the Python path. Run tests using `PYTHONPATH=. python -m pytest tests/` to prevent `ModuleNotFoundError` during test collection.

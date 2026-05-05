@@ -1,4 +1,5 @@
 let responseChart = null;
+const simulateCache = {};
 
 function simulateSystem(systemName) {
     if (!systemName) systemName = document.getElementById('system-select').value;
@@ -28,6 +29,14 @@ function simulateSystem(systemName) {
         dt: 0.05
     };
 
+    // ⚡ Bolt: Check local cache to prevent redundant backend simulation
+    // and network latency. Eliminates API overhead for previously simulated systems.
+    const cacheKey = JSON.stringify(requestData);
+    if (simulateCache[cacheKey]) {
+        updateChart(simulateCache[cacheKey].t, simulateCache[cacheKey].y, systemName);
+        return Promise.resolve();
+    }
+
     const simBtn = document.getElementById('simulate-btn');
     const originalText = simBtn ? simBtn.innerText : 'Simulate';
     if (simBtn) {
@@ -46,6 +55,7 @@ function simulateSystem(systemName) {
         return response.json();
     })
     .then(data => {
+        simulateCache[cacheKey] = data;
         updateChart(data.t, data.y, systemName);
     })
     .catch(error => {
