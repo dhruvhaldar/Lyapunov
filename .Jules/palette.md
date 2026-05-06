@@ -63,3 +63,6 @@
 ## 2026-05-03 - Promise Error Swallowing Breaks Global UI Error State
 **Learning:** When `fetch` calls implicitly swallow HTTP errors (by not checking `!response.ok` or by catching and not re-throwing in local `.catch()` blocks), aggregator logic like `Promise.all` in the main UI file will resolve successfully. This completely breaks global error handling (like displaying a fallback toast and announcing the error to screen readers), leading to silent UI failures and severe accessibility gaps when backend APIs return 500s.
 **Action:** When implementing `fetch` chains, ALWAYS check `!response.ok` and explicitly `throw new Error()`. If handling errors locally with `.catch()`, ensure you re-throw the error so parent calling functions are aware of the failure state.
+## 2024-05-19 - Avoid Inline Styles for Component Micro-Interactions
+**Learning:** Even minor component interactions, like `<kbd>` hover states for tooltips, shouldn't be patched with inline `<style>` blocks in HTML5. Although functionally valid, doing so breaks separation of concerns, complicates maintainability, and ignores existing style hierarchies.
+**Action:** Always map hover and focus-visible states into the central stylesheet (e.g., `glass.css`), ensuring consistency and cleaner HTML.
