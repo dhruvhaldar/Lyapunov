@@ -70,6 +70,16 @@ main[aria-busy="true"]::after {
     }
 }
 
+.spin-icon {
+    animation: spin 1s linear infinite;
+    transform-origin: center;
+}
+
+#refresh-btn:hover #kbd-r,
+#refresh-btn:focus-visible #kbd-r {
+    opacity: 1 !important;
+}
+
 label {
     cursor: pointer;
 }

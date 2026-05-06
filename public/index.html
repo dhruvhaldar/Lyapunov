@@ -31,10 +31,11 @@
                     <option value="Pendulum">Pendulum</option>
                     <option value="Lorenz">Lorenz</option>
                 </select>
-                <button id="refresh-btn" aria-label="Restart simulation" title="Restart simulation" style="margin-left: 8px; margin-right: 0; display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; padding: 0;">
+                <button id="refresh-btn" aria-keyshortcuts="r" aria-label="Restart simulation" title="Restart simulation (R)" style="margin-left: 8px; margin-right: 0; display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; padding: 0; position: relative;">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.59-9.21l5.67-1.36"/>
                     </svg>
+                    <kbd id="kbd-r" style="position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%); background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; padding: 2px 4px; font-size: 0.6em; font-family: monospace; color: #06b6d4; opacity: 0; transition: opacity 0.2s ease, transform 0.1s ease; pointer-events: none;" aria-hidden="true">R</kbd>
                 </button>
             </div>
         </header>
@@ -132,6 +133,8 @@
                 if (refreshBtn) {
                     refreshBtn.disabled = true;
                     refreshBtn.title = "Loading...";
+                    const svg = refreshBtn.querySelector('svg');
+                    if (svg) svg.classList.add('spin-icon');
                 }
 
                 announcer.textContent = `Loading system ${originalText}...`;
@@ -181,7 +184,9 @@
 
                     if (refreshBtn) {
                         refreshBtn.disabled = false;
-                        refreshBtn.title = "Restart simulation";
+                        refreshBtn.title = "Restart simulation (R)";
+                        const svg = refreshBtn.querySelector('svg');
+                        if (svg) svg.classList.remove('spin-icon');
                     }
 
                     if (mainContent) {
@@ -213,6 +218,25 @@
                             kbd.style.transform = 'scale(1)';
                             kbd.style.backgroundColor = 'rgba(255,255,255,0.1)';
                         }, 150);
+                    }
+                }
+
+                if (e.key.toLowerCase() === 'r' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA' && document.activeElement.tagName !== 'SELECT') {
+                    e.preventDefault();
+                    if (refreshBtn && !refreshBtn.disabled) {
+                        refreshBtn.focus();
+                        refreshBtn.click();
+
+                        // Tactile visual feedback
+                        const kbd = document.getElementById('kbd-r');
+                        if (kbd) {
+                            kbd.style.transform = 'translateX(-50%) scale(0.85)';
+                            kbd.style.backgroundColor = 'rgba(255,255,255,0.2)';
+                            setTimeout(() => {
+                                kbd.style.transform = 'translateX(-50%) scale(1)';
+                                kbd.style.backgroundColor = 'rgba(255,255,255,0.1)';
+                            }, 150);
+                        }
                     }
                 }
             });
