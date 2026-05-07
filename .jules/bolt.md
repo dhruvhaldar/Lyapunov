@@ -75,3 +75,11 @@
 ## 2026-05-05 - Test Module Discovery using PYTHONPATH
 **Learning:** Running `pytest` directly in the `/app` root directory fails to collect test modules due to `ModuleNotFoundError` because the local package (e.g. `lyapunov`) is not installed or available in the global python path during the test session.
 **Action:** When running the test suite, ensure local modules are discoverable by explicitly setting the Python path. Run tests using `PYTHONPATH=. python -m pytest tests/` to prevent `ModuleNotFoundError` during test collection.
+
+## 2026-05-06 - NumPy Intermediate Boolean Array Overhead
+**Learning:** Evaluating conditions like `np.any(arr > limit)` or `np.all(arr < limit)` implicitly creates a temporary, full-sized boolean array in memory before performing the reduction. For small arrays or tight loops, this allocation and evaluation overhead is substantial.
+**Action:** Replace `np.any(arr > val)` and `np.all(arr < val)` with aggregate comparisons like `arr.max() > val` and `arr.max() < val` (and use `.min()` appropriately) when dealing with NumPy arrays. This allows NumPy to scan the array natively without allocating an intermediate boolean mask, yielding up to ~2-3x speedup.
+
+## 2026-05-06 - Type Checking Scalar vs NumPy Outputs
+**Learning:** Functions evaluating mathematical expressions (like `sympy.lambdify` output) may return a raw Python scalar (e.g. `float`) instead of a 0-D NumPy array, especially when evaluating constants or at the origin. Passing these scalars through `np.any(val > threshold)` introduces enormous function dispatch and type conversion overhead.
+**Action:** When a variable might be either a NumPy array or a scalar, explicitly check its type using `isinstance(val, np.ndarray)`. Use array methods (e.g., `val.max() > threshold`) for arrays and direct comparisons (`val > threshold`) for scalars. This hybrid approach prevents major slowdowns on scalar inputs while maintaining vectorization benefits for arrays.

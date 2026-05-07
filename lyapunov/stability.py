@@ -22,8 +22,12 @@ def check_negative_definite(expr, variables=None):
     origin_args = [0.0] * len(variables)
     try:
         val_origin = func(*origin_args)
-        if np.any(val_origin > 1e-9):
-             return False
+        if isinstance(val_origin, np.ndarray):
+            if val_origin.max() > 1e-9:
+                return False
+        else:
+            if val_origin > 1e-9:
+                return False
     except (TypeError, ValueError):
         # Could happen if expr is not real or something
         pass
@@ -32,7 +36,7 @@ def check_negative_definite(expr, variables=None):
     pts = np.random.uniform(-5, 5, size=(len(variables), 100))
     try:
         vals = func(*pts)
-        if np.any(vals > 1e-9): # Tolerance
+        if vals.max() > 1e-9: # Tolerance
             return False
     except (TypeError, ValueError):
         pass
@@ -58,8 +62,8 @@ def circle_criterion(G_jw, alpha, beta):
         limit = -1.0/beta
         # Forbidden region is usually interpreted as the disk defined by -1/alpha and -1/beta.
         # As alpha -> 0, -1/alpha -> -inf. The disk becomes the half-plane Re(s) < -1/beta.
-        # ⚡ Bolt: Vectorize loop using NumPy to avoid slow iterative evaluation
-        if np.any(np.real(G_jw) < limit):
+        # ⚡ Bolt: Replace np.any() boolean array evaluation with faster min/max reductions
+        if G_jw.real.min() < limit:
             return False
         return True
 
@@ -69,8 +73,8 @@ def circle_criterion(G_jw, alpha, beta):
     center = (p1 + p2) / 2.0
     radius = abs(p1 - p2) / 2.0
 
-    # ⚡ Bolt: Vectorize distance check using NumPy abs and any to replace slow Python loop
-    if np.any(np.abs(G_jw - center) < radius):
+    # ⚡ Bolt: Replace np.any() boolean array evaluation with faster min/max reductions
+    if np.abs(G_jw - center).min() < radius:
         return False
 
     return True
