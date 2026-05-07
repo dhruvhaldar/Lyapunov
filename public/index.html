@@ -24,7 +24,7 @@
             <div class="controls" style="margin-top: 0; padding-top: 0; border-top: none;">
                 <label for="system-select" style="margin-right: 8px; display: inline-flex; align-items: center; gap: 8px;">
                     System Model:
-                    <kbd id="kbd-s" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; padding: 2px 6px; font-size: 0.8em; font-family: monospace; color: #06b6d4; transition: transform 0.1s ease, background-color 0.1s ease;" aria-hidden="true">S</kbd>
+                    <kbd id="kbd-s" class="kbd-shortcut" aria-hidden="true">S</kbd>
                 </label>
                 <select id="system-select" aria-keyshortcuts="s">
                     <option value="VanDerPol">Van der Pol</option>
@@ -35,7 +35,7 @@
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.59-9.21l5.67-1.36"/>
                     </svg>
-                    <kbd id="kbd-r" style="position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%); background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; padding: 2px 4px; font-size: 0.6em; font-family: monospace; color: #06b6d4; opacity: 0; transition: opacity 0.2s ease, transform 0.1s ease; pointer-events: none;" aria-hidden="true">R</kbd>
+                    <kbd id="kbd-r" class="kbd-shortcut" aria-hidden="true">R</kbd>
                 </button>
             </div>
         </header>
@@ -212,11 +212,9 @@
                     // Tactile visual feedback
                     const kbd = document.getElementById('kbd-s');
                     if (kbd) {
-                        kbd.style.transform = 'scale(0.85)';
-                        kbd.style.backgroundColor = 'rgba(255,255,255,0.2)';
+                        kbd.classList.add('kbd-active');
                         setTimeout(() => {
-                            kbd.style.transform = 'scale(1)';
-                            kbd.style.backgroundColor = 'rgba(255,255,255,0.1)';
+                            kbd.classList.remove('kbd-active');
                         }, 150);
                     }
                 }
@@ -230,11 +228,9 @@
                         // Tactile visual feedback
                         const kbd = document.getElementById('kbd-r');
                         if (kbd) {
-                            kbd.style.transform = 'translateX(-50%) scale(0.85)';
-                            kbd.style.backgroundColor = 'rgba(255,255,255,0.2)';
+                            kbd.classList.add('kbd-active');
                             setTimeout(() => {
-                                kbd.style.transform = 'translateX(-50%) scale(1)';
-                                kbd.style.backgroundColor = 'rgba(255,255,255,0.1)';
+                                kbd.classList.remove('kbd-active');
                             }, 150);
                         }
                     }

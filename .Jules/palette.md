@@ -66,3 +66,7 @@
 ## 2024-05-19 - Avoid Inline Styles for Component Micro-Interactions
 **Learning:** Even minor component interactions, like `<kbd>` hover states for tooltips, shouldn't be patched with inline `<style>` blocks in HTML5. Although functionally valid, doing so breaks separation of concerns, complicates maintainability, and ignores existing style hierarchies.
 **Action:** Always map hover and focus-visible states into the central stylesheet (e.g., `glass.css`), ensuring consistency and cleaner HTML.
+
+## 2026-05-18 - Semantic Class Toggling for JS Micro-Interactions
+**Learning:** Directly mutating inline `style` properties via JavaScript (e.g., `element.style.transform = 'scale(0.85)'`) to simulate tactile feedback (like keypresses) tightly couples logic to presentation, violates separation of concerns, and creates unmaintainable inline styles.
+**Action:** When implementing JS-driven micro-interactions, always toggle semantic CSS classes (e.g., `classList.add('kbd-active')`) and map the visual transition states into the central stylesheet.

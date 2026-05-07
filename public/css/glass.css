@@ -75,6 +75,32 @@ main[aria-busy="true"]::after {
     transform-origin: center;
 }
 
+.kbd-shortcut {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 4px;
+    font-family: monospace;
+    color: #06b6d4;
+}
+
+#kbd-s {
+    padding: 2px 6px;
+    font-size: 0.8em;
+    transition: transform 0.1s ease, background-color 0.1s ease;
+}
+
+#kbd-r {
+    padding: 2px 4px;
+    font-size: 0.6em;
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.2s ease, transform 0.1s ease, background-color 0.1s ease;
+    pointer-events: none;
+}
+
 #refresh-btn:hover #kbd-r,
 #refresh-btn:focus-visible #kbd-r {
     opacity: 1 !important;
@@ -82,6 +108,20 @@ main[aria-busy="true"]::after {
 
 label {
     cursor: pointer;
+}
+
+label:hover #kbd-s {
+    background: rgba(255,255,255,0.2);
+}
+
+.kbd-active#kbd-s {
+    transform: scale(0.85);
+    background-color: rgba(255,255,255,0.2);
+}
+
+.kbd-active#kbd-r {
+    transform: translateX(-50%) scale(0.85);
+    background-color: rgba(255,255,255,0.2);
 }
 
 /* 🎨 Palette: Visual "Paused" Badge for 3D View */
