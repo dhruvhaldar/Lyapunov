@@ -78,4 +78,4 @@ class Linearization:
 
     def is_stable(self):
         # Continuous time: stable if all real parts < 0
-        return np.all(np.real(self.eigenvalues()) < 0)
+        return self.eigenvalues().real.max() < 0
