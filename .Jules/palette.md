@@ -70,3 +70,6 @@
 ## 2026-05-18 - Semantic Class Toggling for JS Micro-Interactions
 **Learning:** Directly mutating inline `style` properties via JavaScript (e.g., `element.style.transform = 'scale(0.85)'`) to simulate tactile feedback (like keypresses) tightly couples logic to presentation, violates separation of concerns, and creates unmaintainable inline styles.
 **Action:** When implementing JS-driven micro-interactions, always toggle semantic CSS classes (e.g., `classList.add('kbd-active')`) and map the visual transition states into the central stylesheet.
+## 2026-05-08 - Revert Optimistic UI Updates on Error
+**Learning:** When async state changes fail in SPAs, the optimistic UI update (like a select dropdown value changing immediately) causes a state mismatch with the displayed data if not reverted.
+**Action:** Immediately revert optimistic UI updates (like select dropdown values) back to their previous state in the `.catch()` block of async operations to prevent misleading visual mismatches between the active control element and the currently displayed data.

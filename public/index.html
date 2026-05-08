@@ -115,6 +115,8 @@
                 });
             }
 
+            let previousValue = systemSelect.value;
+
             systemSelect.addEventListener('change', () => {
                 const sys = systemSelect.value;
                 const originalText = systemSelect.options[systemSelect.selectedIndex].text;
@@ -154,8 +156,16 @@
                 Promise.all(promises).then(() => {
                     // Announce success
                     announcer.textContent = `System ${originalText} loaded successfully.`;
+                    previousValue = sys;
                 }).catch(error => {
                     announcer.textContent = `Error loading system ${originalText}.`;
+
+                    // 🎨 Palette: Revert UI state on failure to prevent misleading data visualization mismatches
+                    if (systemSelect.value !== previousValue) {
+                        systemSelect.value = previousValue;
+                        syncContextLabels();
+                    }
+
                     // Visual error feedback for sighted users
                     const toast = document.createElement('div');
                     toast.className = 'glass-panel';
@@ -237,9 +247,8 @@
                 }
             });
 
-            // Initial load
-            if (window.updatePhasePortrait) window.updatePhasePortrait('VanDerPol');
-            if (window.simulateSystem) window.simulateSystem('VanDerPol');
+            // Initial load (trigger change event to ensure loading states and spinners are shown)
+            systemSelect.dispatchEvent(new Event('change'));
         });
     </script>
 </body>
