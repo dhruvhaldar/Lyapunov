@@ -26,10 +26,11 @@ button:hover:not(:disabled), select:hover:not(:disabled) {
     background: rgba(255, 255, 255, 0.2);
 }
 
-button:disabled, select:disabled {
+button:disabled, select:disabled, button[aria-disabled="true"], select[aria-disabled="true"] {
     opacity: 0.5;
     cursor: wait;
     background: rgba(255, 255, 255, 0.05);
+    pointer-events: none;
 }
 
 button:focus-visible, select:focus-visible, [role="img"][tabindex="0"]:focus-visible {
