@@ -111,6 +111,7 @@
 
             if (refreshBtn) {
                 refreshBtn.addEventListener('click', () => {
+                    if (refreshBtn.getAttribute('aria-disabled') === 'true') return;
                     systemSelect.dispatchEvent(new Event('change'));
                 });
             }
@@ -118,6 +119,10 @@
             let previousValue = systemSelect.value;
 
             systemSelect.addEventListener('change', () => {
+                if (systemSelect.getAttribute('aria-disabled') === 'true') {
+                    systemSelect.value = previousValue; // Revert visually to prevent confusion
+                    return;
+                }
                 const sys = systemSelect.value;
                 const originalText = systemSelect.options[systemSelect.selectedIndex].text;
                 const mainContent = document.querySelector('main');
@@ -129,11 +134,11 @@
                 const refreshHadFocus = document.activeElement === refreshBtn;
 
                 // Set loading state
-                systemSelect.disabled = true;
+                systemSelect.setAttribute('aria-disabled', 'true');
                 systemSelect.title = "Loading...";
 
                 if (refreshBtn) {
-                    refreshBtn.disabled = true;
+                    refreshBtn.setAttribute('aria-disabled', 'true');
                     refreshBtn.title = "Loading...";
                     const svg = refreshBtn.querySelector('svg');
                     if (svg) svg.classList.add('spin-icon');
@@ -189,11 +194,11 @@
                     }, 5000);
                 }).finally(() => {
                     // Restore state
-                    systemSelect.disabled = false;
+                    systemSelect.removeAttribute('aria-disabled');
                     systemSelect.removeAttribute('title');
 
                     if (refreshBtn) {
-                        refreshBtn.disabled = false;
+                        refreshBtn.removeAttribute('aria-disabled');
                         refreshBtn.title = "Restart simulation (R)";
                         const svg = refreshBtn.querySelector('svg');
                         if (svg) svg.classList.remove('spin-icon');
@@ -231,7 +236,7 @@
 
                 if (e.key.toLowerCase() === 'r' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA' && document.activeElement.tagName !== 'SELECT') {
                     e.preventDefault();
-                    if (refreshBtn && !refreshBtn.disabled) {
+                    if (refreshBtn && refreshBtn.getAttribute('aria-disabled') !== 'true') {
                         refreshBtn.focus();
                         refreshBtn.click();
 

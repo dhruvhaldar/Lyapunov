@@ -73,3 +73,7 @@
 ## 2026-05-08 - Revert Optimistic UI Updates on Error
 **Learning:** When async state changes fail in SPAs, the optimistic UI update (like a select dropdown value changing immediately) causes a state mismatch with the displayed data if not reverted.
 **Action:** Immediately revert optimistic UI updates (like select dropdown values) back to their previous state in the `.catch()` block of async operations to prevent misleading visual mismatches between the active control element and the currently displayed data.
+
+## 2026-05-10 - Focus Loss on Natively Disabled Controls
+**Learning:** Using the native `disabled` property on form controls (like `<select>` or `<button>`) during asynchronous operations drops keyboard focus entirely, placing users back at the top of the document or requiring them to tab through the interface again. This breaks the expected navigation flow for keyboard and screen reader users.
+**Action:** Instead of disabling elements natively during loading states, use `aria-disabled="true"` to announce the state to screen readers, while relying on custom CSS (e.g., matching the visual disabled style and adding `pointer-events: none`) and early-return JS logic to prevent interactions. This keeps the element focusable and preserves user context.
