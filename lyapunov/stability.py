@@ -1,4 +1,10 @@
 import numpy as np
+import functools
+
+@functools.lru_cache(maxsize=128)
+def _get_lambdified_func(expr, variables_tuple):
+    import sympy as sp
+    return sp.lambdify(variables_tuple, expr, "numpy")
 
 def check_negative_definite(expr, variables=None):
     import sympy as sp
@@ -16,7 +22,8 @@ def check_negative_definite(expr, variables=None):
             return False
 
     # Fast vectorized evaluation using lambdify
-    func = sp.lambdify(variables, expr, "numpy")
+    # ⚡ Bolt: Cache expensive sympy.lambdify compilation via lru_cache
+    func = _get_lambdified_func(expr, tuple(variables))
 
     # Check origin
     origin_args = [0.0] * len(variables)
@@ -36,8 +43,12 @@ def check_negative_definite(expr, variables=None):
     pts = np.random.uniform(-5, 5, size=(len(variables), 100))
     try:
         vals = func(*pts)
-        if vals.max() > 1e-9: # Tolerance
-            return False
+        if isinstance(vals, np.ndarray):
+            if vals.max() > 1e-9: # Tolerance
+                return False
+        else:
+            if vals > 1e-9:
+                return False
     except (TypeError, ValueError):
         pass
 
