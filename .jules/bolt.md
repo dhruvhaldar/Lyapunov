@@ -86,3 +86,7 @@
 ## 2026-05-18 - NumPy Array Unpacking Overhead
 **Learning:** While replacing array unpacking (e.g., `x, y = state`) with direct indexing (`state[0]`) seems faster for arrays, accessing scalar elements from a NumPy array inside a tight Python loop introduces significant overhead due to NumPy's indexing and Python scalar wrapping mechanics.
 **Action:** When repeatedly accessing scalars from a 1D array (e.g., in numerical simulation steps), convert the array to a Python list first using `.tolist()` and then unpack (e.g. `x, y = state.tolist()`) to substantially accelerate inner-loop performance by ~30%, wrapping it in a `try...except` to fallback for vector/meshgrid inputs.
+
+## 2026-05-18 - Caching SymPy Lambdify AST Compilation
+**Learning:** `sympy.lambdify` introduces a significant performance overhead (~3ms per call) because it generates an Abstract Syntax Tree (AST), performs string manipulation, and dynamically evaluates Python code via `exec` to compile the NumPy lambda. Repeatedly calling `lambdify` on identical inputs (like in deterministic API endpoints evaluating the same expression) is highly inefficient.
+**Action:** When a deterministic module-level function relies on compiling SymPy expressions via `lambdify`, abstract the `lambdify` execution into a dedicated helper function (e.g. `_get_lambdified_func(expr, variables_tuple)`) and decorate it with `@functools.lru_cache(maxsize=128)`. Ensure the `variables` list is cast to an immutable `tuple` so the cache functions properly, resulting in near-instant evaluations on subsequent calls.
