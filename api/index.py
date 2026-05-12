@@ -8,6 +8,7 @@ import sys
 import os
 import math
 import json
+import time
 
 # Ensure lyapunov module is accessible
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -45,6 +46,49 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         status_code=422,
         content={"detail": sanitized_errors},
     )
+
+# Simple in-memory rate limiter to prevent DoS attacks
+RATE_LIMIT_WINDOW = 60 # seconds
+MAX_REQUESTS_PER_WINDOW = 100
+request_counts = {}
+last_gc_time = time.time()
+
+@app.middleware("http")
+async def rate_limit_middleware(request: Request, call_next):
+    global last_gc_time
+    # Use the last IP in the X-Forwarded-For chain (the one appended by the trusted proxy),
+    # or fallback to the direct client connection host.
+    forwarded_for = request.headers.get("X-Forwarded-For")
+    if forwarded_for:
+        client_ip = forwarded_for.split(',')[-1].strip()
+    else:
+        client_ip = request.client.host if request.client else "unknown"
+
+    current_time = time.time()
+
+    # Garbage collect periodically (e.g. once per window) to avoid O(N) overhead per request
+    if current_time - last_gc_time > RATE_LIMIT_WINDOW:
+        keys_to_delete = [ip for ip, data in request_counts.items() if current_time > data["reset_time"]]
+        for k in keys_to_delete:
+            del request_counts[k]
+        last_gc_time = current_time
+
+    # Cap dictionary size to prevent OOM from IP spoofing attacks
+    if len(request_counts) > 10000:
+        request_counts.clear()
+
+    if client_ip not in request_counts or current_time > request_counts[client_ip]["reset_time"]:
+        request_counts[client_ip] = {"count": 1, "reset_time": current_time + RATE_LIMIT_WINDOW}
+    else:
+        request_counts[client_ip]["count"] += 1
+        if request_counts[client_ip]["count"] > MAX_REQUESTS_PER_WINDOW:
+            return JSONResponse(
+                status_code=429,
+                content={"detail": "Too Many Requests"}
+            )
+
+    response = await call_next(request)
+    return response
 
 @app.middleware("http")
 async def add_security_headers(request: Request, call_next):
