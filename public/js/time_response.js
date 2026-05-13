@@ -99,7 +99,8 @@ function updateChart(times, states, systemName) {
             borderWidth: 2,
             pointRadius: 0,
             fill: false,
-            tension: 0.4
+            // ⚡ Bolt: Disabled computationally expensive bezier curve calculations for dense data
+            tension: 0
         });
     }
 
@@ -114,6 +115,8 @@ function updateChart(times, states, systemName) {
             datasets: datasets
         },
         options: {
+            // ⚡ Bolt: Disable internal data sorting loops since time arrays are naturally sorted
+            normalized: true,
             responsive: true,
             maintainAspectRatio: false,
             interaction: { mode: 'index', intersect: false },
