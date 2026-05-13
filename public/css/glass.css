@@ -30,7 +30,6 @@ button:disabled, select:disabled, button[aria-disabled="true"], select[aria-disa
     opacity: 0.5;
     cursor: wait;
     background: rgba(255, 255, 255, 0.05);
-    pointer-events: none;
 }
 
 button:focus-visible, select:focus-visible, [role="img"][tabindex="0"]:focus-visible {
