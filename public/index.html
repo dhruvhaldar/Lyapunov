@@ -218,6 +218,20 @@
 
             syncContextLabels();
 
+            // Prevent interaction with disabled elements when pointer-events is active
+            document.addEventListener('click', (e) => {
+                if (e.target.closest('[aria-disabled="true"]')) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+            }, true);
+
+            document.addEventListener('mousedown', (e) => {
+                if (e.target.closest('[aria-disabled="true"]')) {
+                    e.preventDefault(); // Prevents select dropdowns from opening natively on mousedown
+                }
+            }, true);
+
             // Global keyboard shortcut
             document.addEventListener('keydown', (e) => {
                 if (e.key.toLowerCase() === 's' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA' && document.activeElement.tagName !== 'SELECT') {
