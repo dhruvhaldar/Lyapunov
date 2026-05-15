@@ -26,6 +26,10 @@ button:hover:not(:disabled), select:hover:not(:disabled) {
     background: rgba(255, 255, 255, 0.2);
 }
 
+button:active:not(:disabled):not([aria-disabled="true"]), select:active:not(:disabled):not([aria-disabled="true"]) {
+    transform: scale(0.95);
+}
+
 button:disabled, select:disabled, button[aria-disabled="true"], select[aria-disabled="true"] {
     opacity: 0.5;
     cursor: wait;
