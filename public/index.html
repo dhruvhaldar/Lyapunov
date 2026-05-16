@@ -44,12 +44,12 @@
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr)); gap: 2rem; margin-bottom: 2rem;">
             <div class="glass-panel" role="region" aria-labelledby="heading-phase">
                 <h2 id="heading-phase">Phase Portrait</h2>
-                <div id="phase-portrait" role="img" tabindex="0" aria-label="Interactive phase portrait showing system trajectories and vector fields" style="width: 100%; height: 400px; background: rgba(0,0,0,0.2); border-radius: 8px;"></div>
+                <div id="phase-portrait" role="img" tabindex="0" aria-label="Interactive phase portrait showing system trajectories and vector fields" class="chart-container" style="width: 100%; height: 400px;"></div>
             </div>
 
             <div class="glass-panel" role="region" aria-labelledby="heading-time">
                 <h2 id="heading-time">Time Response</h2>
-                <div style="height: 400px;">
+                <div style="height: 400px; width: 100%; position: relative;" class="chart-container">
                     <canvas id="time-response-chart" role="img" tabindex="0" aria-label="Interactive time response chart showing system states over time">
                         Your browser does not support the canvas element. This visualization shows the time response of the selected system.
                     </canvas>
@@ -59,7 +59,7 @@
 
         <div class="glass-panel" role="region" aria-labelledby="heading-3d">
              <h2 id="heading-3d">3D Visualization</h2>
-             <div id="3d-view" role="img" tabindex="0" aria-label="Interactive 3D visualization of the dynamical system" style="width: 100%; height: 400px; background: rgba(0,0,0,0.2); border-radius: 8px;">
+             <div id="3d-view" role="img" tabindex="0" aria-label="Interactive 3D visualization of the dynamical system" class="chart-container" style="width: 100%; height: 400px;">
                 <div class="paused-badge" aria-hidden="true">⏸ Paused</div>
              </div>
         </div>

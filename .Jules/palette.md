@@ -84,3 +84,10 @@
 ## 2024-05-15 - Add tactile visual feedback to interactive controls
 **Learning:** Adding an `:active` state with a subtle scale transform (`scale(0.95)`) provides important tactile feedback on buttons and selects, making the UI feel responsive, especially on touch devices or when there's a slight delay before an action takes place. It's crucial to guard this with `:not(:disabled):not([aria-disabled="true"])` to prevent false affordances on disabled elements.
 **Action:** When implementing interactive elements like buttons or custom dropdowns, always consider the complete interaction lifecycle: hover, focus-visible, and active.
+## 2024-05-16 - Do Not Pad Canvases
+**Learning:** Applying CSS `padding` directly to `<canvas>` elements breaks internal mouse coordinate calculations (e.g., in Chart.js or Plotly), destroying interactivity. Also, relying on scattered inline styles for background and layout properties leads to visual inconsistencies.
+**Action:** When unifying visual polish across charts, create a shared CSS utility class (e.g., `.chart-container`) and apply padding to the parent `<div>` wrapping the canvas, not the canvas itself.
+
+## 2024-05-16 - Clean Up Scratchpads
+**Learning:** Writing temporary python scripts in the repository root to execute text replacements can pollute the repository if left behind, leading to a failed code review.
+**Action:** Always `rm` temporary development scripts before submitting for review.

@@ -168,3 +168,11 @@ label:hover #kbd-s {
     stroke: rgba(0, 255, 204, 1);
     stroke-width: 3px;
 }
+
+/* 🎨 Palette: Visual Polish for Chart Containers */
+.chart-container {
+    background: rgba(0,0,0,0.2);
+    border-radius: 8px;
+    padding: 16px;
+    box-sizing: border-box;
+}
