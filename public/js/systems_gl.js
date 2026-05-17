@@ -52,6 +52,17 @@ function update3D(systemName) {
 
     if (currentMesh) {
         scene.remove(currentMesh);
+        // ⚡ Bolt: Recursively dispose geometries and materials to prevent WebGL memory leaks
+        currentMesh.traverse((child) => {
+            if (child.geometry) child.geometry.dispose();
+            if (child.material) {
+                if (Array.isArray(child.material)) {
+                    child.material.forEach(mat => mat.dispose());
+                } else {
+                    child.material.dispose();
+                }
+            }
+        });
     }
 
     if (systemName === 'Lorenz') {
