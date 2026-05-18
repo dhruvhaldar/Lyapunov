@@ -51,6 +51,19 @@ function update3D(systemName) {
     if (!systemName) systemName = document.getElementById('system-select')?.value || 'VanDerPol';
 
     if (currentMesh) {
+        // ⚡ Bolt: Explicitly dispose of WebGL buffers when removing meshes to prevent memory leaks
+        currentMesh.traverse((node) => {
+            if (node.isMesh || node.isLine) {
+                if (node.geometry) node.geometry.dispose();
+                if (node.material) {
+                    if (Array.isArray(node.material)) {
+                        node.material.forEach(mat => mat.dispose());
+                    } else {
+                        node.material.dispose();
+                    }
+                }
+            }
+        });
         scene.remove(currentMesh);
     }
 

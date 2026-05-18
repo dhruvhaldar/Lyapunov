@@ -94,3 +94,9 @@
 ## 2026-05-19 - Disable Chart.js Bezier Curves and Enable Normalization for Dense Data
 **Learning:** Rendering high-density time series data (e.g. 2000 points per line) in Chart.js with bezier curves enabled (`tension` > 0) forces computationally expensive cubic bezier interpolations for every segment. Additionally, Chart.js normally loops through raw data to parse and sort it internally, introducing further lag for large datasets.
 **Action:** When plotting thousands of points where the x-axis (time) is already uniformly sorted and raw arrays are correctly formatted, explicitly set `tension: 0` to use straight lines, which provides massive rendering speedups without visual degradation. Also add `normalized: true` to the Chart.js options to skip internal formatting and sorting loops entirely. Note that `parsing: false` should be used cautiously, as it requires the data structure to perfectly match `{x, y}` object arrays.
+## 2026-05-18 - [Fixing WebGL Memory Leak]
+**Learning:** In Three.js, removing a mesh from the scene graph () doesn't automatically garbage collect the underlying WebGL buffers. Geometries and materials must be explicitly d.
+**Action:** Always traverse meshes and call `.dispose()` on geometries and materials when removing them to prevent GPU memory leaks.
+## 2024-05-18 - [Fixing WebGL Memory Leak]
+**Learning:** In Three.js, removing a mesh from the scene graph (`scene.remove()`) doesn't automatically garbage collect the underlying WebGL buffers. Geometries and materials must be explicitly `.dispose()`d.
+**Action:** Always traverse meshes and call `.dispose()` on geometries and materials when removing them to prevent GPU memory leaks.
