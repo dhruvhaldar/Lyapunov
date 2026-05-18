@@ -84,3 +84,6 @@
 ## 2024-05-15 - Add tactile visual feedback to interactive controls
 **Learning:** Adding an `:active` state with a subtle scale transform (`scale(0.95)`) provides important tactile feedback on buttons and selects, making the UI feel responsive, especially on touch devices or when there's a slight delay before an action takes place. It's crucial to guard this with `:not(:disabled):not([aria-disabled="true"])` to prevent false affordances on disabled elements.
 **Action:** When implementing interactive elements like buttons or custom dropdowns, always consider the complete interaction lifecycle: hover, focus-visible, and active.
+## 2025-02-20 - Interactive Element Cues and State Discoverability
+**Learning:** Adding a crosshair cursor to empty/blank interactive charting areas significantly clarifies that the space is reactive, and linking keyboard shortcut badges to their associated form control's focus state using CSS `:has()` drastically improves shortcut discoverability for keyboard-only users.
+**Action:** When creating empty data visualization spaces or pairing labels with keyboard shortcuts, always provide a pointer affordance (like `crosshair`) and dynamically highlight the shortcut badge when its associated input receives focus.
