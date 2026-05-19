@@ -87,3 +87,7 @@
 ## 2025-02-20 - Interactive Element Cues and State Discoverability
 **Learning:** Adding a crosshair cursor to empty/blank interactive charting areas significantly clarifies that the space is reactive, and linking keyboard shortcut badges to their associated form control's focus state using CSS `:has()` drastically improves shortcut discoverability for keyboard-only users.
 **Action:** When creating empty data visualization spaces or pairing labels with keyboard shortcuts, always provide a pointer affordance (like `crosshair`) and dynamically highlight the shortcut badge when its associated input receives focus.
+
+## 2026-05-19 - Dynamic DOM Reordering for SVG Hover Affordances
+**Learning:** In dense SVG visualizations (like vector fields or phase portraits), a CSS `:hover` effect that increases stroke width can be completely obscured by overlapping sibling elements that were drawn later in the DOM order. Because SVG does not support `z-index`, the visual affordance is lost.
+**Action:** When implementing hover affordances on dense SVG elements (like lines or circles), bind a JS event listener (e.g., `d3.select(this).raise()` on `mouseenter`) to dynamically reorder the DOM and bring the hovered element to the front, ensuring the CSS styles are fully visible.

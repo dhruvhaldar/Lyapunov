@@ -131,7 +131,10 @@ function drawPhasePortrait(vectors, systemName) {
         .attr("y2", d => yScale(d.y) - d.dy)
         .attr("stroke", "rgba(0, 255, 204, 0.6)")
         .attr("stroke-width", 1.5)
-        .attr("marker-end", "url(#arrow)");
+        .attr("marker-end", "url(#arrow)")
+        .on("mouseenter", function() {
+            d3.select(this).raise();
+        });
 
     lines.append("title")
         .text(d => `Position: (${d.x.toFixed(2)}, ${d.y.toFixed(2)})\nVector: (${d.u.toFixed(2)}, ${d.v.toFixed(2)})\nMagnitude: ${d.mag.toFixed(2)}`);
