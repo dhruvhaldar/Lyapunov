@@ -50,3 +50,8 @@
 **Vulnerability:** Custom in-memory rate limiters (e.g., tracking counts by IP) introduce memory leaks if expired entries aren't collected, and can be bypassed by spoofing the first IP in the `X-Forwarded-For` header.
 **Learning:** Attackers can craft spoofed IPs in the `X-Forwarded-For` header to exhaust memory (adding unlimited entries to the tracking dictionary) and bypass rate limits (since the first IP is user-controlled).
 **Prevention:** Always extract the last IP in the `X-Forwarded-For` chain (appended by the trusted proxy). Implement periodic garbage collection to remove expired rate-limit tracking records, and enforce a maximum hard cap on the size of the tracking dictionary to prevent OOM attacks.
+
+## 2024-05-20 - Rate Limit Bypass via Cache Flush
+**Vulnerability:** A logic flaw in the in-memory rate limiter where bounding the dictionary size (to prevent OOM) was implemented using `request_counts.clear()`. This allowed attackers to bypass rate limits by spoofing IPs to fill the dictionary, causing it to flush and erase rate limits for all clients, failing open.
+**Learning:** When mitigating OOM attacks in in-memory state tracking (like rate limiters), clearing the entire cache when a cap is hit creates a bypass vulnerability by erasing valid tracking data.
+**Prevention:** Always fail closed. When an in-memory tracking structure hits its size limit, reject any new, untracked entries (e.g., return a 429) rather than flushing the cache.
