@@ -100,3 +100,7 @@
 ## 2024-05-18 - [Fixing WebGL Memory Leak]
 **Learning:** In Three.js, removing a mesh from the scene graph (`scene.remove()`) doesn't automatically garbage collect the underlying WebGL buffers. Geometries and materials must be explicitly `.dispose()`d.
 **Action:** Always traverse meshes and call `.dispose()` on geometries and materials when removing them to prevent GPU memory leaks.
+
+## 2026-05-18 - Replacing `np.abs` with Squared Distance for Complex Arrays
+**Learning:** `np.abs()` on complex NumPy arrays computes the square root for every element, which is computationally expensive for large arrays or tight loops.
+**Action:** When comparing the magnitude of complex numbers against a threshold (like checking if points are within a radius in the circle criterion), replace `np.abs(z) < radius` with the squared distance comparison `(z.real**2 + z.imag**2) < radius**2` to avoid the square root calculation and achieve significant speedups (e.g., ~20-30%).

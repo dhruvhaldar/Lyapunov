@@ -84,8 +84,8 @@ def circle_criterion(G_jw, alpha, beta):
     center = (p1 + p2) / 2.0
     radius = abs(p1 - p2) / 2.0
 
-    # ⚡ Bolt: Replace np.any() boolean array evaluation with faster min/max reductions
-    if np.abs(G_jw - center).min() < radius:
+    # ⚡ Bolt: Replace expensive np.abs() (which computes square roots) with squared distance calculation
+    if ((G_jw.real - center)**2 + G_jw.imag**2).min() < radius**2:
         return False
 
     return True
