@@ -80,6 +80,8 @@ function updateChart(times, states, systemName) {
     // Prepare datasets
     const datasets = [];
     const colors = ['rgba(6, 182, 212, 1)', 'rgba(139, 92, 246, 1)', 'rgba(236, 72, 153, 1)'];
+    // 🎨 Palette: Add distinct border dash patterns for colorblind accessibility
+    const borderDashes = [[], [5, 5], [2, 2]];
 
     // Determine state labels
     let labels = ['x1', 'x2', 'x3'];
@@ -97,6 +99,7 @@ function updateChart(times, states, systemName) {
             borderColor: colors[i % colors.length],
             backgroundColor: colors[i % colors.length],
             borderWidth: 2,
+            borderDash: borderDashes[i % borderDashes.length],
             pointRadius: 0,
             fill: false,
             // ⚡ Bolt: Disabled computationally expensive bezier curve calculations for dense data

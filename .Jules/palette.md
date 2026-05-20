@@ -91,3 +91,7 @@
 ## 2026-05-19 - Dynamic DOM Reordering for SVG Hover Affordances
 **Learning:** In dense SVG visualizations (like vector fields or phase portraits), a CSS `:hover` effect that increases stroke width can be completely obscured by overlapping sibling elements that were drawn later in the DOM order. Because SVG does not support `z-index`, the visual affordance is lost.
 **Action:** When implementing hover affordances on dense SVG elements (like lines or circles), bind a JS event listener (e.g., `d3.select(this).raise()` on `mouseenter`) to dynamically reorder the DOM and bring the hovered element to the front, ensuring the CSS styles are fully visible.
+
+## 2026-05-20 - Chart Accessibility for Colorblind Users
+**Learning:** In data visualizations like line charts, relying solely on hue differences (color) to distinguish between multiple datasets (e.g., state variables x1, x2, x3) makes the chart inaccessible to users with color vision deficiencies. Without structural differences, the lines can blend together or become indistinguishable.
+**Action:** When plotting multiple lines on a single chart, always incorporate structural visual differences, such as distinct dashed or dotted patterns (e.g., using `borderDash` in Chart.js), in addition to color, to ensure all users can differentiate the data series.
