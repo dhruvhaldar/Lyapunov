@@ -169,6 +169,7 @@ function drawPhasePortrait(vectors, systemName) {
         .attr("x", width - 10)
         .attr("y", yZero - 10)
         .attr("fill", "#ccc")
+        .style("text-anchor", "end")
         .style("font-family", "inherit")
         .style("font-size", "12px")
         .text(xLabel);
@@ -180,6 +181,13 @@ function drawPhasePortrait(vectors, systemName) {
         .style("font-family", "inherit")
         .style("font-size", "12px")
         .text(yLabel);
+
+    // 🎨 Palette: Add background-colored halo to all SVG text to ensure legibility over dense vector lines
+    svg.selectAll("text")
+        .style("paint-order", "stroke")
+        .style("stroke", "#0f172a") // Match body background --bg-color
+        .style("stroke-linejoin", "round")
+        .style("stroke-width", "3px");
 }
 
 // Make globally available
