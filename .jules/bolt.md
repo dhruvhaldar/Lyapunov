@@ -104,3 +104,7 @@
 ## 2026-05-18 - Replacing `np.abs` with Squared Distance for Complex Arrays
 **Learning:** `np.abs()` on complex NumPy arrays computes the square root for every element, which is computationally expensive for large arrays or tight loops.
 **Action:** When comparing the magnitude of complex numbers against a threshold (like checking if points are within a radius in the circle criterion), replace `np.abs(z) < radius` with the squared distance comparison `(z.real**2 + z.imag**2) < radius**2` to avoid the square root calculation and achieve significant speedups (e.g., ~20-30%).
+
+## 2026-05-20 - Inline RK4 Numerical Integration Stages
+**Learning:** In tight numerical integration loops (like Runge-Kutta 4th order `step` method), repeatedly dispatching to a vectorized `dynamics` class method that allocates and returns multiple small intermediate NumPy arrays (k1, k2, k3, k4) causes severe garbage collection and allocation overhead inside the hot loop.
+**Action:** For standard 1D scalar simulations of known, time-invariant systems, override the integration method to explicitly inline the dynamics equations using unpacked Python scalars (e.g. `x, y = state.tolist()`). Avoid intermediate array allocations entirely within the RK4 stages, falling back to the standard vectorized `super().step(...)` for multi-dimensional or complex inputs. This optimization yields substantial (e.g. ~6x) simulation speedups.
