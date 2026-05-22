@@ -146,19 +146,33 @@ function drawPhasePortrait(vectors, systemName) {
     const xZero = xScale(0);
     const yZero = yScale(0);
 
-    svg.append("g")
+    const xAxisGroup = svg.append("g")
         .attr("transform", `translate(0, ${yZero})`)
         .call(xAxis)
         .attr("color", "#ccc")
-        .style("font-family", "inherit")
-        .select(".domain").remove();
+        .style("font-family", "inherit");
 
-    svg.append("g")
+    xAxisGroup.selectAll("text")
+        .attr("stroke", "#0f172a")
+        .attr("stroke-width", "3px")
+        .attr("stroke-linejoin", "round")
+        .style("paint-order", "stroke");
+
+    xAxisGroup.select(".domain").remove();
+
+    const yAxisGroup = svg.append("g")
         .attr("transform", `translate(${xZero}, 0)`)
         .call(yAxis)
         .attr("color", "#ccc")
-        .style("font-family", "inherit")
-        .select(".domain").remove();
+        .style("font-family", "inherit");
+
+    yAxisGroup.selectAll("text")
+        .attr("stroke", "#0f172a")
+        .attr("stroke-width", "3px")
+        .attr("stroke-linejoin", "round")
+        .style("paint-order", "stroke");
+
+    yAxisGroup.select(".domain").remove();
 
     // Contextual Labels
     let xLabel = 'x1', yLabel = 'x2';
@@ -169,6 +183,10 @@ function drawPhasePortrait(vectors, systemName) {
         .attr("x", width - 10)
         .attr("y", yZero - 10)
         .attr("fill", "#ccc")
+        .attr("stroke", "#0f172a")
+        .attr("stroke-width", "3px")
+        .attr("stroke-linejoin", "round")
+        .style("paint-order", "stroke")
         .style("font-family", "inherit")
         .style("font-size", "12px")
         .text(xLabel);
@@ -177,6 +195,10 @@ function drawPhasePortrait(vectors, systemName) {
         .attr("x", xZero + 10)
         .attr("y", 20)
         .attr("fill", "#ccc")
+        .attr("stroke", "#0f172a")
+        .attr("stroke-width", "3px")
+        .attr("stroke-linejoin", "round")
+        .style("paint-order", "stroke")
         .style("font-family", "inherit")
         .style("font-size", "12px")
         .text(yLabel);
