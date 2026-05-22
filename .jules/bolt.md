@@ -104,3 +104,10 @@
 ## 2026-05-18 - Replacing `np.abs` with Squared Distance for Complex Arrays
 **Learning:** `np.abs()` on complex NumPy arrays computes the square root for every element, which is computationally expensive for large arrays or tight loops.
 **Action:** When comparing the magnitude of complex numbers against a threshold (like checking if points are within a radius in the circle criterion), replace `np.abs(z) < radius` with the squared distance comparison `(z.real**2 + z.imag**2) < radius**2` to avoid the square root calculation and achieve significant speedups (e.g., ~20-30%).
+## 2025-02-23 - Inline RK4 Integration for 1D Scalars
+**Learning:** In tight numerical integration loops (like RK4), repeatedly dispatching to class methods that allocate small intermediate NumPy arrays causes severe allocation overhead.
+**Action:** For standard 1D scalar simulations, override the integration method to inline the math stages using unpacked Python scalars (e.g., via `.tolist()`), avoiding intermediate array allocations entirely for massive speedups.
+
+## 2025-02-23 - Use Python's math module for scalars
+**Learning:** When performing mathematical operations on scalar values within tight loops, NumPy functions (`np.sin`) introduce significant dispatch and casting overhead compared to native Python `math` module equivalents.
+**Action:** Use native Python `math` functions (like `math.sin`, `math.cos`) instead of NumPy when working with guaranteed scalar values in tight loops to achieve substantial speedups.
