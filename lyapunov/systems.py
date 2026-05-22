@@ -83,6 +83,30 @@ class VanDerPol(DynamicalSystem):
                 pass
         return np.array([state[1], self.mu * (1 - state[0]**2) * state[1] - state[0] + u])
 
+    def step(self, t, state, u, dt):
+        # ⚡ Bolt: Inline RK4 math stages for 1D scalar simulations to avoid severe intermediate NumPy array allocation overhead.
+        if getattr(state, 'ndim', 0) == 1:
+            try:
+                x, y = state.tolist()
+                dt2, dt6 = dt / 2.0, dt / 6.0
+                mu = self.mu
+
+                k1x, k1y = y, mu*(1 - x**2)*y - x + u
+                x2, y2 = x + k1x*dt2, y + k1y*dt2
+
+                k2x, k2y = y2, mu*(1 - x2**2)*y2 - x2 + u
+                x3, y3 = x + k2x*dt2, y + k2y*dt2
+
+                k3x, k3y = y3, mu*(1 - x3**2)*y3 - x3 + u
+                x4, y4 = x + k3x*dt, y + k3y*dt
+
+                k4x, k4y = y4, mu*(1 - x4**2)*y4 - x4 + u
+
+                return np.array([x + dt6*(k1x + 2.0*(k2x + k3x) + k4x), y + dt6*(k1y + 2.0*(k2y + k3y) + k4y)])
+            except TypeError:
+                pass
+        return super().step(t, state, u, dt)
+
     def jacobian(self, t, state):
         x1, x2 = state
         return np.array([
@@ -117,6 +141,37 @@ class Pendulum(DynamicalSystem):
 
         domega = - self.g_l * np.sin(state[0]) - self.b_ml2 * state[1] + u * self.inv_ml2
         return np.array([state[1], domega])
+
+    def step(self, t, state, u, dt):
+        # ⚡ Bolt: Inline RK4 math stages for 1D scalar simulations to avoid severe intermediate NumPy array allocation overhead.
+        if getattr(state, 'ndim', 0) == 1:
+            try:
+                theta, omega = state.tolist()
+                dt2, dt6 = dt / 2.0, dt / 6.0
+                g_l, b_ml2, inv_ml2 = self.g_l, self.b_ml2, self.inv_ml2
+
+                k1_t = omega
+                k1_o = -g_l * math.sin(theta) - b_ml2 * omega + u * inv_ml2
+
+                t2 = theta + k1_t * dt2
+                k2_t = omega + k1_o * dt2
+                k2_o = -g_l * math.sin(t2) - b_ml2 * k2_t + u * inv_ml2
+
+                t3 = theta + k2_t * dt2
+                k3_t = omega + k2_o * dt2
+                k3_o = -g_l * math.sin(t3) - b_ml2 * k3_t + u * inv_ml2
+
+                t4 = theta + k3_t * dt
+                k4_t = omega + k3_o * dt
+                k4_o = -g_l * math.sin(t4) - b_ml2 * k4_t + u * inv_ml2
+
+                return np.array([
+                    theta + dt6 * (k1_t + 2.0 * (k2_t + k3_t) + k4_t),
+                    omega + dt6 * (k1_o + 2.0 * (k2_o + k3_o) + k4_o)
+                ])
+            except TypeError:
+                pass
+        return super().step(t, state, u, dt)
 
     def jacobian(self, t, state):
         theta, omega = state
@@ -157,6 +212,51 @@ class Lorenz(DynamicalSystem):
             state[0] * (self.rho - state[2]) - state[1],
             state[0] * state[1] - self.beta * state[2]
         ])
+
+    def step(self, t, state, u, dt):
+        # ⚡ Bolt: Inline RK4 math stages for 1D scalar simulations to avoid severe intermediate NumPy array allocation overhead.
+        if getattr(state, 'ndim', 0) == 1:
+            try:
+                x, y, z = state.tolist()
+                dt2 = dt / 2.0
+
+                k1_x = self.sigma * (y - x)
+                k1_y = x * (self.rho - z) - y
+                k1_z = x * y - self.beta * z
+
+                x2 = x + k1_x * dt2
+                y2 = y + k1_y * dt2
+                z2 = z + k1_z * dt2
+
+                k2_x = self.sigma * (y2 - x2)
+                k2_y = x2 * (self.rho - z2) - y2
+                k2_z = x2 * y2 - self.beta * z2
+
+                x3 = x + k2_x * dt2
+                y3 = y + k2_y * dt2
+                z3 = z + k2_z * dt2
+
+                k3_x = self.sigma * (y3 - x3)
+                k3_y = x3 * (self.rho - z3) - y3
+                k3_z = x3 * y3 - self.beta * z3
+
+                x4 = x + k3_x * dt
+                y4 = y + k3_y * dt
+                z4 = z + k3_z * dt
+
+                k4_x = self.sigma * (y4 - x4)
+                k4_y = x4 * (self.rho - z4) - y4
+                k4_z = x4 * y4 - self.beta * z4
+
+                dt6 = dt / 6.0
+                return np.array([
+                    x + dt6 * (k1_x + 2.0 * (k2_x + k3_x) + k4_x),
+                    y + dt6 * (k1_y + 2.0 * (k2_y + k3_y) + k4_y),
+                    z + dt6 * (k1_z + 2.0 * (k2_z + k3_z) + k4_z)
+                ])
+            except TypeError:
+                pass
+        return super().step(t, state, u, dt)
 
     def jacobian(self, t, state):
         x, y, z = state
