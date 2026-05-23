@@ -95,3 +95,6 @@
 ## 2026-05-20 - Chart Accessibility for Colorblind Users
 **Learning:** In data visualizations like line charts, relying solely on hue differences (color) to distinguish between multiple datasets (e.g., state variables x1, x2, x3) makes the chart inaccessible to users with color vision deficiencies. Without structural differences, the lines can blend together or become indistinguishable.
 **Action:** When plotting multiple lines on a single chart, always incorporate structural visual differences, such as distinct dashed or dotted patterns (e.g., using `borderDash` in Chart.js), in addition to color, to ensure all users can differentiate the data series.
+## 2025-02-23 - App Polish & Integration
+**Learning:** Adding a basic SVG data-uri favicon and theme-color meta tag instantly integrates a web application with browser UIs (tab icons, mobile toolbars) and clears standard console 404 warnings without requiring an image editor or heavy assets.
+**Action:** Always include a lightweight data-uri SVG favicon and a `theme-color` meta tag in foundational `index.html` headers for instant visual polish and cleaner console outputs.
