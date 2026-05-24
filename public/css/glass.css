@@ -22,7 +22,7 @@ button, select {
     transition: all 0.2s ease;
 }
 
-button:hover:not(:disabled), select:hover:not(:disabled) {
+button:hover:not(:disabled):not([aria-disabled="true"]), select:hover:not(:disabled):not([aria-disabled="true"]) {
     background: rgba(255, 255, 255, 0.2);
 }
 
