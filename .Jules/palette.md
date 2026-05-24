@@ -98,3 +98,7 @@
 ## 2025-02-23 - App Polish & Integration
 **Learning:** Adding a basic SVG data-uri favicon and theme-color meta tag instantly integrates a web application with browser UIs (tab icons, mobile toolbars) and clears standard console 404 warnings without requiring an image editor or heavy assets.
 **Action:** Always include a lightweight data-uri SVG favicon and a `theme-color` meta tag in foundational `index.html` headers for instant visual polish and cleaner console outputs.
+
+## 2026-05-24 - False Hover Affordance on aria-disabled Elements
+**Learning:** When form controls use `aria-disabled="true"` instead of native `:disabled` to preserve keyboard focus during async operations, standard CSS hover pseudo-classes (e.g., `button:hover:not(:disabled)`) will still trigger. This provides users with a false interactive affordance, making it look like a disabled element can be clicked.
+**Action:** When creating hover styles for interactive elements, always explicitly negate the `aria-disabled` attribute (e.g., `:not([aria-disabled="true"])`) alongside the native `:disabled` pseudo-class to prevent misleading hover states.
