@@ -55,3 +55,8 @@
 **Vulnerability:** A logic flaw in the in-memory rate limiter where bounding the dictionary size (to prevent OOM) was implemented using `request_counts.clear()`. This allowed attackers to bypass rate limits by spoofing IPs to fill the dictionary, causing it to flush and erase rate limits for all clients, failing open.
 **Learning:** When mitigating OOM attacks in in-memory state tracking (like rate limiters), clearing the entire cache when a cap is hit creates a bypass vulnerability by erasing valid tracking data.
 **Prevention:** Always fail closed. When an in-memory tracking structure hits its size limit, reject any new, untracked entries (e.g., return a 429) rather than flushing the cache.
+
+## 2024-05-25 - XSS via Inline Scripts in HTML
+**Vulnerability:** Cross-Site Scripting (XSS) risk due to overly permissive Content Security Policy (CSP). The `public/index.html` file contained a large inline `<script>` block, requiring the API's CSP `script-src` to include `'unsafe-inline'`. This allowed any potential XSS injection point to execute arbitrary JavaScript.
+**Learning:** Inline scripts necessitate `'unsafe-inline'` in the CSP, which entirely defeats the primary protection mechanism of CSP against XSS attacks.
+**Prevention:** Always maintain strict separation of concerns by extracting inline JavaScript into dedicated external `.js` files. Configure the backend's `Content-Security-Policy` header to explicitly omit `'unsafe-inline'` from the `script-src` directive, ensuring only trusted, external scripts can execute.
