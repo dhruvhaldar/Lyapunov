@@ -147,7 +147,7 @@ def simulate(req: SimulationRequest):
         # ⚡ Bolt: Bypassing FastAPI's default JSONResponse and jsonable_encoder via standard Response
         # and json.dumps directly. This provides a ~4x speedup for high-resolution array serialization.
         payload = {"t": res.t.tolist(), "y": res.y.T.tolist()}
-        return Response(content=json.dumps(payload), media_type="application/json")
+        return Response(content=json.dumps(payload, separators=(',', ':')), media_type="application/json")
     except Exception as e:
         print(f"Error in simulate: {e}")
         raise HTTPException(status_code=500, detail="Simulation failed. Please check your parameters.")
@@ -164,7 +164,7 @@ def get_phase_portrait(req: PhasePortraitRequest):
         vectors = pp.get_vector_field()
         # ⚡ Bolt: Bypassing FastAPI's default JSONResponse and jsonable_encoder via standard Response
         # and json.dumps directly. This provides a ~4x speedup for high-resolution array serialization.
-        return Response(content=json.dumps({"vectors": vectors}), media_type="application/json")
+        return Response(content=json.dumps({"vectors": vectors}, separators=(',', ':')), media_type="application/json")
     except Exception as e:
         print(f"Error in phase_portrait: {e}")
         raise HTTPException(status_code=500, detail="Phase portrait generation failed. Please check your parameters.")
