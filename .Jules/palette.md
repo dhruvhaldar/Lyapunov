@@ -102,3 +102,7 @@
 ## 2026-05-24 - False Hover Affordance on aria-disabled Elements
 **Learning:** When form controls use `aria-disabled="true"` instead of native `:disabled` to preserve keyboard focus during async operations, standard CSS hover pseudo-classes (e.g., `button:hover:not(:disabled)`) will still trigger. This provides users with a false interactive affordance, making it look like a disabled element can be clicked.
 **Action:** When creating hover styles for interactive elements, always explicitly negate the `aria-disabled` attribute (e.g., `:not([aria-disabled="true"])`) alongside the native `:disabled` pseudo-class to prevent misleading hover states.
+
+## 2026-05-25 - Preventing Native Shortcut Hijacking
+**Learning:** When implementing custom global single-character keyboard shortcuts (like pressing "S" to focus a search bar or select dropdown), always ensure you check and ignore events where modifier keys (`Ctrl`, `Meta`, `Alt`) are active. Failing to explicitly ignore these keys means that standard native browser shortcuts (like `Ctrl+S` / `Cmd+S` to save the page, or `Cmd+R` / `Ctrl+R` to reload) will be violently hijacked and suppressed by `e.preventDefault()`, leading to severe user frustration and breaking established mental models.
+**Action:** In `keydown` event listeners intended for single-character shortcuts, inject an early return condition like `if (e.ctrlKey || e.metaKey || e.altKey) return;` before checking the `e.key` value and calling `e.preventDefault()`.

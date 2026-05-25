@@ -3,3 +3,4 @@ __pycache__/
 *$py.class
 *.log
 node_modules/
+venv/
