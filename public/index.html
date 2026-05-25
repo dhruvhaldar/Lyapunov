@@ -236,6 +236,8 @@
 
             // Global keyboard shortcut
             document.addEventListener('keydown', (e) => {
+                if (e.ctrlKey || e.metaKey || e.altKey) return; // Prevent hijacking native browser shortcuts like Save (Ctrl+S) or Reload (Ctrl+R)
+
                 if (e.key.toLowerCase() === 's' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA' && document.activeElement.tagName !== 'SELECT') {
                     e.preventDefault();
                     systemSelect.focus();
