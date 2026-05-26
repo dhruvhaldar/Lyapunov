@@ -55,3 +55,8 @@
 **Vulnerability:** A logic flaw in the in-memory rate limiter where bounding the dictionary size (to prevent OOM) was implemented using `request_counts.clear()`. This allowed attackers to bypass rate limits by spoofing IPs to fill the dictionary, causing it to flush and erase rate limits for all clients, failing open.
 **Learning:** When mitigating OOM attacks in in-memory state tracking (like rate limiters), clearing the entire cache when a cap is hit creates a bypass vulnerability by erasing valid tracking data.
 **Prevention:** Always fail closed. When an in-memory tracking structure hits its size limit, reject any new, untracked entries (e.g., return a 429) rather than flushing the cache.
+
+## 2024-05-26 - XSS vulnerability due to 'unsafe-inline' scripts
+**Vulnerability:** The application was vulnerable to Cross-Site Scripting (XSS) because the `Content-Security-Policy` header in `api/index.py` allowed `'unsafe-inline'` for `script-src`. This was necessary because there was a large inline `<script>` block in `public/index.html`.
+**Learning:** Allowing `'unsafe-inline'` scripts defeats a primary purpose of Content Security Policy, as it allows attackers to execute arbitrary JavaScript if they can inject a `<script>` tag into the DOM.
+**Prevention:** To prevent XSS vulnerabilities, extract all inline JavaScript into dedicated external files and ensure the backend `Content-Security-Policy` (CSP) explicitly omits `'unsafe-inline'` from the `script-src` directive.
