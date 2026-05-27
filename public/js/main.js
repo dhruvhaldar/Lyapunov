@@ -159,6 +159,16 @@
                 }
             }, true);
 
+            document.addEventListener('keydown', (e) => {
+                if (e.target.closest('[aria-disabled="true"]')) {
+                    const interactionKeys = ['Enter', ' ', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
+                    if (interactionKeys.includes(e.key)) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }
+                }
+            }, true);
+
             // Global keyboard shortcut
             document.addEventListener('keydown', (e) => {
                 if (e.ctrlKey || e.metaKey || e.altKey) return; // Prevent hijacking native browser shortcuts like Save (Ctrl+S) or Reload (Ctrl+R)
