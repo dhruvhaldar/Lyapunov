@@ -106,3 +106,7 @@
 ## 2026-05-25 - Preventing Native Shortcut Hijacking
 **Learning:** When implementing custom global single-character keyboard shortcuts (like pressing "S" to focus a search bar or select dropdown), always ensure you check and ignore events where modifier keys (`Ctrl`, `Meta`, `Alt`) are active. Failing to explicitly ignore these keys means that standard native browser shortcuts (like `Ctrl+S` / `Cmd+S` to save the page, or `Cmd+R` / `Ctrl+R` to reload) will be violently hijacked and suppressed by `e.preventDefault()`, leading to severe user frustration and breaking established mental models.
 **Action:** In `keydown` event listeners intended for single-character shortcuts, inject an early return condition like `if (e.ctrlKey || e.metaKey || e.altKey) return;` before checking the `e.key` value and calling `e.preventDefault()`.
+
+## 2026-05-26 - Domain-Specific Contextual Labels in Visualizations
+**Learning:** Using generic variable names (like 'x1', 'x2' or 'theta') in data visualizations (tooltips, legends, axes) increases cognitive load for users when they are analyzing domain-specific models (like physical pendulums or specific attractors). Users expect typography to match established mathematical conventions (e.g., θ, ω) across all interactive components to maintain a seamless analytical experience.
+**Action:** When rendering multi-domain mathematical visualizations, ensure state variables map to domain-specific Unicode characters consistently across all interface layers (chart legends, axis labels, and SVG tooltips).
