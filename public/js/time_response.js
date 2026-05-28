@@ -85,7 +85,8 @@ function updateChart(times, states, systemName) {
 
     // Determine state labels
     let labels = ['x1', 'x2', 'x3'];
-    if (systemName === 'Pendulum') labels = ['theta', 'omega'];
+    if (systemName === 'Pendulum') labels = ['θ', 'ω'];
+    if (systemName === 'Lorenz') labels = ['x', 'y', 'z'];
 
     // ⚡ Bolt: Removed expensive point-by-point mapping. Chart.js 3+ supports raw arrays
     // natively if `labels` (x-axis points) are provided globally in the data config.

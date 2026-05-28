@@ -120,6 +120,11 @@ function drawPhasePortrait(vectors, systemName) {
         .domain(yExtent)
         .range([height - padding, padding]);
 
+    // Contextual Labels
+    let xLabel = 'x1', yLabel = 'x2';
+    if (systemName === 'Pendulum') { xLabel = 'θ'; yLabel = 'ω'; }
+    if (systemName === 'Lorenz') { xLabel = 'x'; yLabel = 'y'; }
+
     const lines = svg.selectAll("line")
         .data(vectors)
         .enter()
@@ -137,7 +142,7 @@ function drawPhasePortrait(vectors, systemName) {
         });
 
     lines.append("title")
-        .text(d => `Position: (${d.x.toFixed(2)}, ${d.y.toFixed(2)})\nVector: (${d.u.toFixed(2)}, ${d.v.toFixed(2)})\nMagnitude: ${d.mag.toFixed(2)}`);
+        .text(d => `${xLabel}, ${yLabel}: (${d.x.toFixed(2)}, ${d.y.toFixed(2)})\nd${xLabel}/dt, d${yLabel}/dt: (${d.u.toFixed(2)}, ${d.v.toFixed(2)})\nMagnitude: ${d.mag.toFixed(2)}`);
 
     // Axes
     const xAxis = d3.axisBottom(xScale).ticks(5);
@@ -173,11 +178,6 @@ function drawPhasePortrait(vectors, systemName) {
         .style("paint-order", "stroke");
 
     yAxisGroup.select(".domain").remove();
-
-    // Contextual Labels
-    let xLabel = 'x1', yLabel = 'x2';
-    if (systemName === 'Pendulum') { xLabel = 'θ'; yLabel = 'ω'; }
-    if (systemName === 'Lorenz') { xLabel = 'x'; yLabel = 'y'; }
 
     svg.append("text")
         .attr("x", width - 10)
