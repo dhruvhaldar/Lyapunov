@@ -108,42 +108,49 @@ function updateChart(times, states, systemName) {
     }
 
     if (responseChart) {
-        responseChart.destroy();
-    }
-
-    responseChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: times,
-            datasets: datasets
-        },
-        options: {
-            // ⚡ Bolt: Disable internal data sorting loops since time arrays are naturally sorted
-            normalized: true,
-            responsive: true,
-            maintainAspectRatio: false,
-            interaction: { mode: 'index', intersect: false },
-            scales: {
-                x: {
-                    type: 'linear',
-                    position: 'bottom',
-                    title: { display: true, text: 'Time (s)', color: '#ccc' },
-                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
-                    ticks: { color: '#ccc' }
-                },
-                y: {
-                    title: { display: true, text: 'State', color: '#ccc' },
-                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
-                    ticks: { color: '#ccc' }
-                }
+        // ⚡ Bolt: Reuse the Chart.js instance instead of destroying and recreating it.
+        // This avoids the massive CPU overhead of re-initializing the canvas context and internal scales.
+        responseChart.data.labels = times;
+        responseChart.data.datasets = datasets;
+        responseChart.update('none'); // Update without animation for maximum speed
+    } else {
+        responseChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: times,
+                datasets: datasets
             },
-            plugins: {
-                legend: {
-                    labels: { color: '#ccc' }
+            options: {
+                // ⚡ Bolt: Disable initial animation. For high-density data arrays,
+                // animation consumes significant CPU/GPU resources and delays visibility.
+                animation: false,
+                // ⚡ Bolt: Disable internal data sorting loops since time arrays are naturally sorted
+                normalized: true,
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom',
+                        title: { display: true, text: 'Time (s)', color: '#ccc' },
+                        grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                        ticks: { color: '#ccc' }
+                    },
+                    y: {
+                        title: { display: true, text: 'State', color: '#ccc' },
+                        grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                        ticks: { color: '#ccc' }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: { color: '#ccc' }
+                    }
                 }
             }
-        }
-    });
+        });
+    }
 }
 
 // Global export
