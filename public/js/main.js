@@ -96,6 +96,9 @@
                     if (systemSelect.value !== previousValue) {
                         systemSelect.value = previousValue;
                         syncContextLabels();
+                        // Revert visualizations back to previous valid state
+                        if (window.updatePhasePortrait) window.updatePhasePortrait(previousValue);
+                        if (window.simulateSystem) window.simulateSystem(previousValue);
                     }
 
                     // Visual error feedback for sighted users
