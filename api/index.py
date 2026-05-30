@@ -19,7 +19,8 @@ from fastapi.staticfiles import StaticFiles
 from fastapi import Request
 from fastapi.middleware.gzip import GZipMiddleware
 
-app = FastAPI()
+# 🛡️ Sentinel: Disabled auto-generated OpenAPI docs in production to reduce attack surface and prevent information leakage.
+app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
 
 # ⚡ Bolt: Added GZip compression to reduce large JSON numerical payloads (e.g. simulation states, phase portraits) by >50% over the wire
 app.add_middleware(GZipMiddleware, minimum_size=1000)
