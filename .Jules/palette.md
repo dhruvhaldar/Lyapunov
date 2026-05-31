@@ -110,3 +110,11 @@
 ## 2026-05-26 - Domain-Specific Contextual Labels in Visualizations
 **Learning:** Using generic variable names (like 'x1', 'x2' or 'theta') in data visualizations (tooltips, legends, axes) increases cognitive load for users when they are analyzing domain-specific models (like physical pendulums or specific attractors). Users expect typography to match established mathematical conventions (e.g., θ, ω) across all interactive components to maintain a seamless analytical experience.
 **Action:** When rendering multi-domain mathematical visualizations, ensure state variables map to domain-specific Unicode characters consistently across all interface layers (chart legends, axis labels, and SVG tooltips).
+
+## 2026-05-27 - Limitations of title for Interaction Affordances
+**Learning:** For interactive canvas elements (like a 3D view) that pause on focus/hover, using a `title` attribute communicates the affordance to sighted users but is often ignored by screen readers on non-form elements. This leaves assistive technology users unaware of how to control the animation.
+**Action:** When implementing interactive affordances on complex visualization containers, explicitly append the interaction instructions (e.g., "Focus to pause animation.") directly to the container's `aria-label`.
+
+## 2026-05-28 - Macro-Level Spatial Context with focus-within
+**Learning:** Keyboard users navigating through dense dashboards can easily lose spatial context of which major section (landmark) they are currently interacting with, especially when focus moves deep within a complex component like a chart or 3D view.
+**Action:** Apply `:focus-within` styles (such as subtle border-color changes and box-shadow glows) to the parent layout containers (e.g., `.glass-panel`) to provide a persistent, macro-level visual anchor indicating the active region.

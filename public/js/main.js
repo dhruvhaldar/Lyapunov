@@ -29,7 +29,7 @@
                 if (timeContainer) timeContainer.setAttribute('aria-label', `Interactive time response chart showing system states over time for ${originalText}`);
 
                 const view3dContainer = document.getElementById('3d-view');
-                if (view3dContainer) view3dContainer.setAttribute('aria-label', `Interactive 3D visualization of the ${originalText} dynamical system`);
+                if (view3dContainer) view3dContainer.setAttribute('aria-label', `Interactive 3D visualization of the ${originalText} dynamical system. Focus to pause animation.`);
 
                 document.title = `Lyapunov Control Dashboard - ${originalText}`;
             }
