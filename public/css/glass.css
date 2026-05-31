@@ -7,6 +7,12 @@
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
     color: #e0e0e0;
     padding: 24px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.glass-panel:focus-within {
+    border-color: rgba(6, 182, 212, 0.4);
+    box-shadow: 0 4px 30px rgba(6, 182, 212, 0.15);
 }
 
 button, select {
