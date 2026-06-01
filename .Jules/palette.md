@@ -118,3 +118,11 @@
 ## 2026-05-28 - Macro-Level Spatial Context with focus-within
 **Learning:** Keyboard users navigating through dense dashboards can easily lose spatial context of which major section (landmark) they are currently interacting with, especially when focus moves deep within a complex component like a chart or 3D view.
 **Action:** Apply `:focus-within` styles (such as subtle border-color changes and box-shadow glows) to the parent layout containers (e.g., `.glass-panel`) to provide a persistent, macro-level visual anchor indicating the active region.
+
+## 2026-05-30 - OS-Level Native Dark Theme Fallbacks
+**Learning:** Setting a dark CSS background color (`background-color: #0f172a`) on an application does not automatically inform the browser or OS that the application is operating in a "dark mode". As a result, native browser components (like default scrollbars, `<select>` dropdown menus, and context menus) will render in their glaring white default state, breaking immersion and causing potentially jarring visual flashes.
+**Action:** Always include `color-scheme: dark;` (or `dark light` if supporting both) in the `:root` pseudo-class for dark-themed web applications to ensure native OS UI components seamlessly inherit the dark visual context.
+
+## 2026-05-30 - Fallback for JS-Heavy Applications
+**Learning:** For web applications that are fundamentally un-renderable without JavaScript (like those relying exclusively on client-side WebGL or Canvas rendering), users with JS disabled (or certain web crawlers/assistive tech) will encounter a confusing, completely blank page with no indication of why it failed to load.
+**Action:** Always include a prominently styled `<noscript>` block immediately inside the `<body>` tag for JS-heavy applications to provide a polite, explicitly clear warning that JavaScript is required for the application to function.
