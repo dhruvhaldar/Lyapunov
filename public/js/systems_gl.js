@@ -36,14 +36,19 @@ function init3D(containerId) {
     animate();
 
     // Handle resize
+    let resizeScheduled = false;
     window.addEventListener('resize', () => {
-        if (!container) return;
-        const width = container.clientWidth;
-        const height = container.clientHeight;
-        renderer.setSize(width, height);
-        camera.aspect = width / height;
-        camera.updateProjectionMatrix();
-        needsRender = true;
+        if (!container || resizeScheduled) return;
+        resizeScheduled = true;
+        requestAnimationFrame(() => {
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+            renderer.setSize(width, height);
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+            needsRender = true;
+            resizeScheduled = false;
+        });
     });
 }
 
@@ -168,11 +173,23 @@ function animate() {
 
 // Hook into global functions to update 3D when system changes
 // We'll wrap the existing functions if they exist
+// ⚡ Bolt: Debounce the update3D calls so that when main.js triggers both
+// phase portrait and time response simulation concurrently via Promise.all,
+// we only tear down and recreate the WebGL geometry once per tick.
+let update3DTimeout = null;
+const debouncedUpdate3D = (sys) => {
+    if (update3DTimeout) clearTimeout(update3DTimeout);
+    update3DTimeout = setTimeout(() => {
+        update3D(sys);
+        update3DTimeout = null;
+    }, 10);
+};
+
 const _origUpdatePhase = window.updatePhasePortrait;
 window.updatePhasePortrait = function(sys) {
     let result;
     if (_origUpdatePhase) result = _origUpdatePhase(sys);
-    update3D(sys);
+    debouncedUpdate3D(sys);
     return result;
 };
 
@@ -180,7 +197,7 @@ const _origSimulate = window.simulateSystem;
 window.simulateSystem = function(sys) {
     let result;
     if (_origSimulate) result = _origSimulate(sys);
-    update3D(sys);
+    debouncedUpdate3D(sys);
     return result;
 };
 

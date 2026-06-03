@@ -23,3 +23,7 @@
 ## 2025-02-21 - Array Mapping Performance in V8
 **Learning:** When processing and remapping large, dense numerical arrays on the frontend (e.g., generating D3 vector field data), avoid using functional array methods like `Array.prototype.map()` with inline object creation.
 **Action:** Pre-allocate a standard array (`new Array(size)`), hoist array references, and use a traditional `for` loop to bypass closure creation and garbage collection overhead, yielding >2x performance speedups for large grid calculations.
+
+## 2025-02-21 - Debouncing Shared WebGL Update Hooks
+**Learning:** Exposing a shared, expensive WebGL update function (like tearing down and recreating geometries) to multiple decoupled UI update events leads to severe performance degradation if those events fire concurrently (e.g., via `Promise.all` after a system select change). The canvas re-renders redundantly multiple times in the same tick.
+**Action:** Always wrap shared external UI triggers targeting WebGL updates with a `setTimeout` or `requestAnimationFrame` debounce to batch synchronous multi-source invocations into a single render tick.
