@@ -181,12 +181,12 @@ def check_stability(req: StabilityRequest):
     if "__" in req.expression or any("__" in v for v in req.variables):
         raise HTTPException(status_code=400, detail="Invalid expression: unsafe characters detected")
 
-    if not re.match(r'^[a-zA-Z0-9_ \+\-\*\/\(\)\.\,]*$', req.expression):
+    if not re.match(r'^[a-zA-Z0-9_ \+\-\*\/\(\)\.\,]*\Z', req.expression):
         raise HTTPException(status_code=400, detail="Invalid expression")
 
     # Strict validation of variable names to prevent lambdify injection
     for v in req.variables:
-        if not re.match(r'^[a-zA-Z_][a-zA-Z0-9_]*$', v):
+        if not re.match(r'^[a-zA-Z_][a-zA-Z0-9_]*\Z', v):
             raise HTTPException(status_code=400, detail=f"Invalid variable name: {v}")
 
     try:
@@ -197,7 +197,7 @@ def check_stability(req: StabilityRequest):
         safe_dict["__builtins__"] = {}
 
         def safe_symbol(name):
-            if not isinstance(name, str) or not re.match(r'^[a-zA-Z_][a-zA-Z0-9_]*$', name):
+            if not isinstance(name, str) or not re.match(r'^[a-zA-Z_][a-zA-Z0-9_]*\Z', name):
                 raise ValueError(f"Invalid Symbol name: {name}")
             return sp.Symbol(name)
         safe_dict["Symbol"] = safe_symbol
