@@ -132,6 +132,7 @@ label:hover #kbd-s {
 .kbd-active#kbd-r {
     transform: translateX(-50%) scale(0.85);
     background-color: rgba(255,255,255,0.2);
+    opacity: 1 !important;
 }
 
 /* 🎨 Palette: Visual "Paused" Badge for 3D View */

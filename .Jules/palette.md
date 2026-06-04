@@ -126,3 +126,7 @@
 ## 2026-05-30 - Fallback for JS-Heavy Applications
 **Learning:** For web applications that are fundamentally un-renderable without JavaScript (like those relying exclusively on client-side WebGL or Canvas rendering), users with JS disabled (or certain web crawlers/assistive tech) will encounter a confusing, completely blank page with no indication of why it failed to load.
 **Action:** Always include a prominently styled `<noscript>` block immediately inside the `<body>` tag for JS-heavy applications to provide a polite, explicitly clear warning that JavaScript is required for the application to function.
+
+## 2026-06-04 - Invisible Tactile Feedback for Programmatic Focus
+**Learning:** When using JavaScript `.focus()` to programmatically focus a button (e.g., as part of a global keyboard shortcut), modern browsers typically do not trigger the `:focus-visible` CSS pseudo-class, as they attempt to differentiate between keyboard navigation and script-driven focus. If a tooltip or shortcut badge relies on `:focus-visible` (e.g., `opacity: 1`) to appear, it will remain invisible during the shortcut activation.
+**Action:** If you use a `.kbd-active` class to trigger an active state animation for tactile feedback when a shortcut is pressed, explicitly include `opacity: 1 !important` (or the equivalent visibility property) in the `.kbd-active` class itself to ensure the badge appears regardless of whether `:focus-visible` triggers.
