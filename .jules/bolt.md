@@ -27,3 +27,7 @@
 ## 2025-02-21 - Debouncing Shared WebGL Update Hooks
 **Learning:** Exposing a shared, expensive WebGL update function (like tearing down and recreating geometries) to multiple decoupled UI update events leads to severe performance degradation if those events fire concurrently (e.g., via `Promise.all` after a system select change). The canvas re-renders redundantly multiple times in the same tick.
 **Action:** Always wrap shared external UI triggers targeting WebGL updates with a `setTimeout` or `requestAnimationFrame` debounce to batch synchronous multi-source invocations into a single render tick.
+
+## 2025-02-21 - Caching Method Lookups in Tight Loops
+**Learning:** In tight Python loops (such as numerical integration loops in `DynamicalSystem.simulate`), repeatedly calling instance methods (e.g., `self.step(...)`) incurs noticeable dynamic attribute resolution overhead (`getattr`) on every iteration.
+**Action:** Always assign frequently called class methods to a local variable (e.g., `step_fn = self.step`) before the loop. This caches the method lookup and provides a measurable speedup in compute-bound loops.

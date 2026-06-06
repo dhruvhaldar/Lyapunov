@@ -34,6 +34,9 @@ class DynamicalSystem:
         # ⚡ Bolt: Convert t_values to a Python list for much faster scalar access in loop, avoiding numpy indexing overhead.
         t_list = t_values.tolist() if hasattr(t_values, 'tolist') else list(t_values)
 
+        # ⚡ Bolt: Caching method lookups before tight integration loop to avoid expensive dynamic attribute resolution
+        step_fn = self.step
+
         # ⚡ Bolt: Hoisted controller conditional checks outside the hot simulation loop.
         if controller:
             # Determine if controller needs time argument
@@ -49,18 +52,18 @@ class DynamicalSystem:
                 for i in range(1, n_steps):
                     t = t_list[i-1]
                     u = compute(current_state, t)
-                    current_state = self.step(t, current_state, u, dt)
+                    current_state = step_fn(t, current_state, u, dt)
                     states[i] = current_state
             else:
                 for i in range(1, n_steps):
                     t = t_list[i-1]
                     u = compute(current_state)
-                    current_state = self.step(t, current_state, u, dt)
+                    current_state = step_fn(t, current_state, u, dt)
                     states[i] = current_state
         else:
             for i in range(1, n_steps):
                 t = t_list[i-1]
-                current_state = self.step(t, current_state, 0.0, dt)
+                current_state = step_fn(t, current_state, 0.0, dt)
                 states[i] = current_state
 
         # Add a dummy ref for now if needed by tests, or handle it in specific tests
