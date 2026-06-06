@@ -1,19 +1,27 @@
 let scene, camera, renderer, currentMesh;
+let isHovered = false;
+let isFocused = false;
+let isTouched = false;
 let isPausedByUser = false;
 let needsRender = true;
+
+function updatePauseState() {
+    isPausedByUser = isHovered || isFocused || isTouched;
+    needsRender = true;
+}
 
 function init3D(containerId) {
     const container = document.getElementById(containerId);
     if (!container) return;
 
     container.title = "Hover, focus, or touch to pause animation";
-    container.addEventListener('mouseenter', () => { isPausedByUser = true; needsRender = true; });
-    container.addEventListener('focus', () => { isPausedByUser = true; needsRender = true; });
-    container.addEventListener('touchstart', (e) => { isPausedByUser = true; needsRender = true; });
-    container.addEventListener('mouseleave', () => { isPausedByUser = false; needsRender = true; });
-    container.addEventListener('blur', () => { isPausedByUser = false; needsRender = true; });
-    container.addEventListener('touchend', (e) => { isPausedByUser = false; needsRender = true; });
-    container.addEventListener('touchcancel', (e) => { isPausedByUser = false; needsRender = true; });
+    container.addEventListener('mouseenter', () => { isHovered = true; updatePauseState(); });
+    container.addEventListener('mouseleave', () => { isHovered = false; updatePauseState(); });
+    container.addEventListener('focus', () => { isFocused = true; updatePauseState(); });
+    container.addEventListener('blur', () => { isFocused = false; updatePauseState(); });
+    container.addEventListener('touchstart', (e) => { isTouched = true; updatePauseState(); });
+    container.addEventListener('touchend', (e) => { isTouched = false; updatePauseState(); });
+    container.addEventListener('touchcancel', (e) => { isTouched = false; updatePauseState(); });
 
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
