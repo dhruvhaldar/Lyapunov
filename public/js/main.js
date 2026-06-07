@@ -3,18 +3,7 @@
             const systemSelect = document.getElementById('system-select');
 
             // Add a visually hidden element for a11y announcements
-            const announcer = document.createElement('div');
-            announcer.setAttribute('aria-live', 'polite');
-            announcer.style.position = 'absolute';
-            announcer.style.width = '1px';
-            announcer.style.height = '1px';
-            announcer.style.padding = '0';
-            announcer.style.margin = '-1px';
-            announcer.style.overflow = 'hidden';
-            announcer.style.clip = 'rect(0, 0, 0, 0)';
-            announcer.style.whiteSpace = 'nowrap';
-            announcer.style.border = '0';
-            document.body.appendChild(announcer);
+            const announcer = document.getElementById('a11y-announcer');
 
             function syncContextLabels() {
                 const originalText = systemSelect.options[systemSelect.selectedIndex].text;
