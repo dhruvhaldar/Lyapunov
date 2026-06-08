@@ -27,7 +27,7 @@ class DynamicalSystem:
         n_steps = len(t_values)
 
         # ⚡ Bolt: Pre-allocate numpy array of known size instead of repeatedly appending to a dynamic python list, preventing list reallocation overhead.
-        states = np.zeros((n_steps, self.dimension))
+        states = np.empty((n_steps, self.dimension))
         states[0] = initial_state
         current_state = np.array(initial_state)
 
