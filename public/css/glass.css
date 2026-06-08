@@ -160,8 +160,7 @@ label:hover #kbd-s {
     z-index: 10;
 }
 
-[id="3d-view"]:hover .paused-badge,
-[id="3d-view"]:focus-visible .paused-badge {
+[id="3d-view"].is-paused .paused-badge {
     opacity: 1;
     transform: translateY(0);
 }
