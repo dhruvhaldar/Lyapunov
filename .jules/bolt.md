@@ -1,3 +1,6 @@
+## 2025-02-21 - State Array Preallocation
+**Learning:** Initializing large multidimensional NumPy arrays in tight loops with `np.zeros()` incurs significant overhead from writing zeros to memory.
+**Action:** Use `np.empty()` when pre-allocating state history arrays that are guaranteed to be fully overwritten immediately in a subsequent mapping or integration loop.
 ## 2024-05-25 - Safe JSON Serialization
 **Learning:** When serializing dense numerical arrays or large datasets via `json.dumps()` in API responses, include `separators=(',', ':')` to eliminate default whitespace. This simple optimization significantly reduces the payload size (often by ~5-15%) and speeds up network transmission.
 **Action:** Always verify if `json.dumps()` calls for heavy payloads are using optimized separators.
