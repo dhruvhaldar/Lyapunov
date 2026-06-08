@@ -8,6 +8,16 @@ let needsRender = true;
 function updatePauseState() {
     isPausedByUser = isHovered || isFocused || isTouched;
     needsRender = true;
+
+    // 🎨 Palette: Sync visual feedback class to ensure consistency across all input modalities (hover, focus, touch)
+    const container = document.getElementById('3d-view');
+    if (container) {
+        if (isPausedByUser) {
+            container.classList.add('is-paused');
+        } else {
+            container.classList.remove('is-paused');
+        }
+    }
 }
 
 function init3D(containerId) {

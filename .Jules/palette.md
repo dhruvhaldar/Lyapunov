@@ -137,3 +137,7 @@
 ## 2024-05-09 - Hardcoding aria-live regions for initial announcement reliability
 **Learning:** Programmatically generating and appending an `aria-live` element during the `DOMContentLoaded` event often causes screen readers (like VoiceOver) to miss the very first announcement (e.g., initial loading states). Screen readers build their accessibility tree on page parse, and late additions of live regions are not always reliably registered to announce immediate text content changes.
 **Action:** Always hardcode structural `aria-live` announcer regions directly into the static HTML `<body>` to ensure they are present in the DOM before any JavaScript attempts to update their `textContent`.
+
+## 2026-06-08 - Visual Feedback Sync for Multi-Modal Interactions
+**Learning:** When interactive elements handle multiple modalities (hover, focus, touch) and track them with JS to determine an active state (like `isPausedByUser`), relying on pure CSS pseudo-classes (`:hover`, `:focus-visible`) for visual feedback leads to mismatched states. For example, a touch event on a mobile device may trigger the JS pause logic but fail to trigger the CSS `:hover` or `:focus-visible` pseudo-class, rendering the element paused but without the visual "Paused" indicator.
+**Action:** Always sync visual feedback classes (e.g., adding `.is-paused` via JS) directly to the logical interaction state rather than relying on CSS pseudo-classes when dealing with custom multi-modal input handling.
