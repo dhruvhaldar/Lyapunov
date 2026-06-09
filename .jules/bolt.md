@@ -34,3 +34,7 @@
 ## 2025-02-21 - Caching Method Lookups in Tight Loops
 **Learning:** In tight Python loops (such as numerical integration loops in `DynamicalSystem.simulate`), repeatedly calling instance methods (e.g., `self.step(...)`) incurs noticeable dynamic attribute resolution overhead (`getattr`) on every iteration.
 **Action:** Always assign frequently called class methods to a local variable (e.g., `step_fn = self.step`) before the loop. This caches the method lookup and provides a measurable speedup in compute-bound loops.
+
+## 2025-02-21 - Complex NumPy Array Magnitude
+**Learning:** When computing magnitudes for complex NumPy arrays (e.g., `np.abs(z) < radius`), do not replace it with squared distance `(z.real**2 + z.imag**2) < radius**2`. While mathematically avoiding square roots, the squared distance approach allocates multiple temporary intermediate arrays in Python, making it slower than NumPy's optimized, C-level `np.abs()` vectorized hypotenuse calculation.
+**Action:** Always use `np.abs()` for calculating the magnitude of complex NumPy arrays rather than manual squared distance arithmetic.

@@ -84,8 +84,10 @@ def circle_criterion(G_jw, alpha, beta):
     center = (p1 + p2) / 2.0
     radius = abs(p1 - p2) / 2.0
 
-    # ⚡ Bolt: Replace expensive np.abs() (which computes square roots) with squared distance calculation
-    if ((G_jw.real - center)**2 + G_jw.imag**2).min() < radius**2:
+    # ⚡ Bolt: Use np.abs() for complex magnitudes. It is a highly optimized C-level
+    # vectorized hypotenuse calculation that avoids multiple temporary array allocations
+    # caused by `(G_jw.real - center)**2 + G_jw.imag**2`, making it significantly faster.
+    if np.abs(G_jw - center).min() < radius:
         return False
 
     return True
