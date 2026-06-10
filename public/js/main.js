@@ -32,6 +32,12 @@
                 });
             }
 
+            // Read hash to initialize previousValue correctly before the change event listener is attached
+            const initialHash = window.location.hash.substring(1);
+            if (initialHash && Array.from(systemSelect.options).some(opt => opt.value === initialHash)) {
+                systemSelect.value = initialHash;
+            }
+
             let previousValue = systemSelect.value;
 
             systemSelect.addEventListener('change', () => {
@@ -78,6 +84,7 @@
                     // Announce success
                     announcer.textContent = `System ${originalText} loaded successfully.`;
                     previousValue = sys;
+                    window.history.replaceState(null, null, '#' + sys);
                 }).catch(error => {
                     announcer.textContent = `Error loading system ${originalText}.`;
 
