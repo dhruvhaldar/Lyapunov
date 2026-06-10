@@ -68,3 +68,8 @@
 **Vulnerability:** Arbitrary Code Execution (RCE) via `sympy.parse_expr()`. The application used `re.match` with the `$` anchor to validate user inputs against safe characters (e.g., `re.match(r'^[a-zA-Z0-9_]*$', input)`). In Python's `re` module, `$` matches either the end of the string or just before a newline at the end of the string. An attacker could bypass the validation by appending a newline followed by malicious code.
 **Learning:** `$` is not a strict end-of-string anchor in Python's `re` module and can allow a trailing newline to bypass validation logic if not handled carefully, potentially leading to injection vulnerabilities.
 **Prevention:** Use the `\Z` anchor instead of `$` in `re.match` or `re.search` when you need to ensure the pattern strictly matches the absolute end of the string without any trailing newline exceptions.
+
+## 2024-06-10 - SRI Mismatch Risk on Floating CDN URLs
+**Vulnerability:** Application breakage (Denial of Service). Adding Subresource Integrity (SRI) hashes to unversioned or floating-version CDN URLs (e.g., `https://cdn.jsdelivr.net/npm/chart.js`) causes the browser to block the script as soon as the library maintainer releases a new version, since the new file content will not match the hardcoded SRI hash.
+**Learning:** SRI hashes mathematically bind a script tag to a specific file's exact contents. If the URL points to a dynamic resource, the hash will eventually fail.
+**Prevention:** Before implementing SRI, ensure the CDN URL is explicitly pinned to an exact version (e.g., `chart.js@4.4.1/dist/chart.umd.js`).
