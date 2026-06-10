@@ -141,3 +141,7 @@
 ## 2026-06-08 - Visual Feedback Sync for Multi-Modal Interactions
 **Learning:** When interactive elements handle multiple modalities (hover, focus, touch) and track them with JS to determine an active state (like `isPausedByUser`), relying on pure CSS pseudo-classes (`:hover`, `:focus-visible`) for visual feedback leads to mismatched states. For example, a touch event on a mobile device may trigger the JS pause logic but fail to trigger the CSS `:hover` or `:focus-visible` pseudo-class, rendering the element paused but without the visual "Paused" indicator.
 **Action:** Always sync visual feedback classes (e.g., adding `.is-paused` via JS) directly to the logical interaction state rather than relying on CSS pseudo-classes when dealing with custom multi-modal input handling.
+
+## 2026-06-10 - SPA Bookmarkability via URL Hash Syncing
+**Learning:** Single Page Applications (SPAs) that heavily rely on client-side rendering can frustrate users if the URL does not update to reflect their current configuration. Without syncing primary state variables to the URL, users lose the ability to bookmark specific views or share them easily with colleagues, which is a major UX regression compared to traditional multi-page navigation.
+**Action:** When implementing primary view controllers (like a top-level system model selector), always ensure the current configuration state is synced to the URL hash (e.g., using `window.history.replaceState`), and ensure the application can read that hash on initial load to restore the user's context seamlessly.
