@@ -28,8 +28,10 @@ button, select {
     transition: all 0.2s ease;
 }
 
-button:hover:not(:disabled):not([aria-disabled="true"]), select:hover:not(:disabled):not([aria-disabled="true"]) {
-    background: rgba(255, 255, 255, 0.2);
+@media (hover: hover) {
+    button:hover:not(:disabled):not([aria-disabled="true"]), select:hover:not(:disabled):not([aria-disabled="true"]) {
+        background: rgba(255, 255, 255, 0.2);
+    }
 }
 
 button:active:not(:disabled):not([aria-disabled="true"]), select:active:not(:disabled):not([aria-disabled="true"]) {
@@ -111,7 +113,6 @@ main[aria-busy="true"]::after {
     pointer-events: none;
 }
 
-#refresh-btn:hover #kbd-r,
 #refresh-btn:focus-visible #kbd-r {
     opacity: 1 !important;
 }
@@ -120,8 +121,14 @@ label {
     cursor: pointer;
 }
 
-label:hover #kbd-s {
-    background: rgba(255,255,255,0.2);
+@media (hover: hover) {
+    #refresh-btn:hover #kbd-r {
+        opacity: 1 !important;
+    }
+
+    label:hover #kbd-s {
+        background: rgba(255,255,255,0.2);
+    }
 }
 
 .kbd-active#kbd-s {
@@ -170,9 +177,11 @@ label:hover #kbd-s {
     transition: stroke-width 0.2s ease, stroke 0.2s ease;
 }
 
-.vector-line:hover {
-    stroke: rgba(0, 255, 204, 1);
-    stroke-width: 3px;
+@media (hover: hover) {
+    .vector-line:hover {
+        stroke: rgba(0, 255, 204, 1);
+        stroke-width: 3px;
+    }
 }
 
 /* 🎨 Palette: Interactive Chart Feedback */
@@ -184,4 +193,10 @@ label:hover #kbd-s {
 /* 🎨 Palette: Keyboard shortcut visual feedback on focus */
 label:has(+ select:focus-visible) #kbd-s {
     background: rgba(255,255,255,0.2);
+}
+
+@media (pointer: coarse) {
+    .kbd-shortcut {
+        display: none !important;
+    }
 }
