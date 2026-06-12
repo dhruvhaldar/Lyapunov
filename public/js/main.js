@@ -24,11 +24,32 @@
             }
 
             const refreshBtn = document.getElementById('refresh-btn');
+            const copyLinkBtn = document.getElementById('copy-link-btn');
 
             if (refreshBtn) {
                 refreshBtn.addEventListener('click', () => {
                     if (refreshBtn.getAttribute('aria-disabled') === 'true') return;
                     systemSelect.dispatchEvent(new Event('change'));
+                });
+            }
+
+            if (copyLinkBtn) {
+                copyLinkBtn.addEventListener('click', () => {
+                    if (copyLinkBtn.getAttribute('aria-disabled') === 'true') return;
+
+                    navigator.clipboard.writeText(window.location.href).then(() => {
+                        announcer.textContent = 'Link copied to clipboard';
+
+                        const originalSvg = copyLinkBtn.innerHTML;
+                        copyLinkBtn.innerHTML = `<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+
+                        setTimeout(() => {
+                            copyLinkBtn.innerHTML = originalSvg;
+                        }, 2000);
+                    }).catch(err => {
+                        console.error('Failed to copy link: ', err);
+                        announcer.textContent = 'Failed to copy link';
+                    });
                 });
             }
 
@@ -64,6 +85,10 @@
                     refreshBtn.title = "Loading...";
                     const svg = refreshBtn.querySelector('svg');
                     if (svg) svg.classList.add('spin-icon');
+                }
+
+                if (copyLinkBtn) {
+                    copyLinkBtn.setAttribute('aria-disabled', 'true');
                 }
 
                 announcer.textContent = `Loading system ${originalText}...`;
@@ -128,6 +153,10 @@
                         refreshBtn.title = "Restart simulation (R)";
                         const svg = refreshBtn.querySelector('svg');
                         if (svg) svg.classList.remove('spin-icon');
+                    }
+
+                    if (copyLinkBtn) {
+                        copyLinkBtn.removeAttribute('aria-disabled');
                     }
 
                     if (mainContent) {
