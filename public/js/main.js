@@ -40,11 +40,18 @@
                     navigator.clipboard.writeText(window.location.href).then(() => {
                         announcer.textContent = 'Link copied to clipboard';
 
-                        const originalSvg = copyLinkBtn.innerHTML;
-                        copyLinkBtn.innerHTML = `<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+                        const originalHtml = copyLinkBtn.innerHTML;
+                        const originalTitle = copyLinkBtn.getAttribute('title');
+                        const originalAriaLabel = copyLinkBtn.getAttribute('aria-label');
+
+                        copyLinkBtn.innerHTML = `<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg><kbd id="kbd-c" class="kbd-shortcut" aria-hidden="true">C</kbd>`;
+                        copyLinkBtn.setAttribute('title', 'Copied!');
+                        copyLinkBtn.setAttribute('aria-label', 'Copied!');
 
                         setTimeout(() => {
-                            copyLinkBtn.innerHTML = originalSvg;
+                            copyLinkBtn.innerHTML = originalHtml;
+                            if (originalTitle) copyLinkBtn.setAttribute('title', originalTitle);
+                            if (originalAriaLabel) copyLinkBtn.setAttribute('aria-label', originalAriaLabel);
                         }, 2000);
                     }).catch(err => {
                         console.error('Failed to copy link: ', err);
@@ -223,6 +230,23 @@
 
                         // Tactile visual feedback
                         const kbd = document.getElementById('kbd-r');
+                        if (kbd) {
+                            kbd.classList.add('kbd-active');
+                            setTimeout(() => {
+                                kbd.classList.remove('kbd-active');
+                            }, 150);
+                        }
+                    }
+                }
+
+                if (e.key.toLowerCase() === 'c' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA' && document.activeElement.tagName !== 'SELECT') {
+                    e.preventDefault();
+                    if (copyLinkBtn && copyLinkBtn.getAttribute('aria-disabled') !== 'true') {
+                        copyLinkBtn.focus();
+                        copyLinkBtn.click();
+
+                        // Tactile visual feedback
+                        const kbd = document.getElementById('kbd-c');
                         if (kbd) {
                             kbd.classList.add('kbd-active');
                             setTimeout(() => {
