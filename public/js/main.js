@@ -34,15 +34,19 @@
             }
 
             if (copyLinkBtn) {
+                // Pre-store original state to prevent transient state corruption on rapid clicks
+                const originalHtml = copyLinkBtn.innerHTML;
+                const originalTitle = copyLinkBtn.getAttribute('title');
+                const originalAriaLabel = copyLinkBtn.getAttribute('aria-label');
+
                 copyLinkBtn.addEventListener('click', () => {
                     if (copyLinkBtn.getAttribute('aria-disabled') === 'true') return;
 
+                    // Prevent double clicks during transient success state
+                    copyLinkBtn.setAttribute('aria-disabled', 'true');
+
                     navigator.clipboard.writeText(window.location.href).then(() => {
                         announcer.textContent = 'Link copied to clipboard';
-
-                        const originalHtml = copyLinkBtn.innerHTML;
-                        const originalTitle = copyLinkBtn.getAttribute('title');
-                        const originalAriaLabel = copyLinkBtn.getAttribute('aria-label');
 
                         copyLinkBtn.innerHTML = `<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg><kbd id="kbd-c" class="kbd-shortcut" aria-hidden="true">C</kbd>`;
                         copyLinkBtn.setAttribute('title', 'Copied!');
@@ -52,10 +56,12 @@
                             copyLinkBtn.innerHTML = originalHtml;
                             if (originalTitle) copyLinkBtn.setAttribute('title', originalTitle);
                             if (originalAriaLabel) copyLinkBtn.setAttribute('aria-label', originalAriaLabel);
+                            copyLinkBtn.removeAttribute('aria-disabled');
                         }, 2000);
                     }).catch(err => {
                         console.error('Failed to copy link: ', err);
                         announcer.textContent = 'Failed to copy link';
+                        copyLinkBtn.removeAttribute('aria-disabled');
                     });
                 });
             }
@@ -96,6 +102,7 @@
 
                 if (copyLinkBtn) {
                     copyLinkBtn.setAttribute('aria-disabled', 'true');
+                    copyLinkBtn.title = "Loading...";
                 }
 
                 announcer.textContent = `Loading system ${originalText}...`;
@@ -164,6 +171,7 @@
 
                     if (copyLinkBtn) {
                         copyLinkBtn.removeAttribute('aria-disabled');
+                        copyLinkBtn.title = "Copy link to current state (C)";
                     }
 
                     if (mainContent) {
