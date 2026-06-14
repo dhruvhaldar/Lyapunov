@@ -157,3 +157,7 @@
 ## 2026-06-13 - Syncing Transient Visual States with Accessibility Semantics
 **Learning:** When displaying temporary visual success states (like turning a "Copy Link" icon into a green checkmark for 2 seconds), leaving the original `title` and `aria-label` (e.g., "Copy link to current state") unchanged creates severe cognitive dissonance. Sighted users hovering over the checkmark see a tooltip telling them to "Copy link" even though it just succeeded, and screen reader users navigating back to the button during the animation hear the original action prompt instead of the success confirmation.
 **Action:** Always explicitly sync transient visual interaction states with their corresponding accessibility attributes. When injecting temporary success HTML, simultaneously update `title` and `aria-label` to match the new visual semantics (e.g., "Copied!"), and ensure they are reliably reverted when the visual state resets.
+
+## 2026-06-14 - Transient State Corruption on Rapid Interaction
+**Learning:** When temporarily replacing a button's `innerHTML` to show a transient success state (like a checkmark), storing the original HTML inside the click event listener causes state corruption if the user clicks rapidly before the timeout resets. The "original" HTML becomes the temporary checkmark, permanently breaking the UI.
+**Action:** Always cache the original state variables (`innerHTML`, `title`, etc.) outside the event listener. Additionally, apply `aria-disabled="true"` during the transient state to prevent spam clicks and protect the interaction cycle.
