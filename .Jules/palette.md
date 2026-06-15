@@ -161,3 +161,7 @@
 ## 2026-06-14 - Transient State Corruption on Rapid Interaction
 **Learning:** When temporarily replacing a button's `innerHTML` to show a transient success state (like a checkmark), storing the original HTML inside the click event listener causes state corruption if the user clicks rapidly before the timeout resets. The "original" HTML becomes the temporary checkmark, permanently breaking the UI.
 **Action:** Always cache the original state variables (`innerHTML`, `title`, etc.) outside the event listener. Additionally, apply `aria-disabled="true"` during the transient state to prevent spam clicks and protect the interaction cycle.
+
+## 2026-06-15 - Decoupling Success States from Disabled Styles
+**Learning:** When using `aria-disabled="true"` as an interaction guard to prevent double-clicks during a transient success animation (like a checkmark), the element inadvertently inherits generic disabled styles (e.g., `opacity: 0.5`, `cursor: wait`). This dims the success indicator and provides confusing cursor feedback, breaking the positive confirmation experience.
+**Action:** When applying an interaction guard for a success state, apply a distinct modifier class (e.g., `.is-success`) to explicitly override the generic disabled opacity and cursor, ensuring the success visual remains vibrant and clear.

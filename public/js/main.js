@@ -51,12 +51,14 @@
                         copyLinkBtn.innerHTML = `<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg><kbd id="kbd-c" class="kbd-shortcut" aria-hidden="true">C</kbd>`;
                         copyLinkBtn.setAttribute('title', 'Copied!');
                         copyLinkBtn.setAttribute('aria-label', 'Copied!');
+                        copyLinkBtn.classList.add('is-success');
 
                         setTimeout(() => {
                             copyLinkBtn.innerHTML = originalHtml;
                             if (originalTitle) copyLinkBtn.setAttribute('title', originalTitle);
                             if (originalAriaLabel) copyLinkBtn.setAttribute('aria-label', originalAriaLabel);
                             copyLinkBtn.removeAttribute('aria-disabled');
+                            copyLinkBtn.classList.remove('is-success');
                         }, 2000);
                     }).catch(err => {
                         console.error('Failed to copy link: ', err);
