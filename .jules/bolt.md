@@ -38,3 +38,6 @@
 ## 2025-02-21 - Complex NumPy Array Magnitude
 **Learning:** When computing magnitudes for complex NumPy arrays (e.g., `np.abs(z) < radius`), do not replace it with squared distance `(z.real**2 + z.imag**2) < radius**2`. While mathematically avoiding square roots, the squared distance approach allocates multiple temporary intermediate arrays in Python, making it slower than NumPy's optimized, C-level `np.abs()` vectorized hypotenuse calculation.
 **Action:** Always use `np.abs()` for calculating the magnitude of complex NumPy arrays rather than manual squared distance arithmetic.
+## 2025-02-21 - Array Flattening Memory Views
+**Learning:** `numpy.flatten()` always allocates new memory and returns a copy of the array. For read-only operations or immediate serialization (like `.tolist()`), this copying is an unnecessary bottleneck for large dense arrays.
+**Action:** Use `numpy.ravel()` instead of `.flatten()` when preparing multidimensional arrays for read-only operations or serialization. `.ravel()` returns a memory view whenever possible, avoiding expensive memory copying overhead and providing measurable speedups.
