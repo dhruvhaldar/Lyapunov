@@ -165,3 +165,7 @@
 ## 2026-06-15 - Decoupling Success States from Disabled Styles
 **Learning:** When using `aria-disabled="true"` as an interaction guard to prevent double-clicks during a transient success animation (like a checkmark), the element inadvertently inherits generic disabled styles (e.g., `opacity: 0.5`, `cursor: wait`). This dims the success indicator and provides confusing cursor feedback, breaking the positive confirmation experience.
 **Action:** When applying an interaction guard for a success state, apply a distinct modifier class (e.g., `.is-success`) to explicitly override the generic disabled opacity and cursor, ensuring the success visual remains vibrant and clear.
+
+## 2026-06-16 - Auditory Feedback for Implicit State Changes
+**Learning:** When an element implicitly changes system state purely by receiving focus, hover, or touch (such as pausing an animation), sighted users might receive feedback via visual indicators (like a paused badge). However, screen reader users do not receive auditory confirmation because these visual indicators are often marked with `aria-hidden="true"` to prevent screen readers from reading them constantly as they navigate.
+**Action:** Always explicitly announce implicit state changes via an `aria-live` region to provide feedback parity for screen reader users when visual indicators are inaccessible. Keep track of the previous state to ensure we only announce when the state actually *changes*, rather than on every continuous interaction event.
