@@ -41,3 +41,6 @@
 ## 2025-02-21 - Array Flattening Memory Views
 **Learning:** `numpy.flatten()` always allocates new memory and returns a copy of the array. For read-only operations or immediate serialization (like `.tolist()`), this copying is an unnecessary bottleneck for large dense arrays.
 **Action:** Use `numpy.ravel()` instead of `.flatten()` when preparing multidimensional arrays for read-only operations or serialization. `.ravel()` returns a memory view whenever possible, avoiding expensive memory copying overhead and providing measurable speedups.
+## 2025-02-21 - Python Float vs NumPy Array Pow Optimization
+**Learning:** When performing squaring operations, explicit multiplication (`x*x`) is significantly faster than the power operator (`x**2`) for standard Python scalar floats (e.g., variables unpacked via `.tolist()`), yielding ~2x speedups. However, this is NOT true for NumPy arrays, where the vectorized `x**2` is highly optimized in C and faster than `x*x`.
+**Action:** Always differentiate between Python scalars and NumPy arrays when optimizing math operations. Use `x*x` for scalar variables in tight loops, but retain `x**2` for native NumPy array/meshgrid operations.
