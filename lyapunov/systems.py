@@ -81,7 +81,8 @@ class VanDerPol(DynamicalSystem):
         if getattr(state, 'ndim', 0) == 1:
             try:
                 x, y = state.tolist()
-                return np.array([y, self.mu * (1 - x**2) * y - x + u])
+                # ⚡ Bolt: Replaced x**2 with x*x for scalar floats which is significantly faster in tight loops.
+                return np.array([y, self.mu * (1 - x*x) * y - x + u])
             except TypeError:
                 pass
         return np.array([state[1], self.mu * (1 - state[0]**2) * state[1] - state[0] + u])
@@ -94,16 +95,17 @@ class VanDerPol(DynamicalSystem):
                 dt2, dt6 = dt / 2.0, dt / 6.0
                 mu = self.mu
 
-                k1x, k1y = y, mu*(1 - x**2)*y - x + u
+                # ⚡ Bolt: Replaced x**2 with x*x for scalar floats which is significantly faster in tight loops.
+                k1x, k1y = y, mu*(1 - x*x)*y - x + u
                 x2, y2 = x + k1x*dt2, y + k1y*dt2
 
-                k2x, k2y = y2, mu*(1 - x2**2)*y2 - x2 + u
+                k2x, k2y = y2, mu*(1 - x2*x2)*y2 - x2 + u
                 x3, y3 = x + k2x*dt2, y + k2y*dt2
 
-                k3x, k3y = y3, mu*(1 - x3**2)*y3 - x3 + u
+                k3x, k3y = y3, mu*(1 - x3*x3)*y3 - x3 + u
                 x4, y4 = x + k3x*dt, y + k3y*dt
 
-                k4x, k4y = y4, mu*(1 - x4**2)*y4 - x4 + u
+                k4x, k4y = y4, mu*(1 - x4*x4)*y4 - x4 + u
 
                 return np.array([x + dt6*(k1x + 2.0*(k2x + k3x) + k4x), y + dt6*(k1y + 2.0*(k2y + k3y) + k4y)])
             except TypeError:
