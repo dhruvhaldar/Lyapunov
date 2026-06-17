@@ -48,6 +48,14 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         content={"detail": sanitized_errors},
     )
 
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    print(f"Unhandled Server Error: {exc}")
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "An internal server error occurred."}
+    )
+
 # Simple in-memory rate limiter to prevent DoS attacks
 RATE_LIMIT_WINDOW = 60 # seconds
 MAX_REQUESTS_PER_WINDOW = 100
