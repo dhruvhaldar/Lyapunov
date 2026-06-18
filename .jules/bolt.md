@@ -44,3 +44,7 @@
 ## 2025-02-21 - Python Float vs NumPy Array Pow Optimization
 **Learning:** When performing squaring operations, explicit multiplication (`x*x`) is significantly faster than the power operator (`x**2`) for standard Python scalar floats (e.g., variables unpacked via `.tolist()`), yielding ~2x speedups. However, this is NOT true for NumPy arrays, where the vectorized `x**2` is highly optimized in C and faster than `x*x`.
 **Action:** Always differentiate between Python scalars and NumPy arrays when optimizing math operations. Use `x*x` for scalar variables in tight loops, but retain `x**2` for native NumPy array/meshgrid operations.
+
+## 2025-02-21 - Reciprocal Multiplication vs Division
+**Learning:** In tight loops, performing multiple divisions with the same denominator (e.g., normalising vectors `x/mag` and `y/mag`) is significantly slower than precomputing the reciprocal scale factor (`scale = 1/mag`) and multiplying (`x * scale`, `y * scale`). Division operations are computationally expensive at the hardware level compared to multiplication.
+**Action:** Always refactor multiple divisions by a common denominator in hot loops into a single reciprocal division followed by multiplications.
