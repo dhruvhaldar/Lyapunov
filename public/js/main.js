@@ -76,6 +76,15 @@
 
             let previousValue = systemSelect.value;
 
+            // Listen for hash changes (e.g., from browser back/forward navigation)
+            window.addEventListener('hashchange', () => {
+                const newHash = window.location.hash.substring(1);
+                if (newHash && newHash !== systemSelect.value && Array.from(systemSelect.options).some(opt => opt.value === newHash)) {
+                    systemSelect.value = newHash;
+                    systemSelect.dispatchEvent(new Event('change'));
+                }
+            });
+
             systemSelect.addEventListener('change', () => {
                 if (systemSelect.getAttribute('aria-disabled') === 'true') {
                     systemSelect.value = previousValue; // Revert visually to prevent confusion
@@ -125,7 +134,12 @@
                     // Announce success
                     announcer.textContent = `System ${originalText} loaded successfully.`;
                     previousValue = sys;
-                    window.history.replaceState(null, null, '#' + sys);
+                    // Only push state if the hash isn't already correct, to prevent duplicate history entries
+                    if (window.location.hash !== '#' + sys) {
+                        window.history.pushState(null, null, '#' + sys);
+                    } else {
+                        window.history.replaceState(null, null, '#' + sys);
+                    }
                 }).catch(error => {
                     announcer.textContent = `Error loading system ${originalText}.`;
 
