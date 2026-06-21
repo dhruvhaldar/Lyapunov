@@ -211,3 +211,20 @@ label:has(+ select:focus-visible) #kbd-s {
         display: none !important;
     }
 }
+
+/* 🎨 Palette: Data exploration UX - crosshair cursor for precision and tactile hover feedback for dense vector fields */
+#phase-portrait,
+#time-response-chart {
+    cursor: crosshair;
+}
+
+.vector-line {
+    transition: stroke 0.15s ease, stroke-width 0.15s ease;
+}
+
+@media (hover: hover) {
+    .vector-line:hover {
+        stroke: #ffffff !important;
+        stroke-width: 2.5px !important;
+    }
+}
