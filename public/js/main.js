@@ -2,6 +2,22 @@
         document.addEventListener('DOMContentLoaded', () => {
             const systemSelect = document.getElementById('system-select');
 
+            // 🎨 Palette: Intercept skip link to prevent hash collision with SPA routing
+            const skipLink = document.querySelector('.skip-to-content');
+            if (skipLink) {
+                skipLink.addEventListener('click', (e) => {
+                    e.preventDefault(); // Stop native hash mutation
+                    const targetId = skipLink.getAttribute('href').substring(1);
+                    const targetEl = document.getElementById(targetId);
+                    if (targetEl) {
+                        if (!targetEl.hasAttribute('tabindex')) {
+                            targetEl.setAttribute('tabindex', '-1');
+                        }
+                        targetEl.focus();
+                    }
+                });
+            }
+
             // Add a visually hidden element for a11y announcements
             const announcer = document.getElementById('a11y-announcer');
 
