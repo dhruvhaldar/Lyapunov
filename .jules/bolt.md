@@ -48,3 +48,7 @@
 ## 2025-02-21 - Reciprocal Multiplication vs Division
 **Learning:** In tight loops, performing multiple divisions with the same denominator (e.g., normalising vectors `x/mag` and `y/mag`) is significantly slower than precomputing the reciprocal scale factor (`scale = 1/mag`) and multiplying (`x * scale`, `y * scale`). Division operations are computationally expensive at the hardware level compared to multiplication.
 **Action:** Always refactor multiple divisions by a common denominator in hot loops into a single reciprocal division followed by multiplications.
+
+## 2025-02-21 - Caching Instance Attributes in Hot Loops
+**Learning:** Accessing instance attributes like `self.sigma` inside deep numerical loops (e.g. the 4 stages of Runge-Kutta numerical integration) forces Python to repeatedly perform the expensive `LOAD_ATTR` operation. For a method like `Lorenz.step`, multiple attribute accesses happen per step, scaling linearly with duration and severely impacting performance.
+**Action:** Always hoist commonly accessed instance parameters into local variables (using `LOAD_FAST`) right before the core math calculations within the loop/method body.
