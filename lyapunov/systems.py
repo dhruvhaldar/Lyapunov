@@ -223,37 +223,38 @@ class Lorenz(DynamicalSystem):
         if getattr(state, 'ndim', 0) == 1:
             try:
                 x, y, z = state.tolist()
-                dt2 = dt / 2.0
+                # ⚡ Bolt: Hoist instance parameters to local variables to avoid expensive dynamic attribute lookups (LOAD_ATTR) inside the hot loop.
+                dt2, dt6 = dt / 2.0, dt / 6.0
+                sigma, rho, beta = self.sigma, self.rho, self.beta
 
-                k1_x = self.sigma * (y - x)
-                k1_y = x * (self.rho - z) - y
-                k1_z = x * y - self.beta * z
+                k1_x = sigma * (y - x)
+                k1_y = x * (rho - z) - y
+                k1_z = x * y - beta * z
 
                 x2 = x + k1_x * dt2
                 y2 = y + k1_y * dt2
                 z2 = z + k1_z * dt2
 
-                k2_x = self.sigma * (y2 - x2)
-                k2_y = x2 * (self.rho - z2) - y2
-                k2_z = x2 * y2 - self.beta * z2
+                k2_x = sigma * (y2 - x2)
+                k2_y = x2 * (rho - z2) - y2
+                k2_z = x2 * y2 - beta * z2
 
                 x3 = x + k2_x * dt2
                 y3 = y + k2_y * dt2
                 z3 = z + k2_z * dt2
 
-                k3_x = self.sigma * (y3 - x3)
-                k3_y = x3 * (self.rho - z3) - y3
-                k3_z = x3 * y3 - self.beta * z3
+                k3_x = sigma * (y3 - x3)
+                k3_y = x3 * (rho - z3) - y3
+                k3_z = x3 * y3 - beta * z3
 
                 x4 = x + k3_x * dt
                 y4 = y + k3_y * dt
                 z4 = z + k3_z * dt
 
-                k4_x = self.sigma * (y4 - x4)
-                k4_y = x4 * (self.rho - z4) - y4
-                k4_z = x4 * y4 - self.beta * z4
+                k4_x = sigma * (y4 - x4)
+                k4_y = x4 * (rho - z4) - y4
+                k4_z = x4 * y4 - beta * z4
 
-                dt6 = dt / 6.0
                 return np.array([
                     x + dt6 * (k1_x + 2.0 * (k2_x + k3_x) + k4_x),
                     y + dt6 * (k1_y + 2.0 * (k2_y + k3_y) + k4_y),
