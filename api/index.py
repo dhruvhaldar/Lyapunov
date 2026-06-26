@@ -106,7 +106,16 @@ async def rate_limit_middleware(request: Request, call_next):
 
 @app.middleware("http")
 async def add_security_headers(request: Request, call_next):
-    response = await call_next(request)
+    try:
+        response = await call_next(request)
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        print(f"Unhandled Server Error in middleware: {e}")
+        response = JSONResponse(
+            status_code=500,
+            content={"detail": "An internal server error occurred."}
+        )
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["X-Frame-Options"] = "DENY"
     response.headers["X-XSS-Protection"] = "1; mode=block"
