@@ -244,6 +244,14 @@
                 }
             }, true);
 
+
+            // 🎨 Palette: Allow keyboard users to easily dismiss focus and tactile UI states using the Escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && document.activeElement && document.activeElement !== document.body) {
+                    document.activeElement.blur();
+                }
+            });
+
             // Global keyboard shortcut
             document.addEventListener('keydown', (e) => {
                 if (e.ctrlKey || e.metaKey || e.altKey) return; // Prevent hijacking native browser shortcuts like Save (Ctrl+S) or Reload (Ctrl+R)
