@@ -248,7 +248,10 @@
             // 🎨 Palette: Allow keyboard users to easily dismiss focus and tactile UI states using the Escape key
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape' && document.activeElement && document.activeElement !== document.body) {
-                    document.activeElement.blur();
+                    const tag = document.activeElement.tagName;
+                    if (tag !== 'INPUT' && tag !== 'TEXTAREA' && tag !== 'SELECT') {
+                        document.activeElement.blur();
+                    }
                 }
             });
 
