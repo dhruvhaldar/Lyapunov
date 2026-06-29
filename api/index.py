@@ -9,12 +9,16 @@ import os
 import math
 import json
 import time
+import re
+import sympy as sp
 
 # Ensure lyapunov module is accessible
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from lyapunov.systems import VanDerPol, Pendulum, Lorenz
 from lyapunov.analysis import PhasePortrait
+from lyapunov.stability import check_negative_definite
+from sympy.parsing.sympy_parser import parse_expr
 from fastapi.staticfiles import StaticFiles
 from fastapi import Request
 from fastapi.middleware.gzip import GZipMiddleware
@@ -194,9 +198,6 @@ def get_phase_portrait(req: PhasePortraitRequest):
 
 @app.post("/api/check_stability")
 def check_stability(req: StabilityRequest):
-    import re
-    import sympy as sp
-    from lyapunov.stability import check_negative_definite
     # Reject dunder methods to prevent sandbox escape via Python builtins
     if "__" in req.expression or any("__" in v for v in req.variables):
         raise HTTPException(status_code=400, detail="Invalid expression: unsafe characters detected")
@@ -211,7 +212,6 @@ def check_stability(req: StabilityRequest):
 
     try:
         # parsing expression safely to avoid RCE
-        from sympy.parsing.sympy_parser import parse_expr
         allowed_names = ["Symbol", "Integer", "Float", "Rational", "Add", "Mul", "Pow", "sin", "cos", "tan", "exp", "log", "sqrt", "pi", "E"]
         safe_dict = {name: getattr(sp, name) for name in allowed_names}
         safe_dict["__builtins__"] = {}
