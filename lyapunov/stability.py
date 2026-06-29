@@ -1,13 +1,12 @@
 import numpy as np
 import functools
+import sympy as sp
 
 @functools.lru_cache(maxsize=128)
 def _get_lambdified_func(expr, variables_tuple):
-    import sympy as sp
     return sp.lambdify(variables_tuple, expr, "numpy")
 
 def check_negative_definite(expr, variables=None):
-    import sympy as sp
     """
     Checks if a sympy expression is negative semi-definite (<= 0).
     Returns True if it appears to be negative definite/semi-definite.

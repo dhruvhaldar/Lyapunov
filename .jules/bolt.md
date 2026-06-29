@@ -52,3 +52,7 @@
 ## 2025-02-21 - Caching Instance Attributes in Hot Loops
 **Learning:** Accessing instance attributes like `self.sigma` inside deep numerical loops (e.g. the 4 stages of Runge-Kutta numerical integration) forces Python to repeatedly perform the expensive `LOAD_ATTR` operation. For a method like `Lorenz.step`, multiple attribute accesses happen per step, scaling linearly with duration and severely impacting performance.
 **Action:** Always hoist commonly accessed instance parameters into local variables (using `LOAD_FAST`) right before the core math calculations within the loop/method body.
+
+## 2025-03-05 - Endpoint Latency due to Dynamic Imports
+**Learning:** In FastAPI, dynamic or inline imports of heavy modules (like `sympy` or `re`) inside endpoint functions introduce a measurable per-request overhead. Even though Python caches modules in `sys.modules`, the dictionary lookup on every request accumulates latency.
+**Action:** Move all heavy or frequently accessed module imports out of endpoint functions and to the top module level to eliminate per-request overhead and reduce API response latency.
