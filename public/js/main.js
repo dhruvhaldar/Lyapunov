@@ -79,7 +79,19 @@
                     }).catch(err => {
                         console.error('Failed to copy link: ', err);
                         announcer.textContent = 'Failed to copy link';
-                        copyLinkBtn.removeAttribute('aria-disabled');
+
+                        copyLinkBtn.innerHTML = `<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg><kbd id="kbd-c" class="kbd-shortcut" aria-hidden="true">C</kbd>`;
+                        copyLinkBtn.setAttribute('title', 'Failed to copy!');
+                        copyLinkBtn.setAttribute('aria-label', 'Failed to copy!');
+                        copyLinkBtn.classList.add('is-error');
+
+                        setTimeout(() => {
+                            copyLinkBtn.innerHTML = originalHtml;
+                            if (originalTitle) copyLinkBtn.setAttribute('title', originalTitle);
+                            if (originalAriaLabel) copyLinkBtn.setAttribute('aria-label', originalAriaLabel);
+                            copyLinkBtn.removeAttribute('aria-disabled');
+                            copyLinkBtn.classList.remove('is-error');
+                        }, 2000);
                     });
                 });
             }
