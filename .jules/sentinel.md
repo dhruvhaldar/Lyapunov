@@ -87,3 +87,13 @@
 **Vulnerability:** Unhandled exceptions in FastAPI bypass custom HTTP middlewares, causing 500 error responses to be returned without essential security headers (like CSP, HSTS, X-Frame-Options).
 **Learning:** The `@app.exception_handler(Exception)` does not catch exceptions *inside* the middleware stack, meaning exceptions raised by `call_next()` prevent subsequent middleware logic from executing.
 **Prevention:** Wrap `await call_next(request)` in a `try...except Exception` block directly within the outermost security middleware to ensure exceptions are transformed into sanitized responses *before* applying the headers. However, you MUST also keep the global `@app.exception_handler(Exception)` intact to properly catch errors in routes and avoid breaking things like CORS and ASGI protocol for streaming responses!
+
+## 2024-07-01 - JSON Serialization Bypass and Client-Side Crash
+**Vulnerability:** Client-Side Denial of Service (DoS) due to invalid JSON generation. Python's `json.dumps()` by default serializes floating-point `NaN` and `Infinity` into unquoted strings (e.g., `[NaN, Infinity]`), violating the strict JSON specification. If a dynamical system simulation diverged, it returned these invalid payloads to the client, causing `JSON.parse()` to throw a `SyntaxError` and permanently crashing the frontend visualizations.
+**Learning:** Python's standard `json` library does not enforce standard JSON specification for non-finite floats unless explicitly instructed.
+**Prevention:** Always pass `allow_nan=False` to `json.dumps()` when manually serializing API responses. This forces the backend to securely fail (raising a `ValueError` which is caught by a 500 handler) instead of emitting malformed payloads that crash the client.
+
+## 2024-07-01 - Missing Cross-Origin Isolation Headers
+**Vulnerability:** The application was missing `Cross-Origin-Opener-Policy` and `Cross-Origin-Resource-Policy` headers, leaving it potentially vulnerable to side-channel attacks like Spectre by not enforcing proper cross-origin isolation.
+**Learning:** Relying solely on CSP and HSTS is insufficient for full defense-in-depth in modern web applications.
+**Prevention:** Always include `Cross-Origin-Opener-Policy: same-origin` and `Cross-Origin-Resource-Policy: same-origin` in the global security middleware to ensure the browsing context is securely isolated from potentially malicious cross-origin documents.
