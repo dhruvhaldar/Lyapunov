@@ -127,6 +127,8 @@ async def add_security_headers(request: Request, call_next):
     response.headers["Content-Security-Policy"] = "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://d3js.org https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'"
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
     response.headers["Permissions-Policy"] = "geolocation=(), microphone=(), camera=()"
+    response.headers["Cross-Origin-Opener-Policy"] = "same-origin"
+    response.headers["Cross-Origin-Resource-Policy"] = "same-origin"
     if request.url.path.startswith("/api/"):
         response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
         response.headers["Pragma"] = "no-cache"
@@ -174,7 +176,7 @@ def simulate(req: SimulationRequest):
         # ⚡ Bolt: Bypassing FastAPI's default JSONResponse and jsonable_encoder via standard Response
         # and json.dumps directly. This provides a ~4x speedup for high-resolution array serialization.
         payload = {"t": res.t.tolist(), "y": res.y.T.tolist()}
-        return Response(content=json.dumps(payload, separators=(',', ':')), media_type="application/json")
+        return Response(content=json.dumps(payload, separators=(',', ':'), allow_nan=False), media_type="application/json")
     except Exception as e:
         print(f"Error in simulate: {e}")
         raise HTTPException(status_code=500, detail="Simulation failed. Please check your parameters.")
@@ -191,7 +193,7 @@ def get_phase_portrait(req: PhasePortraitRequest):
         vectors = pp.get_vector_field()
         # ⚡ Bolt: Bypassing FastAPI's default JSONResponse and jsonable_encoder via standard Response
         # and json.dumps directly. This provides a ~4x speedup for high-resolution array serialization.
-        return Response(content=json.dumps({"vectors": vectors}, separators=(',', ':')), media_type="application/json")
+        return Response(content=json.dumps({"vectors": vectors}, separators=(',', ':'), allow_nan=False), media_type="application/json")
     except Exception as e:
         print(f"Error in phase_portrait: {e}")
         raise HTTPException(status_code=500, detail="Phase portrait generation failed. Please check your parameters.")
