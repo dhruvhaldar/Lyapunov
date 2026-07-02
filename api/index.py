@@ -151,6 +151,21 @@ class StabilityRequest(BaseModel):
     expression: str = Field(..., max_length=200)
     variables: List[constr(max_length=50)] = Field(..., max_length=10)
 
+# ⚡ Bolt: Hoisted safe_dict construction and allowed_names out of the endpoint
+# and into the global scope. This eliminates the massive per-request overhead of
+# dictionary allocation, reflection (getattr), and function closure creation,
+# significantly reducing API latency for stability checks.
+ALLOWED_NAMES = ["Symbol", "Integer", "Float", "Rational", "Add", "Mul", "Pow", "sin", "cos", "tan", "exp", "log", "sqrt", "pi", "E"]
+SAFE_DICT = {name: getattr(sp, name) for name in ALLOWED_NAMES}
+SAFE_DICT["__builtins__"] = {}
+
+def safe_symbol(name):
+    if not isinstance(name, str) or not re.match(r'^[a-zA-Z_][a-zA-Z0-9_]*\Z', name):
+        raise ValueError(f"Invalid Symbol name: {name}")
+    return sp.Symbol(name)
+
+SAFE_DICT["Symbol"] = safe_symbol
+
 SYSTEM_MAP = {
     "VanDerPol": VanDerPol,
     "Pendulum": Pendulum,
@@ -214,17 +229,7 @@ def check_stability(req: StabilityRequest):
 
     try:
         # parsing expression safely to avoid RCE
-        allowed_names = ["Symbol", "Integer", "Float", "Rational", "Add", "Mul", "Pow", "sin", "cos", "tan", "exp", "log", "sqrt", "pi", "E"]
-        safe_dict = {name: getattr(sp, name) for name in allowed_names}
-        safe_dict["__builtins__"] = {}
-
-        def safe_symbol(name):
-            if not isinstance(name, str) or not re.match(r'^[a-zA-Z_][a-zA-Z0-9_]*\Z', name):
-                raise ValueError(f"Invalid Symbol name: {name}")
-            return sp.Symbol(name)
-        safe_dict["Symbol"] = safe_symbol
-
-        expr = parse_expr(req.expression, local_dict={}, global_dict=safe_dict, evaluate=False)
+        expr = parse_expr(req.expression, local_dict={}, global_dict=SAFE_DICT, evaluate=False)
 
         # Prevent DoS from large powers during lambdify
         for node in sp.preorder_traversal(expr):
