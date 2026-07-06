@@ -97,3 +97,8 @@
 **Vulnerability:** The application was missing `Cross-Origin-Opener-Policy` and `Cross-Origin-Resource-Policy` headers, leaving it potentially vulnerable to side-channel attacks like Spectre by not enforcing proper cross-origin isolation.
 **Learning:** Relying solely on CSP and HSTS is insufficient for full defense-in-depth in modern web applications.
 **Prevention:** Always include `Cross-Origin-Opener-Policy: same-origin` and `Cross-Origin-Resource-Policy: same-origin` in the global security middleware to ensure the browsing context is securely isolated from potentially malicious cross-origin documents.
+
+## 2024-07-26 - Incomplete CSP Headers Left App Vulnerable to Object Injection and Clickjacking
+**Vulnerability:** The application's `Content-Security-Policy` header previously lacked strict definitions for non-script directives (like `object-src`, `base-uri`, `frame-ancestors`, and `form-action`). This omission left the app potentially vulnerable to object injection via `<object>` or `<embed>` tags, base URI injection, and clickjacking attacks.
+**Learning:** Relying solely on `default-src 'self'` and `script-src` is insufficient for a robust defense-in-depth CSP configuration. Certain browser behaviors and legacy plugins can bypass these generic rules if specific directives aren't strictly locked down.
+**Prevention:** When configuring Content-Security-Policy (CSP) headers in the middleware, apply defense-in-depth by explicitly including `object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests;` to mitigate object injection, base URI attacks, clickjacking, and to ensure secure transport.
