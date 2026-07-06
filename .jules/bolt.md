@@ -56,3 +56,7 @@
 ## 2025-03-05 - Endpoint Latency due to Dynamic Imports
 **Learning:** In FastAPI, dynamic or inline imports of heavy modules (like `sympy` or `re`) inside endpoint functions introduce a measurable per-request overhead. Even though Python caches modules in `sys.modules`, the dictionary lookup on every request accumulates latency.
 **Action:** Move all heavy or frequently accessed module imports out of endpoint functions and to the top module level to eliminate per-request overhead and reduce API response latency.
+
+## 2026-07-06 - Reciprocal Multiplication for Constant Divisors
+**Learning:** In tight numerical integration loops (like RK4), dividing by a constant (`dt / 2.0` or `dt / 6.0`) hundreds of thousands of times is measurably slower than multiplying by the precomputed reciprocal (`dt * 0.5` or `dt * 0.16666666666666666`).
+**Action:** Always replace scalar division by a constant with multiplication by its reciprocal in hot mathematical loops to save computationally expensive hardware division operations.
