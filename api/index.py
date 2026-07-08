@@ -11,6 +11,7 @@ import json
 import time
 import re
 import sympy as sp
+import traceback
 
 # Ensure lyapunov module is accessible
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -113,7 +114,6 @@ async def add_security_headers(request: Request, call_next):
     try:
         response = await call_next(request)
     except Exception as e:
-        import traceback
         traceback.print_exc()
         print(f"Unhandled Server Error in middleware: {e}")
         response = JSONResponse(

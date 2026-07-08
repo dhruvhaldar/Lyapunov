@@ -60,3 +60,10 @@
 ## 2026-07-06 - Reciprocal Multiplication for Constant Divisors
 **Learning:** In tight numerical integration loops (like RK4), dividing by a constant (`dt / 2.0` or `dt / 6.0`) hundreds of thousands of times is measurably slower than multiplying by the precomputed reciprocal (`dt * 0.5` or `dt * 0.16666666666666666`).
 **Action:** Always replace scalar division by a constant with multiplication by its reciprocal in hot mathematical loops to save computationally expensive hardware division operations.
+## 2025-07-06 - Dynamic Imports in Hot Loops
+**Learning:** Placing `import` statements inside functions or methods that are called frequently or inside tight loops (like `inspect` in `DynamicalSystem.simulate`) adds noticeable overhead, even when the module is already cached in `sys.modules`.
+**Action:** Always hoist imports to the top level of the file unless there is a specific reason for a delayed import.
+
+## 2025-07-06 - Dynamic Imports in Exception Handlers
+**Learning:** Even inside exception handlers, placing `import traceback` inside a middleware adds lookup time. While cold paths shouldn't be prematurely optimized, having it at the top-level is standard practice and avoids unnecessary delay when an error needs to be logged quickly.
+**Action:** Move standard library imports like `traceback` to the top of the file.

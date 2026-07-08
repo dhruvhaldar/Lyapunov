@@ -1,5 +1,6 @@
 import numpy as np
 import math
+import inspect
 from types import SimpleNamespace
 
 class DynamicalSystem:
@@ -42,7 +43,6 @@ class DynamicalSystem:
         if controller:
             # Determine if controller needs time argument
             needs_time = False
-            import inspect
             if hasattr(controller, 'compute'):
                 sig = inspect.signature(controller.compute)
                 if 't' in sig.parameters:
