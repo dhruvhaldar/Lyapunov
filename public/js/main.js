@@ -182,23 +182,15 @@
 
                     // Visual error feedback for sighted users
                     const toast = document.createElement('div');
-                    toast.className = 'glass-panel';
+                    toast.className = 'glass-panel toast';
                     toast.textContent = `⚠️ Error loading ${originalText}. Please try again.`;
                     toast.setAttribute('aria-hidden', 'true');
-                    Object.assign(toast.style, {
-                        position: 'fixed', bottom: '24px', right: '24px',
-                        borderLeft: '4px solid #ef4444', padding: '16px 24px',
-                        zIndex: '1000', opacity: '0', transform: 'translateY(10px)',
-                        transition: 'all 0.3s ease'
-                    });
                     document.body.appendChild(toast);
                     requestAnimationFrame(() => {
-                        toast.style.opacity = '1';
-                        toast.style.transform = 'translateY(0)';
+                        toast.classList.add('toast-visible');
                     });
                     setTimeout(() => {
-                        toast.style.opacity = '0';
-                        toast.style.transform = 'translateY(10px)';
+                        toast.classList.remove('toast-visible');
                         setTimeout(() => toast.remove(), 300);
                     }, 5000);
                 }).finally(() => {
