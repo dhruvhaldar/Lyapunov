@@ -98,6 +98,11 @@
 **Learning:** Relying solely on CSP and HSTS is insufficient for full defense-in-depth in modern web applications.
 **Prevention:** Always include `Cross-Origin-Opener-Policy: same-origin` and `Cross-Origin-Resource-Policy: same-origin` in the global security middleware to ensure the browsing context is securely isolated from potentially malicious cross-origin documents.
 
+## 2024-07-29 - XSS vulnerability due to 'unsafe-inline' in style-src
+**Vulnerability:** The application's `Content-Security-Policy` header permitted `'unsafe-inline'` for `style-src`. This allowed inline `style="..."` attributes within the DOM, which could be exploited by an attacker to execute Cross-Site Scripting (XSS) via CSS injections or data exfiltration.
+**Learning:** Permitting `'unsafe-inline'` in `style-src` diminishes the effectiveness of CSP. Inline styles can be leveraged for attacks such as exfiltrating data (e.g., using `background-image` requests) or altering UI to perform clickjacking/phishing.
+**Prevention:** Strictly forbid `'unsafe-inline'` in the `style-src` directive of the Content-Security-Policy (CSP) header. Extract all inline CSS (`style="..."`) into dedicated external CSS files and apply styles using semantic classes to mitigate CSS-based injection risks.
+
 ## 2024-07-26 - Incomplete CSP Headers Left App Vulnerable to Object Injection and Clickjacking
 **Vulnerability:** The application's `Content-Security-Policy` header previously lacked strict definitions for non-script directives (like `object-src`, `base-uri`, `frame-ancestors`, and `form-action`). This omission left the app potentially vulnerable to object injection via `<object>` or `<embed>` tags, base URI injection, and clickjacking attacks.
 **Learning:** Relying solely on `default-src 'self'` and `script-src` is insufficient for a robust defense-in-depth CSP configuration. Certain browser behaviors and legacy plugins can bypass these generic rules if specific directives aren't strictly locked down.

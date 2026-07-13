@@ -16,21 +16,21 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" integrity="sha384-CI3ELBVUz9XQO+97x6nwMDPosPR5XvsxW2ua7N1Xeygeh1IxtgqtCkGfQY9WWdHu" crossorigin="anonymous"></script>
 </head>
 <body>
-    <div id="a11y-announcer" aria-live="polite" style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;"></div>
+    <div id="a11y-announcer" aria-live="polite" class="sr-only"></div>
     <noscript>
-        <div style="background: #ef4444; color: white; padding: 16px; text-align: center; font-weight: bold; border-radius: 8px; margin: 16px;">
+        <div class="noscript-warning">
             ⚠️ JavaScript is required. This application relies on client-side rendering (D3.js, Chart.js, Three.js) for interactive visualizations. Please enable JavaScript to continue.
         </div>
     </noscript>
     <a href="#main-content" class="skip-to-content">Skip to main content</a>
     <div class="container">
-        <header class="glass-panel" style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <header class="glass-panel header-panel">
             <div>
                 <h1>Lyapunov Control Workbench</h1>
                 <p>Nonlinear Control Playground & Simulator</p>
             </div>
-            <div class="controls" style="margin-top: 0; padding-top: 0; border-top: none;">
-                <label for="system-select" style="margin-right: 8px; display: inline-flex; align-items: center; gap: 8px;">
+            <div class="controls header-controls">
+                <label for="system-select" class="system-select-label">
                     System Model:
                     <kbd id="kbd-s" class="kbd-shortcut" aria-hidden="true">S</kbd>
                 </label>
@@ -39,13 +39,13 @@
                     <option value="Pendulum">Pendulum</option>
                     <option value="Lorenz">Lorenz</option>
                 </select>
-                <button type="button" id="refresh-btn" aria-keyshortcuts="r" aria-label="Restart simulation" title="Restart simulation (R)" style="margin-left: 8px; margin-right: 8px; display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; padding: 0; position: relative;">
+                <button type="button" id="refresh-btn" aria-keyshortcuts="r" aria-label="Restart simulation" title="Restart simulation (R)" class="icon-btn icon-btn-refresh">
                     <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.59-9.21l5.67-1.36"/>
                     </svg>
                     <kbd id="kbd-r" class="kbd-shortcut" aria-hidden="true">R</kbd>
                 </button>
-                <button type="button" id="copy-link-btn" aria-keyshortcuts="c" aria-label="Copy link to current state" title="Copy link to current state (C)" style="margin-right: 0; display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; padding: 0; position: relative;">
+                <button type="button" id="copy-link-btn" aria-keyshortcuts="c" aria-label="Copy link to current state" title="Copy link to current state (C)" class="icon-btn icon-btn-copy">
                     <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                         <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -55,16 +55,16 @@
             </div>
         </header>
 
-        <main id="main-content" tabindex="-1" style="position: relative; transition: opacity 0.3s ease; outline: none;">
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr)); gap: 2rem; margin-bottom: 2rem;">
+        <main id="main-content" tabindex="-1" class="main-content">
+        <div class="grid-container">
             <div class="glass-panel" role="region" aria-labelledby="heading-phase">
                 <h2 id="heading-phase">Phase Portrait</h2>
-                <div id="phase-portrait" role="img" tabindex="0" aria-label="Interactive phase portrait showing system trajectories and vector fields" style="width: 100%; height: 400px; background: rgba(0,0,0,0.2); border-radius: 8px;"></div>
+                <div id="phase-portrait" role="img" tabindex="0" aria-label="Interactive phase portrait showing system trajectories and vector fields" class="viz-container"></div>
             </div>
 
             <div class="glass-panel" role="region" aria-labelledby="heading-time">
                 <h2 id="heading-time">Time Response</h2>
-                <div style="width: 100%; height: 400px; background: rgba(0,0,0,0.2); border-radius: 8px; padding: 16px; box-sizing: border-box;">
+                <div class="viz-container viz-container-padded">
                     <canvas id="time-response-chart" role="img" tabindex="0" aria-label="Interactive time response chart showing system states over time">
                         Your browser does not support the canvas element. This visualization shows the time response of the selected system.
                     </canvas>
@@ -74,7 +74,7 @@
 
         <div class="glass-panel" role="region" aria-labelledby="heading-3d">
              <h2 id="heading-3d">3D Visualization</h2>
-             <div id="3d-view" role="img" tabindex="0" aria-label="Interactive 3D visualization of the dynamical system. Focus to pause animation." style="width: 100%; height: 400px; background: rgba(0,0,0,0.2); border-radius: 8px;">
+             <div id="3d-view" role="img" tabindex="0" aria-label="Interactive 3D visualization of the dynamical system. Focus to pause animation." class="viz-container">
                 <div class="paused-badge" aria-hidden="true">⏸ Paused</div>
              </div>
         </div>
