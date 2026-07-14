@@ -42,7 +42,9 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         elif isinstance(obj, list):
             return [sanitize(v) for v in obj]
         elif isinstance(obj, dict):
-            return {k: sanitize(v) for k, v in obj.items()}
+            # 🛡️ Sentinel: Remove potentially sensitive or maliciously crafted input data
+            # and URLs from validation error responses to prevent XSS and information leakage.
+            return {k: sanitize(v) for k, v in obj.items() if k not in ["input", "url"]}
         elif isinstance(obj, tuple):
             return tuple(sanitize(v) for v in obj)
         return obj
