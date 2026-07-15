@@ -67,3 +67,6 @@
 ## 2025-07-06 - Dynamic Imports in Exception Handlers
 **Learning:** Even inside exception handlers, placing `import traceback` inside a middleware adds lookup time. While cold paths shouldn't be prematurely optimized, having it at the top-level is standard practice and avoids unnecessary delay when an error needs to be logged quickly.
 **Action:** Move standard library imports like `traceback` to the top of the file.
+## 2026-07-15 - Dynamic Array Allocation Overhead
+**Learning:** Creating NumPy arrays dynamically using `np.array([x, y])` in tight numerical loops (like RK4 integration steps) incurs significant overhead due to intermediate Python list creation and dynamic typing checks on every iteration.
+**Action:** Always preallocate arrays using `np.empty()` and assign elements by index (e.g., `out[0] = x`) when returning small, dense arrays from hot functions. This avoids list allocation overhead and provides substantial speedups.
