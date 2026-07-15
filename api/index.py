@@ -69,6 +69,26 @@ MAX_REQUESTS_PER_WINDOW = 100
 request_counts = {}
 last_gc_time = time.time()
 
+# Limit request body size to prevent DoS via large JSON payloads (OOM)
+MAX_REQUEST_SIZE = 2_000_000 # 2MB
+
+@app.middleware("http")
+async def limit_upload_size(request: Request, call_next):
+    # Enforce request size limit to prevent OOM DOS
+    content_length = request.headers.get('content-length')
+    if content_length:
+        try:
+            if int(content_length) > MAX_REQUEST_SIZE:
+                return JSONResponse(status_code=413, content={"detail": "Payload too large"})
+        except ValueError:
+            return JSONResponse(status_code=400, content={"detail": "Invalid content-length"})
+
+    # Reject chunked encoding without content-length to prevent bypass
+    if "chunked" in request.headers.get("transfer-encoding", "").lower():
+        return JSONResponse(status_code=411, content={"detail": "Length required"})
+
+    return await call_next(request)
+
 @app.middleware("http")
 async def rate_limit_middleware(request: Request, call_next):
     global last_gc_time
