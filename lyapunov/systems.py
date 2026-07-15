@@ -108,7 +108,11 @@ class VanDerPol(DynamicalSystem):
 
                 k4x, k4y = y4, mu*(1 - x4*x4)*y4 - x4 + u
 
-                return np.array([x + dt6*(k1x + 2.0*(k2x + k3x) + k4x), y + dt6*(k1y + 2.0*(k2y + k3y) + k4y)])
+                # ⚡ Bolt: Replace np.array with np.empty for faster preallocation in tight loops
+                out = np.empty(2)
+                out[0] = x + dt6*(k1x + 2.0*(k2x + k3x) + k4x)
+                out[1] = y + dt6*(k1y + 2.0*(k2y + k3y) + k4y)
+                return out
             except TypeError:
                 pass
         return super().step(t, state, u, dt)
@@ -171,10 +175,12 @@ class Pendulum(DynamicalSystem):
                 k4_t = omega + k3_o * dt
                 k4_o = -g_l * math.sin(t4) - b_ml2 * k4_t + u * inv_ml2
 
-                return np.array([
-                    theta + dt6 * (k1_t + 2.0 * (k2_t + k3_t) + k4_t),
-                    omega + dt6 * (k1_o + 2.0 * (k2_o + k3_o) + k4_o)
-                ])
+                # ⚡ Bolt: Replace np.array with np.empty for faster preallocation in tight loops
+                out = np.empty(2)
+                out[0] = theta + dt6 * (k1_t + 2.0 * (k2_t + k3_t) + k4_t)
+                out[1] = omega + dt6 * (k1_o + 2.0 * (k2_o + k3_o) + k4_o)
+                return out
+
             except TypeError:
                 pass
         return super().step(t, state, u, dt)
@@ -256,11 +262,12 @@ class Lorenz(DynamicalSystem):
                 k4_y = x4 * (rho - z4) - y4
                 k4_z = x4 * y4 - beta * z4
 
-                return np.array([
-                    x + dt6 * (k1_x + 2.0 * (k2_x + k3_x) + k4_x),
-                    y + dt6 * (k1_y + 2.0 * (k2_y + k3_y) + k4_y),
-                    z + dt6 * (k1_z + 2.0 * (k2_z + k3_z) + k4_z)
-                ])
+                # ⚡ Bolt: Replace np.array with np.empty for faster preallocation in tight loops
+                out = np.empty(3)
+                out[0] = x + dt6 * (k1_x + 2.0 * (k2_x + k3_x) + k4_x)
+                out[1] = y + dt6 * (k1_y + 2.0 * (k2_y + k3_y) + k4_y)
+                out[2] = z + dt6 * (k1_z + 2.0 * (k2_z + k3_z) + k4_z)
+                return out
             except TypeError:
                 pass
         return super().step(t, state, u, dt)
