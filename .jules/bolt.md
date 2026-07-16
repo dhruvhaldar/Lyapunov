@@ -70,3 +70,7 @@
 ## 2026-07-15 - Dynamic Array Allocation Overhead
 **Learning:** Creating NumPy arrays dynamically using `np.array([x, y])` in tight numerical loops (like RK4 integration steps) incurs significant overhead due to intermediate Python list creation and dynamic typing checks on every iteration.
 **Action:** Always preallocate arrays using `np.empty()` and assign elements by index (e.g., `out[0] = x`) when returning small, dense arrays from hot functions. This avoids list allocation overhead and provides substantial speedups.
+
+## 2026-07-20 - Safe Array Preallocation Data Types
+**Learning:** When using `np.empty_like(state)` to optimize NumPy array allocations and bypass Python list creation overhead in numerical loops, the new array inherits the exact `dtype` of the input `state`. If `state` is instantiated with integers (e.g., `np.array([1, 0])`), the preallocated array will be an integer array. Subsequent floating-point assignments (e.g., `out[1] = 0.5`) will be silently truncated to integers (`0`), causing severe logical regressions.
+**Action:** When preallocating arrays for continuous mathematical operations using `np.empty_like()`, always explicitly force the data type to float via `np.empty_like(state, dtype=float)`.

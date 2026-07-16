@@ -83,10 +83,18 @@ class VanDerPol(DynamicalSystem):
             try:
                 x, y = state.tolist()
                 # ⚡ Bolt: Replaced x**2 with x*x for scalar floats which is significantly faster in tight loops.
-                return np.array([y, self.mu * (1 - x*x) * y - x + u])
+                # ⚡ Bolt: Preallocate numpy arrays to prevent intermediate list creation overhead
+                out = np.empty(2)
+                out[0] = y
+                out[1] = self.mu * (1 - x*x) * y - x + u
+                return out
             except TypeError:
                 pass
-        return np.array([state[1], self.mu * (1 - state[0]**2) * state[1] - state[0] + u])
+        # ⚡ Bolt: Use empty_like for multi-dimensional arrays (like meshgrids) to speed up vectorized evaluation
+        out = np.empty_like(state, dtype=float)
+        out[0] = state[1]
+        out[1] = self.mu * (1 - state[0]**2) * state[1] - state[0] + u
+        return out
 
     def step(self, t, state, u, dt):
         # ⚡ Bolt: Inline RK4 math stages for 1D scalar simulations to avoid severe intermediate NumPy array allocation overhead.
@@ -145,12 +153,20 @@ class Pendulum(DynamicalSystem):
             try:
                 theta, omega = state.tolist()
                 domega = - self.g_l * math.sin(theta) - self.b_ml2 * omega + u * self.inv_ml2
-                return np.array([omega, domega])
+                # ⚡ Bolt: Preallocate numpy arrays to prevent intermediate list creation overhead
+                out = np.empty(2)
+                out[0] = omega
+                out[1] = domega
+                return out
             except TypeError:
                 pass
 
         domega = - self.g_l * np.sin(state[0]) - self.b_ml2 * state[1] + u * self.inv_ml2
-        return np.array([state[1], domega])
+        # ⚡ Bolt: Use empty_like for multi-dimensional arrays (like meshgrids) to speed up vectorized evaluation
+        out = np.empty_like(state, dtype=float)
+        out[0] = state[1]
+        out[1] = domega
+        return out
 
     def step(self, t, state, u, dt):
         # ⚡ Bolt: Inline RK4 math stages for 1D scalar simulations to avoid severe intermediate NumPy array allocation overhead.
@@ -211,19 +227,21 @@ class Lorenz(DynamicalSystem):
         if getattr(state, 'ndim', 0) == 1:
             try:
                 x, y, z = state.tolist()
-                return np.array([
-                    self.sigma * (y - x),
-                    x * (self.rho - z) - y,
-                    x * y - self.beta * z
-                ])
+                # ⚡ Bolt: Preallocate numpy arrays to prevent intermediate list creation overhead
+                out = np.empty(3)
+                out[0] = self.sigma * (y - x)
+                out[1] = x * (self.rho - z) - y
+                out[2] = x * y - self.beta * z
+                return out
             except TypeError:
                 pass
 
-        return np.array([
-            self.sigma * (state[1] - state[0]),
-            state[0] * (self.rho - state[2]) - state[1],
-            state[0] * state[1] - self.beta * state[2]
-        ])
+        # ⚡ Bolt: Use empty_like for multi-dimensional arrays (like meshgrids) to speed up vectorized evaluation
+        out = np.empty_like(state, dtype=float)
+        out[0] = self.sigma * (state[1] - state[0])
+        out[1] = state[0] * (self.rho - state[2]) - state[1]
+        out[2] = state[0] * state[1] - self.beta * state[2]
+        return out
 
     def step(self, t, state, u, dt):
         # ⚡ Bolt: Inline RK4 math stages for 1D scalar simulations to avoid severe intermediate NumPy array allocation overhead.
@@ -289,4 +307,8 @@ class RoboticArm(DynamicalSystem):
 
     def dynamics(self, t, state, u=0):
         # Simple double integrator
-        return np.array([state[1], u])
+        # ⚡ Bolt: Preallocate numpy arrays to prevent intermediate list creation overhead
+        out = np.empty_like(state, dtype=float)
+        out[0] = state[1]
+        out[1] = u
+        return out
