@@ -92,13 +92,12 @@ async def limit_upload_size(request: Request, call_next):
 @app.middleware("http")
 async def rate_limit_middleware(request: Request, call_next):
     global last_gc_time
-    # Use the last IP in the X-Forwarded-For chain (the one appended by the trusted proxy),
-    # or fallback to the direct client connection host.
-    forwarded_for = request.headers.get("X-Forwarded-For")
-    if forwarded_for:
-        client_ip = forwarded_for.split(',')[-1].strip()
-    else:
-        client_ip = request.client.host if request.client else "unknown"
+    # 🛡️ Sentinel: Removed insecure manual X-Forwarded-For parsing.
+    # Rely solely on `request.client.host` which is safely managed by the
+    # underlying ASGI server (uvicorn) when proxy-headers are configured.
+    # Manual parsing allows trivial IP spoofing which, combined with the cache cap,
+    # can lead to a Denial of Service (DoS) by filling the rate limiter dictionary.
+    client_ip = request.client.host if request.client else "unknown"
 
     current_time = time.time()
 
