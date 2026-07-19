@@ -36,9 +36,6 @@ class DynamicalSystem:
         # ⚡ Bolt: Convert t_values to a Python list for much faster scalar access in loop, avoiding numpy indexing overhead.
         t_list = t_values.tolist() if hasattr(t_values, 'tolist') else list(t_values)
 
-        # ⚡ Bolt: Caching method lookups before tight integration loop to avoid expensive dynamic attribute resolution
-        step_fn = self.step
-
         # ⚡ Bolt: Hoisted controller conditional checks outside the hot simulation loop.
         if controller:
             # Determine if controller needs time argument
@@ -49,6 +46,11 @@ class DynamicalSystem:
                     needs_time = True
 
             compute = controller.compute
+
+            # ⚡ Bolt: Fallback to safe array-based step for custom controllers to prevent breaking changes (TypeError).
+            # External controllers expect NumPy arrays for vector math, not tuples.
+            step_fn = self.step
+
             if needs_time:
                 for i in range(1, n_steps):
                     t = t_list[i-1]
@@ -62,6 +64,14 @@ class DynamicalSystem:
                     current_state = step_fn(t, current_state, u, dt)
                     states[i] = current_state
         else:
+            # ⚡ Bolt: Check for optimized tuple-based step method only for uncontrolled simulations
+            if hasattr(self, '_step_fast'):
+                step_fn = self._step_fast
+                # Convert initial state to tuple to seed the fast loop
+                current_state = tuple(initial_state)
+            else:
+                step_fn = self.step
+
             for i in range(1, n_steps):
                 t = t_list[i-1]
                 current_state = step_fn(t, current_state, 0.0, dt)
@@ -96,30 +106,38 @@ class VanDerPol(DynamicalSystem):
         out[1] = self.mu * (1 - state[0]**2) * state[1] - state[0] + u
         return out
 
+    def _step_fast(self, t, state, u, dt):
+        """Internal optimized method for the tight simulation loop utilizing tuples instead of NumPy arrays."""
+        x, y = state
+        dt2, dt6 = dt * 0.5, dt * 0.16666666666666666
+        mu = self.mu
+
+        k1x, k1y = y, mu*(1 - x*x)*y - x + u
+        x2, y2 = x + k1x*dt2, y + k1y*dt2
+
+        k2x, k2y = y2, mu*(1 - x2*x2)*y2 - x2 + u
+        x3, y3 = x + k2x*dt2, y + k2y*dt2
+
+        k3x, k3y = y3, mu*(1 - x3*x3)*y3 - x3 + u
+        x4, y4 = x + k3x*dt, y + k3y*dt
+
+        k4x, k4y = y4, mu*(1 - x4*x4)*y4 - x4 + u
+
+        return (
+            x + dt6*(k1x + 2.0*(k2x + k3x) + k4x),
+            y + dt6*(k1y + 2.0*(k2y + k3y) + k4y)
+        )
+
     def step(self, t, state, u, dt):
         # ⚡ Bolt: Inline RK4 math stages for 1D scalar simulations to avoid severe intermediate NumPy array allocation overhead.
         if getattr(state, 'ndim', 0) == 1:
             try:
                 x, y = state.tolist()
-                dt2, dt6 = dt * 0.5, dt * 0.16666666666666666
-                mu = self.mu
-
-                # ⚡ Bolt: Replaced x**2 with x*x for scalar floats which is significantly faster in tight loops.
-                k1x, k1y = y, mu*(1 - x*x)*y - x + u
-                x2, y2 = x + k1x*dt2, y + k1y*dt2
-
-                k2x, k2y = y2, mu*(1 - x2*x2)*y2 - x2 + u
-                x3, y3 = x + k2x*dt2, y + k2y*dt2
-
-                k3x, k3y = y3, mu*(1 - x3*x3)*y3 - x3 + u
-                x4, y4 = x + k3x*dt, y + k3y*dt
-
-                k4x, k4y = y4, mu*(1 - x4*x4)*y4 - x4 + u
-
-                # ⚡ Bolt: Replace np.array with np.empty for faster preallocation in tight loops
+                # Use fast tuple method internally and return a pre-allocated numpy array
+                out_tuple = self._step_fast(t, (x, y), u, dt)
                 out = np.empty(2)
-                out[0] = x + dt6*(k1x + 2.0*(k2x + k3x) + k4x)
-                out[1] = y + dt6*(k1y + 2.0*(k2y + k3y) + k4y)
+                out[0] = out_tuple[0]
+                out[1] = out_tuple[1]
                 return out
             except TypeError:
                 pass
@@ -168,35 +186,42 @@ class Pendulum(DynamicalSystem):
         out[1] = domega
         return out
 
+    def _step_fast(self, t, state, u, dt):
+        """Internal optimized method for the tight simulation loop utilizing tuples instead of NumPy arrays."""
+        theta, omega = state
+        dt2, dt6 = dt * 0.5, dt * 0.16666666666666666
+        g_l, b_ml2, inv_ml2 = self.g_l, self.b_ml2, self.inv_ml2
+
+        k1_t = omega
+        k1_o = -g_l * math.sin(theta) - b_ml2 * omega + u * inv_ml2
+
+        t2 = theta + k1_t * dt2
+        k2_t = omega + k1_o * dt2
+        k2_o = -g_l * math.sin(t2) - b_ml2 * k2_t + u * inv_ml2
+
+        t3 = theta + k2_t * dt2
+        k3_t = omega + k2_o * dt2
+        k3_o = -g_l * math.sin(t3) - b_ml2 * k3_t + u * inv_ml2
+
+        t4 = theta + k3_t * dt
+        k4_t = omega + k3_o * dt
+        k4_o = -g_l * math.sin(t4) - b_ml2 * k4_t + u * inv_ml2
+
+        return (
+            theta + dt6 * (k1_t + 2.0 * (k2_t + k3_t) + k4_t),
+            omega + dt6 * (k1_o + 2.0 * (k2_o + k3_o) + k4_o)
+        )
+
     def step(self, t, state, u, dt):
         # ⚡ Bolt: Inline RK4 math stages for 1D scalar simulations to avoid severe intermediate NumPy array allocation overhead.
         if getattr(state, 'ndim', 0) == 1:
             try:
                 theta, omega = state.tolist()
-                dt2, dt6 = dt * 0.5, dt * 0.16666666666666666
-                g_l, b_ml2, inv_ml2 = self.g_l, self.b_ml2, self.inv_ml2
-
-                k1_t = omega
-                k1_o = -g_l * math.sin(theta) - b_ml2 * omega + u * inv_ml2
-
-                t2 = theta + k1_t * dt2
-                k2_t = omega + k1_o * dt2
-                k2_o = -g_l * math.sin(t2) - b_ml2 * k2_t + u * inv_ml2
-
-                t3 = theta + k2_t * dt2
-                k3_t = omega + k2_o * dt2
-                k3_o = -g_l * math.sin(t3) - b_ml2 * k3_t + u * inv_ml2
-
-                t4 = theta + k3_t * dt
-                k4_t = omega + k3_o * dt
-                k4_o = -g_l * math.sin(t4) - b_ml2 * k4_t + u * inv_ml2
-
-                # ⚡ Bolt: Replace np.array with np.empty for faster preallocation in tight loops
+                out_tuple = self._step_fast(t, (theta, omega), u, dt)
                 out = np.empty(2)
-                out[0] = theta + dt6 * (k1_t + 2.0 * (k2_t + k3_t) + k4_t)
-                out[1] = omega + dt6 * (k1_o + 2.0 * (k2_o + k3_o) + k4_o)
+                out[0] = out_tuple[0]
+                out[1] = out_tuple[1]
                 return out
-
             except TypeError:
                 pass
         return super().step(t, state, u, dt)
@@ -243,48 +268,57 @@ class Lorenz(DynamicalSystem):
         out[2] = state[0] * state[1] - self.beta * state[2]
         return out
 
+    def _step_fast(self, t, state, u, dt):
+        """Internal optimized method for the tight simulation loop utilizing tuples instead of NumPy arrays."""
+        x, y, z = state
+        # ⚡ Bolt: Hoist instance parameters to local variables to avoid expensive dynamic attribute lookups (LOAD_ATTR) inside the hot loop.
+        dt2, dt6 = dt * 0.5, dt * 0.16666666666666666
+        sigma, rho, beta = self.sigma, self.rho, self.beta
+
+        k1_x = sigma * (y - x)
+        k1_y = x * (rho - z) - y
+        k1_z = x * y - beta * z
+
+        x2 = x + k1_x * dt2
+        y2 = y + k1_y * dt2
+        z2 = z + k1_z * dt2
+
+        k2_x = sigma * (y2 - x2)
+        k2_y = x2 * (rho - z2) - y2
+        k2_z = x2 * y2 - beta * z2
+
+        x3 = x + k2_x * dt2
+        y3 = y + k2_y * dt2
+        z3 = z + k2_z * dt2
+
+        k3_x = sigma * (y3 - x3)
+        k3_y = x3 * (rho - z3) - y3
+        k3_z = x3 * y3 - beta * z3
+
+        x4 = x + k3_x * dt
+        y4 = y + k3_y * dt
+        z4 = z + k3_z * dt
+
+        k4_x = sigma * (y4 - x4)
+        k4_y = x4 * (rho - z4) - y4
+        k4_z = x4 * y4 - beta * z4
+
+        return (
+            x + dt6 * (k1_x + 2.0 * (k2_x + k3_x) + k4_x),
+            y + dt6 * (k1_y + 2.0 * (k2_y + k3_y) + k4_y),
+            z + dt6 * (k1_z + 2.0 * (k2_z + k3_z) + k4_z)
+        )
+
     def step(self, t, state, u, dt):
         # ⚡ Bolt: Inline RK4 math stages for 1D scalar simulations to avoid severe intermediate NumPy array allocation overhead.
         if getattr(state, 'ndim', 0) == 1:
             try:
                 x, y, z = state.tolist()
-                # ⚡ Bolt: Hoist instance parameters to local variables to avoid expensive dynamic attribute lookups (LOAD_ATTR) inside the hot loop.
-                dt2, dt6 = dt * 0.5, dt * 0.16666666666666666
-                sigma, rho, beta = self.sigma, self.rho, self.beta
-
-                k1_x = sigma * (y - x)
-                k1_y = x * (rho - z) - y
-                k1_z = x * y - beta * z
-
-                x2 = x + k1_x * dt2
-                y2 = y + k1_y * dt2
-                z2 = z + k1_z * dt2
-
-                k2_x = sigma * (y2 - x2)
-                k2_y = x2 * (rho - z2) - y2
-                k2_z = x2 * y2 - beta * z2
-
-                x3 = x + k2_x * dt2
-                y3 = y + k2_y * dt2
-                z3 = z + k2_z * dt2
-
-                k3_x = sigma * (y3 - x3)
-                k3_y = x3 * (rho - z3) - y3
-                k3_z = x3 * y3 - beta * z3
-
-                x4 = x + k3_x * dt
-                y4 = y + k3_y * dt
-                z4 = z + k3_z * dt
-
-                k4_x = sigma * (y4 - x4)
-                k4_y = x4 * (rho - z4) - y4
-                k4_z = x4 * y4 - beta * z4
-
-                # ⚡ Bolt: Replace np.array with np.empty for faster preallocation in tight loops
+                out_tuple = self._step_fast(t, (x, y, z), u, dt)
                 out = np.empty(3)
-                out[0] = x + dt6 * (k1_x + 2.0 * (k2_x + k3_x) + k4_x)
-                out[1] = y + dt6 * (k1_y + 2.0 * (k2_y + k3_y) + k4_y)
-                out[2] = z + dt6 * (k1_z + 2.0 * (k2_z + k3_z) + k4_z)
+                out[0] = out_tuple[0]
+                out[1] = out_tuple[1]
+                out[2] = out_tuple[2]
                 return out
             except TypeError:
                 pass
