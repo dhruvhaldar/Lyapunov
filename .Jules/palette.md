@@ -192,3 +192,7 @@
 ## 2026-06-28 - Visual Feedback Parity for Transient Async Operations
 **Learning:** When async operations like `navigator.clipboard.writeText` fail silently (or just log to console/aria-live), sighted users are left confused because the UI simply resets without indicating failure. While success states often have vibrant visual changes (like a checkmark), the absence of an error equivalent breaks the expected visual contract and leaves users wondering if their action succeeded or failed.
 **Action:** Always provide Visual Feedback Parity for transient async operations. If you have a visual success state, implement an equivalent visual error state (e.g., a red X icon and `.is-error` class) to keep all users fully informed.
+
+## 2024-07-19 - Add context change warning to auto-submitting select
+**Learning:** Screen reader users can be disoriented by "auto-submitting" select dropdowns (where choosing an option immediately changes the page state or layout).
+**Action:** Always provide an advanced warning by attaching an `aria-describedby` property to the select element, pointing to a visually hidden (`.sr-only`) description explaining that the context will change upon selection.

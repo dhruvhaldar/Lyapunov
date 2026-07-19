@@ -34,7 +34,8 @@
                     System Model:
                     <kbd id="kbd-s" class="kbd-shortcut" aria-hidden="true">S</kbd>
                 </label>
-                <select id="system-select" aria-keyshortcuts="s" aria-controls="main-content">
+                <span id="system-select-desc" class="sr-only">Changing this option will automatically update the visualizations.</span>
+                <select id="system-select" aria-keyshortcuts="s" aria-controls="main-content" aria-describedby="system-select-desc">
                     <option value="VanDerPol">Van der Pol</option>
                     <option value="Pendulum">Pendulum</option>
                     <option value="Lorenz">Lorenz</option>
