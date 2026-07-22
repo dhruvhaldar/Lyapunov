@@ -77,3 +77,7 @@
 ## 2024-05-24 - NumPy Array Allocation Overhead in Hot Loops
 **Learning:** In tight numerical integration loops (like RK4) with small, constant-sized state vectors (e.g. 2D or 3D), repeatedly allocating and destroying NumPy arrays (`np.empty(2)`) or mutating arrays in-place creates a massive performance bottleneck due to Python object overhead. Utilizing native Python tuples and scalar floats completely bypasses this allocation cost, resulting in ~35-40% speedups.
 **Action:** Extract tuple-based fast paths into private internal methods (e.g., `_step_fast`) to accelerate internal simulations while maintaining the public NumPy array API for external controllers that expect vector math.
+
+## 2026-07-22 - Caching Method Lookups in Hot Numerical Loops
+**Learning:** In hot numerical loops like Runge-Kutta (RK4) integration steps (`DynamicalSystem.step`), the same instance method (`self.dynamics`) is called multiple times per step (e.g., 4 times for `k1`, `k2`, `k3`, `k4`). Each call forces Python to perform a dynamic attribute resolution (`LOAD_ATTR`), which incurs measurable overhead when executed thousands of times per simulation.
+**Action:** Always hoist repeatedly called instance methods into local variables (e.g., `dynamics = self.dynamics`) before entering tight mathematical loops or calculations. This replaces expensive `LOAD_ATTR` operations with much faster local variable accesses (`LOAD_FAST`), yielding significant performance improvements.
