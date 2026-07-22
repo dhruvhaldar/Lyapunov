@@ -11,6 +11,7 @@ import json
 import time
 import re
 import sympy as sp
+import asyncio
 import traceback
 
 # Ensure lyapunov module is accessible
@@ -71,6 +72,16 @@ last_gc_time = time.time()
 
 # Limit request body size to prevent DoS via large JSON payloads (OOM)
 MAX_REQUEST_SIZE = 2_000_000 # 2MB
+# Limit request duration to prevent Slowloris and resource exhaustion DoS
+REQUEST_TIMEOUT = 15.0 # seconds
+
+@app.middleware("http")
+async def timeout_middleware(request: Request, call_next):
+    try:
+        # 🛡️ Sentinel: Enforce strict request timeout to prevent resource exhaustion DoS
+        return await asyncio.wait_for(call_next(request), timeout=REQUEST_TIMEOUT)
+    except asyncio.TimeoutError:
+        return JSONResponse(status_code=504, content={"detail": "Gateway Timeout"})
 
 @app.middleware("http")
 async def limit_upload_size(request: Request, call_next):
