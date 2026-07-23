@@ -210,7 +210,7 @@ label {
 }
 
 /* 🎨 Palette: Keyboard shortcut visual feedback on focus */
-label:has(+ select:focus-visible) #kbd-s {
+label:has(~ select:focus-visible) #kbd-s {
     background: rgba(255,255,255,0.2);
 }
 

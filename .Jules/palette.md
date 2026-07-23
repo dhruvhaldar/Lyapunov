@@ -196,3 +196,7 @@
 ## 2024-07-19 - Add context change warning to auto-submitting select
 **Learning:** Screen reader users can be disoriented by "auto-submitting" select dropdowns (where choosing an option immediately changes the page state or layout).
 **Action:** Always provide an advanced warning by attaching an `aria-describedby` property to the select element, pointing to a visually hidden (`.sr-only`) description explaining that the context will change upon selection.
+
+## 2026-06-29 - Sibling Combinators and Hidden Elements
+**Learning:** Adding visually hidden `.sr-only` descriptions (like a `span`) directly between a `label` and its input element breaks CSS adjacent sibling combinators (`label:has(+ select)`). Even though the intermediate element is invisible, it still exists in the DOM tree, causing the `+` selector to fail and breaking interactive visual feedback (like highlighting shortcut badges on focus).
+**Action:** When creating CSS selectors that rely on DOM relationships spanning inputs and labels (e.g., using `:has()` for focus state syncing), prefer the general sibling combinator (`~`) over the adjacent sibling combinator (`+`) to make the UI resilient to invisible semantic injections like `aria-describedby` helper elements.
