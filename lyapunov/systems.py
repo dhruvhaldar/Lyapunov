@@ -54,14 +54,12 @@ class DynamicalSystem:
             step_fn = self.step
 
             if needs_time:
-                for i in range(1, n_steps):
-                    t = t_list[i-1]
+                for i, t in zip(range(1, n_steps), t_list):
                     u = compute(current_state, t)
                     current_state = step_fn(t, current_state, u, dt)
                     states[i] = current_state
             else:
-                for i in range(1, n_steps):
-                    t = t_list[i-1]
+                for i, t in zip(range(1, n_steps), t_list):
                     u = compute(current_state)
                     current_state = step_fn(t, current_state, u, dt)
                     states[i] = current_state
@@ -74,8 +72,7 @@ class DynamicalSystem:
             else:
                 step_fn = self.step
 
-            for i in range(1, n_steps):
-                t = t_list[i-1]
+            for i, t in zip(range(1, n_steps), t_list):
                 current_state = step_fn(t, current_state, 0.0, dt)
                 states[i] = current_state
 
