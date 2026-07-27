@@ -85,3 +85,7 @@
 ## 2026-07-25 - Python Loop Variable Indexing vs Zip Iteration
 **Learning:** In tight Python numerical simulation loops (like `DynamicalSystem.simulate`), accessing elements from a precomputed time list via index (e.g., `t = t_list[i-1]`) inside a `for i in range(1, n_steps):` loop is noticeably slower (by around ~30-50% for the loop iteration overhead itself) than iterating through the items simultaneously with the index using `for i, t in zip(range(1, n_steps), t_list):`.
 **Action:** When a loop requires both a sequential integer index (for array assignment) and elements from a pre-existing list, use `zip(range(...), list)` to traverse them in tandem, completely avoiding the Python list indexing overhead on every iteration.
+
+## 2026-08-01 - Hoisting Global Functions and Constant Terms in RK4 Loops
+**Learning:** Inside the 4 stages of a Runge-Kutta numerical integration step (like `Pendulum._step_fast`), the same global functions (e.g. `math.sin`) and constant mathematical terms (e.g. `u * inv_ml2`) are repeatedly evaluated. This incurs redundant dictionary lookups and scalar multiplications.
+**Action:** Always hoist commonly accessed global functions to local variables (e.g., `sin_fn = math.sin`) and precalculate constant terms (e.g., `u_term = u * inv_ml2`) prior to the core math stages inside the hot inner loop.

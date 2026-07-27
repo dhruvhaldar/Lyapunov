@@ -191,20 +191,24 @@ class Pendulum(DynamicalSystem):
         dt2, dt6 = dt * 0.5, dt * 0.16666666666666666
         g_l, b_ml2, inv_ml2 = self.g_l, self.b_ml2, self.inv_ml2
 
+        # ⚡ Bolt: Hoist math.sin and precompute u_term to avoid repeated lookups and calculations in RK4 loop
+        sin_fn = math.sin
+        u_term = u * inv_ml2
+
         k1_t = omega
-        k1_o = -g_l * math.sin(theta) - b_ml2 * omega + u * inv_ml2
+        k1_o = -g_l * sin_fn(theta) - b_ml2 * omega + u_term
 
         t2 = theta + k1_t * dt2
         k2_t = omega + k1_o * dt2
-        k2_o = -g_l * math.sin(t2) - b_ml2 * k2_t + u * inv_ml2
+        k2_o = -g_l * sin_fn(t2) - b_ml2 * k2_t + u_term
 
         t3 = theta + k2_t * dt2
         k3_t = omega + k2_o * dt2
-        k3_o = -g_l * math.sin(t3) - b_ml2 * k3_t + u * inv_ml2
+        k3_o = -g_l * sin_fn(t3) - b_ml2 * k3_t + u_term
 
         t4 = theta + k3_t * dt
         k4_t = omega + k3_o * dt
-        k4_o = -g_l * math.sin(t4) - b_ml2 * k4_t + u * inv_ml2
+        k4_o = -g_l * sin_fn(t4) - b_ml2 * k4_t + u_term
 
         return (
             theta + dt6 * (k1_t + 2.0 * (k2_t + k3_t) + k4_t),
