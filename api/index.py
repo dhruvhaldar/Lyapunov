@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse, Response
-from pydantic import BaseModel, Field, confloat, constr
+from pydantic import BaseModel, Field, confloat, constr, model_validator
 from typing import List, Optional, Dict, Any
 import numpy as np
 import sys
@@ -172,6 +172,15 @@ class SimulationRequest(BaseModel):
     initial_state: List[confloat(allow_inf_nan=False)] = Field(..., max_length=10)
     duration: float = Field(default=10.0, gt=0, le=100.0)
     dt: float = Field(default=0.01, ge=0.001, le=1.0)
+
+    @model_validator(mode='after')
+    def check_max_steps(self):
+        # 🛡️ Sentinel: Enforce strict application-level bounds on total simulation steps
+        # to prevent thread pool exhaustion and CPU-bound Denial of Service (DoS) attacks
+        # caused by unbounded mathematical operations in the endpoint.
+        if self.duration / self.dt > 100000:
+            raise ValueError("Total simulation steps cannot exceed 100000")
+        return self
 
 class PhasePortraitRequest(BaseModel):
     system: str = Field(..., max_length=100)
