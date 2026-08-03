@@ -48,6 +48,8 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
             return {k: sanitize(v) for k, v in obj.items() if k not in ["input", "url"]}
         elif isinstance(obj, tuple):
             return tuple(sanitize(v) for v in obj)
+        elif isinstance(obj, Exception):
+            return str(obj)
         return obj
 
     sanitized_errors = sanitize(exc.errors())
@@ -178,8 +180,8 @@ class SimulationRequest(BaseModel):
         # 🛡️ Sentinel: Enforce strict application-level bounds on total simulation steps
         # to prevent thread pool exhaustion and CPU-bound Denial of Service (DoS) attacks
         # caused by unbounded mathematical operations in the endpoint.
-        if self.duration / self.dt > 100000:
-            raise ValueError("Total simulation steps cannot exceed 100000")
+        if self.duration / self.dt > 10000:
+            raise ValueError("Total simulation steps cannot exceed 10000")
         return self
 
 class PhasePortraitRequest(BaseModel):
