@@ -349,3 +349,48 @@ class RoboticArm(DynamicalSystem):
         out[0] = state[1]
         out[1] = u
         return out
+
+    def _step_fast(self, t, state, u, dt):
+        """Internal optimized method for the tight simulation loop utilizing tuples instead of NumPy arrays."""
+        x1, x2 = state
+        dt2, dt6 = dt * 0.5, dt * 0.16666666666666666
+
+        k1_1 = x2
+        k1_2 = u
+
+        x1_2 = x1 + k1_1 * dt2
+        x2_2 = x2 + k1_2 * dt2
+
+        k2_1 = x2_2
+        k2_2 = u
+
+        x1_3 = x1 + k2_1 * dt2
+        x2_3 = x2 + k2_2 * dt2
+
+        k3_1 = x2_3
+        k3_2 = u
+
+        x1_4 = x1 + k3_1 * dt
+        x2_4 = x2 + k3_2 * dt
+
+        k4_1 = x2_4
+        k4_2 = u
+
+        return (
+            x1 + dt6 * (k1_1 + 2.0 * (k2_1 + k3_1) + k4_1),
+            x2 + dt6 * (k1_2 + 2.0 * (k2_2 + k3_2) + k4_2)
+        )
+
+    def step(self, t, state, u, dt):
+        # ⚡ Bolt: Inline RK4 math stages for 1D scalar simulations to avoid severe intermediate NumPy array allocation overhead.
+        if getattr(state, 'ndim', 0) == 1:
+            try:
+                x, y = state.tolist()
+                out_tuple = self._step_fast(t, (x, y), u, dt)
+                out = np.empty(2)
+                out[0] = out_tuple[0]
+                out[1] = out_tuple[1]
+                return out
+            except TypeError:
+                pass
+        return super().step(t, state, u, dt)

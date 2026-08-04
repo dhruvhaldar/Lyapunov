@@ -89,3 +89,7 @@
 ## 2026-08-01 - Hoisting Global Functions and Constant Terms in RK4 Loops
 **Learning:** Inside the 4 stages of a Runge-Kutta numerical integration step (like `Pendulum._step_fast`), the same global functions (e.g. `math.sin`) and constant mathematical terms (e.g. `u * inv_ml2`) are repeatedly evaluated. This incurs redundant dictionary lookups and scalar multiplications.
 **Action:** Always hoist commonly accessed global functions to local variables (e.g., `sin_fn = math.sin`) and precalculate constant terms (e.g., `u_term = u * inv_ml2`) prior to the core math stages inside the hot inner loop.
+
+## 2026-08-05 - Avoid RK4 Inlining for Simple Linear Systems
+**Learning:** For a simple double-integrator system like `RoboticArm` (`x_ddot = u`), manually unrolling the 4-stage Runge-Kutta (RK4) integration mathematically simplifies to the exact analytical step: `x1_next = x1 + x2*dt + 0.5*u*dt**2` and `x2_next = x2 + u*dt`. Mechanical unrolling of all RK4 stages instead of simplifying the math results in redundant floating-point operations. Additionally, hardcoding an integration scheme inside a domain model couples it to that solver.
+**Action:** When optimizing tight numerical simulation loops, look for opportunities to simplify the underlying algebra rather than purely unrolling the solver steps, especially for simple linear systems.
