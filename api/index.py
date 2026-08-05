@@ -277,7 +277,7 @@ def check_stability(req: StabilityRequest):
         # Prevent DoS from large powers during lambdify
         for node in sp.preorder_traversal(expr):
             if node.func == sp.Pow:
-                if isinstance(node.exp, sp.Pow):
+                if node.exp.has(sp.Pow):
                     raise HTTPException(status_code=400, detail="Expression too complex: nested powers are not allowed")
                 if node.exp.is_number:
                     try:
