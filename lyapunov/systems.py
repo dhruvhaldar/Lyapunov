@@ -353,32 +353,11 @@ class RoboticArm(DynamicalSystem):
     def _step_fast(self, t, state, u, dt):
         """Internal optimized method for the tight simulation loop utilizing tuples instead of NumPy arrays."""
         x1, x2 = state
-        dt2, dt6 = dt * 0.5, dt * 0.16666666666666666
-
-        k1_1 = x2
-        k1_2 = u
-
-        x1_2 = x1 + k1_1 * dt2
-        x2_2 = x2 + k1_2 * dt2
-
-        k2_1 = x2_2
-        k2_2 = u
-
-        x1_3 = x1 + k2_1 * dt2
-        x2_3 = x2 + k2_2 * dt2
-
-        k3_1 = x2_3
-        k3_2 = u
-
-        x1_4 = x1 + k3_1 * dt
-        x2_4 = x2 + k3_2 * dt
-
-        k4_1 = x2_4
-        k4_2 = u
-
+        # ⚡ Bolt: Replaced mechanically unrolled RK4 stages with exact analytical step
+        # for double integrator (x_ddot = u) to avoid redundant calculations.
         return (
-            x1 + dt6 * (k1_1 + 2.0 * (k2_1 + k3_1) + k4_1),
-            x2 + dt6 * (k1_2 + 2.0 * (k2_2 + k3_2) + k4_2)
+            x1 + x2 * dt + 0.5 * u * dt * dt,
+            x2 + u * dt
         )
 
     def step(self, t, state, u, dt):
