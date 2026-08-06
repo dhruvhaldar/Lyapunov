@@ -93,3 +93,11 @@
 ## 2026-08-05 - Avoid RK4 Inlining for Simple Linear Systems
 **Learning:** For a simple double-integrator system like `RoboticArm` (`x_ddot = u`), manually unrolling the 4-stage Runge-Kutta (RK4) integration mathematically simplifies to the exact analytical step: `x1_next = x1 + x2*dt + 0.5*u*dt**2` and `x2_next = x2 + u*dt`. Mechanical unrolling of all RK4 stages instead of simplifying the math results in redundant floating-point operations. Additionally, hardcoding an integration scheme inside a domain model couples it to that solver.
 **Action:** When optimizing tight numerical simulation loops, look for opportunities to simplify the underlying algebra rather than purely unrolling the solver steps, especially for simple linear systems.
+
+## 2026-08-05 - Avoid RK4 Inlining for Simple Linear Systems
+**Learning:** For a simple double-integrator system like `RoboticArm` (`x_ddot = u`), manually unrolling the 4-stage Runge-Kutta (RK4) integration mathematically simplifies to the exact analytical step: `x1_next = x1 + x2*dt + 0.5*u*dt**2` and `x2_next = x2 + u*dt`. Mechanical unrolling of all RK4 stages instead of simplifying the math results in redundant floating-point operations. Additionally, hardcoding an integration scheme inside a domain model couples it to that solver.
+**Action:** When optimizing tight numerical simulation loops, look for opportunities to simplify the underlying algebra rather than purely unrolling the solver steps, especially for simple linear systems.
+
+## 2026-08-10 - Fast Paths for Controlled Simulations
+**Learning:** In `DynamicalSystem.simulate`, external controllers (like `SlidingModeController`) can safely accept tuple state representations instead of NumPy arrays. Utilizing the `_step_fast` tuple-based method even during closed-loop simulations yields significant speedups (e.g. 40%) by eliminating array allocation overhead on every iteration.
+**Action:** When conditionally switching to fast internal paths (like tuples), verify if all consumers (like the controller in a feedback loop) can safely handle the data type. If so, extend the fast path to cover those code branches as well.

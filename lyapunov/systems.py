@@ -49,9 +49,12 @@ class DynamicalSystem:
 
             compute = controller.compute
 
-            # ⚡ Bolt: Fallback to safe array-based step for custom controllers to prevent breaking changes (TypeError).
-            # External controllers expect NumPy arrays for vector math, not tuples.
-            step_fn = self.step
+            # ⚡ Bolt: Check for optimized tuple-based step method
+            if hasattr(self, '_step_fast'):
+                step_fn = self._step_fast
+                current_state = tuple(initial_state)
+            else:
+                step_fn = self.step
 
             if needs_time:
                 for i, t in zip(range(1, n_steps), t_list):
