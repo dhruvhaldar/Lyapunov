@@ -37,6 +37,14 @@
                 if (view3dContainer) view3dContainer.setAttribute('aria-label', `Interactive 3D visualization of the ${originalText} dynamical system. Focus to pause animation.`);
 
                 document.title = `Lyapunov Control Dashboard - ${originalText}`;
+
+                const refreshBtn = document.getElementById('refresh-btn');
+                if (refreshBtn) {
+                    refreshBtn.setAttribute('aria-label', `Restart simulation for ${originalText}`);
+                    if (refreshBtn.getAttribute('aria-disabled') !== 'true') {
+                        refreshBtn.setAttribute('title', `Restart simulation for ${originalText} (R)`);
+                    }
+                }
             }
 
             const refreshBtn = document.getElementById('refresh-btn');
@@ -208,7 +216,7 @@
 
                     if (refreshBtn) {
                         refreshBtn.removeAttribute('aria-disabled');
-                        refreshBtn.title = "Restart simulation (R)";
+                        refreshBtn.title = `Restart simulation for ${originalText} (R)`;
                         const svg = refreshBtn.querySelector('svg');
                         if (svg) svg.classList.remove('spin-icon');
                     }
