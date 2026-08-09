@@ -45,6 +45,14 @@
                         refreshBtn.setAttribute('title', `Restart simulation for ${originalText} (R)`);
                     }
                 }
+
+                const copyLinkBtn = document.getElementById('copy-link-btn');
+                if (copyLinkBtn) {
+                    copyLinkBtn.setAttribute('aria-label', `Copy link to ${originalText} state`);
+                    if (copyLinkBtn.getAttribute('aria-disabled') !== 'true') {
+                        copyLinkBtn.setAttribute('title', `Copy link to ${originalText} state (C)`);
+                    }
+                }
             }
 
             const refreshBtn = document.getElementById('refresh-btn');
@@ -58,13 +66,15 @@
             }
 
             if (copyLinkBtn) {
-                // Pre-store original state to prevent transient state corruption on rapid clicks
+                // Pre-store original HTML state outside the listener to prevent transient corruption
                 const originalHtml = copyLinkBtn.innerHTML;
-                const originalTitle = copyLinkBtn.getAttribute('title');
-                const originalAriaLabel = copyLinkBtn.getAttribute('aria-label');
 
                 copyLinkBtn.addEventListener('click', () => {
                     if (copyLinkBtn.getAttribute('aria-disabled') === 'true') return;
+
+                    // Cache current contextual labels before overwriting them with transient states
+                    const currentTitle = copyLinkBtn.getAttribute('title');
+                    const currentAriaLabel = copyLinkBtn.getAttribute('aria-label');
 
                     // Prevent double clicks during transient success state
                     copyLinkBtn.setAttribute('aria-disabled', 'true');
@@ -79,8 +89,8 @@
 
                         setTimeout(() => {
                             copyLinkBtn.innerHTML = originalHtml;
-                            if (originalTitle) copyLinkBtn.setAttribute('title', originalTitle);
-                            if (originalAriaLabel) copyLinkBtn.setAttribute('aria-label', originalAriaLabel);
+                            if (currentTitle) copyLinkBtn.setAttribute('title', currentTitle);
+                            if (currentAriaLabel) copyLinkBtn.setAttribute('aria-label', currentAriaLabel);
                             copyLinkBtn.removeAttribute('aria-disabled');
                             copyLinkBtn.classList.remove('is-success');
                         }, 2000);
@@ -95,8 +105,8 @@
 
                         setTimeout(() => {
                             copyLinkBtn.innerHTML = originalHtml;
-                            if (originalTitle) copyLinkBtn.setAttribute('title', originalTitle);
-                            if (originalAriaLabel) copyLinkBtn.setAttribute('aria-label', originalAriaLabel);
+                            if (currentTitle) copyLinkBtn.setAttribute('title', currentTitle);
+                            if (currentAriaLabel) copyLinkBtn.setAttribute('aria-label', currentAriaLabel);
                             copyLinkBtn.removeAttribute('aria-disabled');
                             copyLinkBtn.classList.remove('is-error');
                         }, 2000);
@@ -223,7 +233,7 @@
 
                     if (copyLinkBtn) {
                         copyLinkBtn.removeAttribute('aria-disabled');
-                        copyLinkBtn.title = "Copy link to current state (C)";
+                        copyLinkBtn.title = `Copy link to ${originalText} state (C)`;
                     }
 
                     if (mainContent) {
