@@ -145,7 +145,6 @@
                 // Remember focus state to restore it after loading
                 const hadFocus = document.activeElement === systemSelect;
                 const refreshHadFocus = document.activeElement === refreshBtn;
-                const copyLinkHadFocus = document.activeElement === copyLinkBtn;
 
                 // Set loading state
                 systemSelect.setAttribute('aria-disabled', 'true');
@@ -245,8 +244,6 @@
                         systemSelect.focus();
                     } else if (refreshHadFocus && refreshBtn) {
                         refreshBtn.focus();
-                    } else if (copyLinkHadFocus && copyLinkBtn) {
-                        copyLinkBtn.focus();
                     }
                 });
             });
