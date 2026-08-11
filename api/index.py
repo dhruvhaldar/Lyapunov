@@ -265,6 +265,10 @@ def check_stability(req: StabilityRequest):
     if not re.match(r'^[a-zA-Z0-9_ \+\-\*\/\(\)\.\,]*\Z', req.expression):
         raise HTTPException(status_code=400, detail="Invalid expression")
 
+    # 🛡️ Sentinel: Prevent DoS via evalf()/n() methods that execute *during* parsing
+    if re.search(r'\.\s*[a-zA-Z_]', req.expression):
+        raise HTTPException(status_code=400, detail="Invalid expression: attribute access is forbidden")
+
     # Strict validation of variable names to prevent lambdify injection
     for v in req.variables:
         if not re.match(r'^[a-zA-Z_][a-zA-Z0-9_]*\Z', v):
