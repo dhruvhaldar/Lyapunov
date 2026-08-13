@@ -41,13 +41,15 @@
                     <option value="Pendulum">Pendulum</option>
                     <option value="Lorenz">Lorenz</option>
                 </select>
-                <button type="button" id="refresh-btn" aria-keyshortcuts="r" aria-label="Restart simulation" title="Restart simulation (R)" class="icon-btn icon-btn-refresh">
+                <span id="refresh-desc" class="sr-only">Press R to restart</span>
+                <button type="button" id="refresh-btn" aria-keyshortcuts="r" aria-describedby="refresh-desc" aria-label="Restart simulation" title="Restart simulation (R)" class="icon-btn icon-btn-refresh">
                     <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.59-9.21l5.67-1.36"/>
                     </svg>
                     <kbd id="kbd-r" class="kbd-shortcut" aria-hidden="true">R</kbd>
                 </button>
-                <button type="button" id="copy-link-btn" aria-keyshortcuts="c" aria-label="Copy link to current state" title="Copy link to current state (C)" class="icon-btn icon-btn-copy">
+                <span id="copy-desc" class="sr-only">Press C to copy</span>
+                <button type="button" id="copy-link-btn" aria-keyshortcuts="c" aria-describedby="copy-desc" aria-label="Copy link to current state" title="Copy link to current state (C)" class="icon-btn icon-btn-copy">
                     <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                         <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
