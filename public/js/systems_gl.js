@@ -1,3 +1,12 @@
+// ⚡ Bolt: Cache media query outside of animation loop to prevent synchronous string parsing 60fps
+const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+let prefersReducedMotion = reducedMotionQuery.matches;
+reducedMotionQuery.addEventListener('change', (e) => {
+    prefersReducedMotion = e.matches;
+    // 🎨 Palette: Update UI when preference changes
+    if (typeof updatePauseState === 'function') updatePauseState();
+});
+
 let scene, camera, renderer, currentMesh;
 let isHovered = false;
 let isFocused = false;
@@ -10,29 +19,40 @@ function updatePauseState() {
     isPausedByUser = isHovered || isFocused || isTouched;
     needsRender = true;
 
+    const isPaused = isPausedByUser || prefersReducedMotion;
+
     // 🎨 Palette: Sync visual feedback class to ensure consistency across all input modalities (hover, focus, touch)
     const container = document.getElementById('3d-view');
-    if (container) {
-        if (isPausedByUser) {
+    const badge = container?.querySelector('.paused-badge');
+
+    if (container && badge) {
+        if (isPaused) {
             container.classList.add('is-paused');
+            badge.textContent = prefersReducedMotion ? '⏸ Reduced Motion' : '⏸ Paused';
         } else {
             container.classList.remove('is-paused');
         }
     }
 
     // 🎨 Palette: Provide explicit auditory feedback when the pause state changes
-    if (isPausedByUser !== _prevPausedByUser) {
+    if (isPaused !== _prevPausedByUser) {
         const announcer = document.getElementById('a11y-announcer');
         if (announcer) {
-            announcer.textContent = isPausedByUser ? '3D Animation paused.' : '3D Animation resumed.';
+            if (prefersReducedMotion) {
+                announcer.textContent = '3D Animation paused due to reduced motion preference.';
+            } else {
+                announcer.textContent = isPaused ? '3D Animation paused.' : '3D Animation resumed.';
+            }
         }
-        _prevPausedByUser = isPausedByUser;
+        _prevPausedByUser = isPaused;
     }
 }
 
 function init3D(containerId) {
     const container = document.getElementById(containerId);
     if (!container) return;
+
+    updatePauseState(); // Initialize badge state correctly if prefers-reduced-motion is already true
 
     container.title = "Hover, focus, or touch to pause animation";
     container.addEventListener('mouseenter', () => { isHovered = true; updatePauseState(); });
@@ -168,13 +188,6 @@ function update3D(systemName) {
     scene.add(currentMesh);
     needsRender = true;
 }
-
-// ⚡ Bolt: Cache media query outside of animation loop to prevent synchronous string parsing 60fps
-const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-let prefersReducedMotion = reducedMotionQuery.matches;
-reducedMotionQuery.addEventListener('change', (e) => {
-    prefersReducedMotion = e.matches;
-});
 
 function animate() {
     requestAnimationFrame(animate);
