@@ -166,7 +166,7 @@ label {
     position: relative;
 }
 
-.paused-badge {
+.paused-badge, .reduced-motion-badge {
     position: absolute;
     top: 16px;
     right: 16px;
@@ -189,6 +189,18 @@ label {
 [id="3d-view"].is-paused .paused-badge {
     opacity: 1;
     transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .reduced-motion-badge {
+        opacity: 1;
+        transform: translateY(0);
+        /* If both badges exist, position this one below the paused badge if paused */
+    }
+
+    [id="3d-view"].is-paused .reduced-motion-badge {
+        top: 56px;
+    }
 }
 
 .vector-line {
