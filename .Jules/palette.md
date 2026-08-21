@@ -204,3 +204,7 @@
 ## 2026-08-09 - Syncing Transient Visual States with Contextual Accessibility Semantics
 **Learning:** When elements have dynamic contextual attributes (like a 'Copy Link' button whose `aria-label` changes based on a selected dropdown), replacing these attributes for transient states (like 'Copied!') and then restoring them from variables cached *at page load* causes the contextual updates to be lost. The attributes revert to their stale initial state, breaking the accessibility context.
 **Action:** When temporarily overriding `title` and `aria-label` attributes for transient visual states, cache the *current* contextual labels inside the event listener immediately before the override rather than relying on global constants captured at page initialization. This ensures the dynamic context is perfectly restored when the transient state finishes.
+
+## 2026-08-21 - Visual Indicator for Reduced Motion States
+**Learning:** When programmatically halting all animations or WebGL rendering in response to `@media (prefers-reduced-motion: reduce)`, sighted users who have the OS setting enabled may mistake the intentional accessibility feature for a frozen or broken interface if there is no explicit visual feedback explaining why the UI is static.
+**Action:** Always provide an explicit visual indicator (e.g., a "Reduced Motion" badge) when animations are globally halted due to user OS preferences, ensuring clear communication of the interface state.
