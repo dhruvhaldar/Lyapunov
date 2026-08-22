@@ -172,8 +172,21 @@ function update3D(systemName) {
 // ⚡ Bolt: Cache media query outside of animation loop to prevent synchronous string parsing 60fps
 const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
 let prefersReducedMotion = reducedMotionQuery.matches;
+
+function updateReducedMotionState() {
+    const container = document.getElementById('3d-view');
+    if (container) {
+        if (prefersReducedMotion) {
+            container.classList.add('is-reduced-motion');
+        } else {
+            container.classList.remove('is-reduced-motion');
+        }
+    }
+}
+
 reducedMotionQuery.addEventListener('change', (e) => {
     prefersReducedMotion = e.matches;
+    updateReducedMotionState();
 });
 
 function animate() {
@@ -231,4 +244,5 @@ window.simulateSystem = function(sys) {
 
 document.addEventListener('DOMContentLoaded', () => {
     init3D('3d-view');
+    updateReducedMotionState();
 });

@@ -27,3 +27,7 @@
 ## 2026-08-16 - Accessible Keyboard Shortcut Hints for Icon Buttons
 **Learning:** According to W3C Accessible Name and Description Computation specifications, an `aria-label` completely overrides any inner text content of an element. When attempting to add supplementary screen-reader text (like keyboard shortcut hints via `.sr-only` spans) to an icon button that relies on an `aria-label`, placing the span *inside* the button causes it to be completely ignored by assistive technologies.
 **Action:** Always place supplementary descriptive text (like keyboard shortcuts) in a `.sr-only` container *outside* the button (e.g., as a preceding sibling) and link it to the button using the `aria-describedby` attribute. This guarantees the screen reader reads the `aria-label` first, followed by the description, providing full accessibility parity.
+
+## 2026-08-22 - Visual Indicators for Accessibility Settings
+**Learning:** When programmatically halting all animations or WebGL rendering in response to `@media (prefers-reduced-motion: reduce)`, always provide an explicit visual indicator (e.g., a 'Reduced Motion' badge) explaining why the UI is static. Without this, sighted users who have the OS setting enabled may mistake the intentional accessibility feature for a frozen or broken interface.
+**Action:** When pausing WebGL rendering based on `prefers-reduced-motion`, display a visual badge inside the visualization container to indicate that reduced motion is active.
