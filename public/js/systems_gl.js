@@ -10,23 +10,39 @@ function updatePauseState() {
     isPausedByUser = isHovered || isFocused || isTouched;
     needsRender = true;
 
-    // 🎨 Palette: Sync visual feedback class to ensure consistency across all input modalities (hover, focus, touch)
+    // Check if we should pause due to user preference OR interaction
+    const isPaused = isPausedByUser || prefersReducedMotion;
+
+    // 🎨 Palette: Sync visual feedback class to ensure consistency across all input modalities (hover, focus, touch, reduced motion)
     const container = document.getElementById('3d-view');
     if (container) {
-        if (isPausedByUser) {
+        if (isPaused) {
             container.classList.add('is-paused');
+            const badge = container.querySelector('.paused-badge');
+            if (badge) {
+                // If paused due to reduced motion preference and not actively interacted with
+                if (prefersReducedMotion && !isPausedByUser) {
+                    badge.textContent = '⏸ Reduced Motion';
+                } else {
+                    badge.textContent = '⏸ Paused';
+                }
+            }
         } else {
             container.classList.remove('is-paused');
         }
     }
 
     // 🎨 Palette: Provide explicit auditory feedback when the pause state changes
-    if (isPausedByUser !== _prevPausedByUser) {
+    if (isPaused !== _prevPausedByUser) {
         const announcer = document.getElementById('a11y-announcer');
         if (announcer) {
-            announcer.textContent = isPausedByUser ? '3D Animation paused.' : '3D Animation resumed.';
+            if (isPaused) {
+                announcer.textContent = (prefersReducedMotion && !isPausedByUser) ? '3D Animation reduced motion.' : '3D Animation paused.';
+            } else {
+                announcer.textContent = '3D Animation resumed.';
+            }
         }
-        _prevPausedByUser = isPausedByUser;
+        _prevPausedByUser = isPaused;
     }
 }
 
@@ -62,6 +78,9 @@ function init3D(containerId) {
     update3D('VanDerPol');
 
     animate();
+
+    // Ensure initial state handles prefersReducedMotion correctly
+    updatePauseState();
 
     // Handle resize
     let resizeScheduled = false;
@@ -174,6 +193,7 @@ const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
 let prefersReducedMotion = reducedMotionQuery.matches;
 reducedMotionQuery.addEventListener('change', (e) => {
     prefersReducedMotion = e.matches;
+    updatePauseState();
 });
 
 function animate() {
