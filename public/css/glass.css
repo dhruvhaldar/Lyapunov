@@ -236,3 +236,34 @@ label:has(~ select:focus-visible) #kbd-s {
         stroke-width: 2.5px !important;
     }
 }
+
+.reduced-motion-badge {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    padding: 6px 12px;
+    color: #f8fafc;
+    font-size: 0.875rem;
+    font-weight: 500;
+    opacity: 0;
+    transform: translateY(-5px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    pointer-events: none;
+    z-index: 10;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .reduced-motion-badge {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    [id="3d-view"].is-paused .paused-badge {
+        display: none !important;
+    }
+}
