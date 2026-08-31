@@ -204,3 +204,7 @@
 ## 2026-08-09 - Syncing Transient Visual States with Contextual Accessibility Semantics
 **Learning:** When elements have dynamic contextual attributes (like a 'Copy Link' button whose `aria-label` changes based on a selected dropdown), replacing these attributes for transient states (like 'Copied!') and then restoring them from variables cached *at page load* causes the contextual updates to be lost. The attributes revert to their stale initial state, breaking the accessibility context.
 **Action:** When temporarily overriding `title` and `aria-label` attributes for transient visual states, cache the *current* contextual labels inside the event listener immediately before the override rather than relying on global constants captured at page initialization. This ensures the dynamic context is perfectly restored when the transient state finishes.
+
+## 2026-08-31 - SVG Responsiveness in D3 Data Visualizations
+**Learning:** When dynamically appending SVGs (e.g., via D3.js) to a responsive container, hardcoding fixed `width` and `height` attributes based on the container's initial size causes the visualization to remain static and potentially clip or overflow on window or device resize.
+**Action:** Avoid fixed `width` and `height` attributes for responsive SVGs. Instead, use a `viewBox` attribute (e.g., `viewBox="0 0 ${width} ${height}"`), `preserveAspectRatio="xMidYMid meet"`, and set CSS `width` and `height` to `100%` to ensure the visualization seamlessly scales.
