@@ -103,8 +103,10 @@ function drawPhasePortrait(vectors, systemName) {
 
     const svg = d3.select("#phase-portrait")
         .append("svg")
-        .attr("width", width)
-        .attr("height", height);
+        .attr("viewBox", `0 0 ${width} ${height}`)
+        .attr("preserveAspectRatio", "xMidYMid meet")
+        .style("width", "100%")
+        .style("height", "100%");
 
     // Add arrow marker
     svg.append("defs").append("marker")
