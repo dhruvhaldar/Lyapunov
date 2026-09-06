@@ -101,3 +101,7 @@
 ## 2026-08-10 - Fast Paths for Controlled Simulations
 **Learning:** In `DynamicalSystem.simulate`, external controllers (like `SlidingModeController`) can safely accept tuple state representations instead of NumPy arrays. Utilizing the `_step_fast` tuple-based method even during closed-loop simulations yields significant speedups (e.g. 40%) by eliminating array allocation overhead on every iteration.
 **Action:** When conditionally switching to fast internal paths (like tuples), verify if all consumers (like the controller in a feedback loop) can safely handle the data type. If so, extend the fast path to cover those code branches as well.
+
+## 2026-08-15 - Fast Tuple to NumPy Array Assignment
+**Learning:** In tight loops assigning Python tuples to a preallocated 2D NumPy array (e.g. `states[i] = current_state_tuple`), assigning the entire tuple directly incurs unexpected overhead. Unpacking the tuple and assigning elements individually by index (e.g., `states[i, 0] = current_state[0]`, `states[i, 1] = current_state[1]`) is significantly faster. Additionally, avoiding unused list traversal (like iterating over `t_list` when `t` is ignored in the fallback method) provides further loop iteration speedups.
+**Action:** When assigning small Python tuples (e.g., dimension 2 or 3) to NumPy arrays inside hot numerical simulation loops, conditionally check the dimension and use individual element assignment paths to bypass tuple-to-array typecasting overhead.
