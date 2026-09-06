@@ -31,3 +31,7 @@
 ## 2026-08-24 - Visual Indication for Reduced Motion Accessibility
 **Learning:** When programmatically halting all animations or WebGL rendering in response to `@media (prefers-reduced-motion: reduce)`, always provide an explicit visual indicator (e.g., a "Reduced Motion" badge) explaining why the UI is static. Without this, sighted users who have the OS setting enabled may mistake the intentional accessibility feature for a frozen or broken interface.
 **Action:** When creating logic or CSS that halts animation for reduced motion, pair it with a visual element (like a badge or banner) that becomes visible specifically under the `prefers-reduced-motion: reduce` media query to contextualize the static state for the user.
+
+## 2026-08-27 - Global Text Selection and Scrollbar Styling
+**Learning:** When building immersive dark-themed or glassmorphism UIs, relying on default browser styling for text selection (`::selection`) and scrollbars (`::-webkit-scrollbar`) can break immersion, especially on OSes that default to bright white scrollbars or high-contrast blue selection colors.
+**Action:** Always include custom `::selection` and `::-webkit-scrollbar` styling in the core theme CSS to ensure these subtle interaction points match the application's overall accent color and dark mode aesthetic.
