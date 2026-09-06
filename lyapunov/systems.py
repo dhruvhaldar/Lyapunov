@@ -72,12 +72,30 @@ class DynamicalSystem:
                 step_fn = self._step_fast
                 # Convert initial state to tuple to seed the fast loop
                 current_state = tuple(initial_state)
+
+                # ⚡ Bolt: Fast paths for element-wise unpacking which is significantly faster than assigning a tuple directly
+                # to a 2D numpy array row, and avoiding list traversal overhead via zip
+                dim = self.dimension
+                if dim == 2:
+                    for i, t in zip(range(1, n_steps), t_list):
+                        current_state = step_fn(t, current_state, 0.0, dt)
+                        states[i, 0] = current_state[0]
+                        states[i, 1] = current_state[1]
+                elif dim == 3:
+                    for i, t in zip(range(1, n_steps), t_list):
+                        current_state = step_fn(t, current_state, 0.0, dt)
+                        states[i, 0] = current_state[0]
+                        states[i, 1] = current_state[1]
+                        states[i, 2] = current_state[2]
+                else:
+                    for i, t in zip(range(1, n_steps), t_list):
+                        current_state = step_fn(t, current_state, 0.0, dt)
+                        states[i] = current_state
             else:
                 step_fn = self.step
-
-            for i, t in zip(range(1, n_steps), t_list):
-                current_state = step_fn(t, current_state, 0.0, dt)
-                states[i] = current_state
+                for i, t in zip(range(1, n_steps), t_list):
+                    current_state = step_fn(t, current_state, 0.0, dt)
+                    states[i] = current_state
 
         # Add a dummy ref for now if needed by tests, or handle it in specific tests
         return SimpleNamespace(t=t_values, y=states, ref=np.zeros((n_steps, self.dimension)))
