@@ -56,16 +56,60 @@ class DynamicalSystem:
             else:
                 step_fn = self.step
 
-            if needs_time:
-                for i, t in zip(range(1, n_steps), t_list):
-                    u = compute(current_state, t)
-                    current_state = step_fn(t, current_state, u, dt)
-                    states[i] = current_state
+            # ⚡ Bolt: Fast paths for element-wise unpacking which is significantly faster than assigning a tuple directly
+            # to a 2D numpy array row, and avoiding list traversal overhead via zip
+            dim = self.dimension
+            if hasattr(self, '_step_fast'):
+                if dim == 2:
+                    if needs_time:
+                        for i, t in zip(range(1, n_steps), t_list):
+                            u = compute(current_state, t)
+                            current_state = step_fn(t, current_state, u, dt)
+                            states[i, 0] = current_state[0]
+                            states[i, 1] = current_state[1]
+                    else:
+                        for i, t in zip(range(1, n_steps), t_list):
+                            u = compute(current_state)
+                            current_state = step_fn(t, current_state, u, dt)
+                            states[i, 0] = current_state[0]
+                            states[i, 1] = current_state[1]
+                elif dim == 3:
+                    if needs_time:
+                        for i, t in zip(range(1, n_steps), t_list):
+                            u = compute(current_state, t)
+                            current_state = step_fn(t, current_state, u, dt)
+                            states[i, 0] = current_state[0]
+                            states[i, 1] = current_state[1]
+                            states[i, 2] = current_state[2]
+                    else:
+                        for i, t in zip(range(1, n_steps), t_list):
+                            u = compute(current_state)
+                            current_state = step_fn(t, current_state, u, dt)
+                            states[i, 0] = current_state[0]
+                            states[i, 1] = current_state[1]
+                            states[i, 2] = current_state[2]
+                else:
+                    if needs_time:
+                        for i, t in zip(range(1, n_steps), t_list):
+                            u = compute(current_state, t)
+                            current_state = step_fn(t, current_state, u, dt)
+                            states[i] = current_state
+                    else:
+                        for i, t in zip(range(1, n_steps), t_list):
+                            u = compute(current_state)
+                            current_state = step_fn(t, current_state, u, dt)
+                            states[i] = current_state
             else:
-                for i, t in zip(range(1, n_steps), t_list):
-                    u = compute(current_state)
-                    current_state = step_fn(t, current_state, u, dt)
-                    states[i] = current_state
+                if needs_time:
+                    for i, t in zip(range(1, n_steps), t_list):
+                        u = compute(current_state, t)
+                        current_state = step_fn(t, current_state, u, dt)
+                        states[i] = current_state
+                else:
+                    for i, t in zip(range(1, n_steps), t_list):
+                        u = compute(current_state)
+                        current_state = step_fn(t, current_state, u, dt)
+                        states[i] = current_state
         else:
             # ⚡ Bolt: Check for optimized tuple-based step method only for uncontrolled simulations
             if hasattr(self, '_step_fast'):
