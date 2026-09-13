@@ -34,7 +34,6 @@ function init3D(containerId) {
     const container = document.getElementById(containerId);
     if (!container) return;
 
-    container.title = "Hover, focus, or touch to pause animation";
     container.addEventListener('mouseenter', () => { isHovered = true; updatePauseState(); });
     container.addEventListener('mouseleave', () => { isHovered = false; updatePauseState(); });
     container.addEventListener('focus', () => { isFocused = true; updatePauseState(); });

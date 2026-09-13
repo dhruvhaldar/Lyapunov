@@ -33,8 +33,12 @@
                 const timeContainer = document.getElementById('time-response-chart');
                 if (timeContainer) timeContainer.setAttribute('aria-label', `Interactive time response chart showing system states over time for ${originalText}`);
 
+                const isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
                 const view3dContainer = document.getElementById('3d-view');
-                if (view3dContainer) view3dContainer.setAttribute('aria-label', `Interactive 3D visualization of the ${originalText} dynamical system. Focus to pause animation.`);
+                if (view3dContainer) {
+                    view3dContainer.setAttribute('aria-label', `Interactive 3D visualization of the ${originalText} dynamical system. ${isReducedMotion ? 'Animation disabled by system preferences.' : 'Focus to pause animation.'}`);
+                    view3dContainer.title = isReducedMotion ? 'Animation disabled by system preferences' : 'Hover, focus, or touch to pause animation';
+                }
 
                 document.title = `Lyapunov Control Dashboard - ${originalText}`;
 
@@ -252,6 +256,10 @@
             });
 
             syncContextLabels();
+
+            window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', () => {
+                syncContextLabels();
+            });
 
             // Prevent interaction with disabled elements when pointer-events is active
             document.addEventListener('click', (e) => {

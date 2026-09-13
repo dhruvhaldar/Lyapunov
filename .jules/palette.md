@@ -35,3 +35,6 @@
 ## 2026-08-27 - Global Text Selection and Scrollbar Styling
 **Learning:** When building immersive dark-themed or glassmorphism UIs, relying on default browser styling for text selection (`::selection`) and scrollbars (`::-webkit-scrollbar`) can break immersion, especially on OSes that default to bright white scrollbars or high-contrast blue selection colors.
 **Action:** Always include custom `::selection` and `::-webkit-scrollbar` styling in the core theme CSS to ensure these subtle interaction points match the application's overall accent color and dark mode aesthetic.
+## 2026-08-28 - Dynamic Context Labels for Reduced Motion
+**Learning:** When programmatically halting animations for `prefers-reduced-motion: reduce`, static contextual labels (like `aria-label` and `title` instructing users to "hover to pause") become inaccurate and confusing.
+**Action:** Always dynamically check `window.matchMedia('(prefers-reduced-motion: reduce)').matches` when rendering labels for interactive visual states, and add event listeners to update them if the OS preference changes during the session.
