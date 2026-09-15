@@ -103,6 +103,30 @@ main[aria-busy="true"]::after {
     transform-origin: center;
 }
 
+@media (prefers-reduced-motion: reduce) {
+    main[aria-busy="true"]::after {
+        animation: none;
+        border: none;
+        content: "Loading...";
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: auto;
+        height: auto;
+        padding: 8px 16px;
+        background: rgba(15, 23, 42, 0.9);
+        border-radius: 6px;
+        color: var(--accent-color);
+        font-weight: bold;
+        transform: translate(-50%, -50%);
+        margin: 0;
+    }
+
+    .spin-icon {
+        animation: none;
+    }
+}
+
 .kbd-shortcut {
     background: rgba(255,255,255,0.1);
     border: 1px solid rgba(255,255,255,0.2);

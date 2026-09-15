@@ -38,3 +38,7 @@
 ## 2026-08-28 - Dynamic Context Labels for Reduced Motion
 **Learning:** When programmatically halting animations for `prefers-reduced-motion: reduce`, static contextual labels (like `aria-label` and `title` instructing users to "hover to pause") become inaccurate and confusing.
 **Action:** Always dynamically check `window.matchMedia('(prefers-reduced-motion: reduce)').matches` when rendering labels for interactive visual states, and add event listeners to update them if the OS preference changes during the session.
+
+## 2026-09-15 - Visual Fallbacks for CSS Spinners in Reduced Motion
+**Learning:** When users enable `prefers-reduced-motion: reduce`, CSS animations (like spinners) are often halted. However, simply pausing a spinning border or icon leaves the UI looking frozen or broken, confusing users as to whether the system is actually loading or just stuck.
+**Action:** When implementing CSS spinners, always include a `@media (prefers-reduced-motion: reduce)` override that explicitly removes the animation and replaces the visual spinner with static, descriptive text (e.g., changing a spinner circle into a "Loading..." badge) to clearly communicate the busy state without motion.
