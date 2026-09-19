@@ -209,10 +209,15 @@ class VanDerPol(DynamicalSystem):
 
     def jacobian(self, t, state):
         x1, x2 = state
-        return np.array([
-            [0, 1],
-            [-2*self.mu*x1*x2 - 1, self.mu*(1 - x1**2)]
-        ])
+        # ⚡ Bolt: Replaced dynamic np.array allocation with pre-allocated np.empty
+        # and individual assignments for significantly faster execution in loops.
+        # Also replaced x1**2 with x1*x1 to avoid power operator overhead.
+        out = np.empty((2, 2), dtype=float)
+        out[0, 0] = 0.0
+        out[0, 1] = 1.0
+        out[1, 0] = -2.0*self.mu*x1*x2 - 1.0
+        out[1, 1] = self.mu*(1.0 - x1*x1)
+        return out
 
 class Pendulum(DynamicalSystem):
     def __init__(self, length=1.0, mass=1.0, damping=0.1, gravity=9.81):
@@ -303,10 +308,14 @@ class Pendulum(DynamicalSystem):
         except TypeError:
             cos_theta = np.cos(theta)
 
-        return np.array([
-            [0, 1],
-            [-self.g_l * cos_theta, -self.b_ml2]
-        ])
+        # ⚡ Bolt: Replaced dynamic np.array allocation with pre-allocated np.empty
+        # and individual assignments for significantly faster execution in loops.
+        out = np.empty((2, 2), dtype=float)
+        out[0, 0] = 0.0
+        out[0, 1] = 1.0
+        out[1, 0] = -self.g_l * cos_theta
+        out[1, 1] = -self.b_ml2
+        return out
 
 class Lorenz(DynamicalSystem):
     def __init__(self, sigma=10.0, rho=28.0, beta=8.0/3.0):
@@ -394,11 +403,19 @@ class Lorenz(DynamicalSystem):
 
     def jacobian(self, t, state):
         x, y, z = state
-        return np.array([
-            [-self.sigma, self.sigma, 0],
-            [self.rho - z, -1, -x],
-            [y, x, -self.beta]
-        ])
+        # ⚡ Bolt: Replaced dynamic np.array allocation with pre-allocated np.empty
+        # and individual assignments for significantly faster execution in loops.
+        out = np.empty((3, 3), dtype=float)
+        out[0, 0] = -self.sigma
+        out[0, 1] = self.sigma
+        out[0, 2] = 0.0
+        out[1, 0] = self.rho - z
+        out[1, 1] = -1.0
+        out[1, 2] = -x
+        out[2, 0] = y
+        out[2, 1] = x
+        out[2, 2] = -self.beta
+        return out
 
 class RoboticArm(DynamicalSystem):
     # Placeholder for the E2E test mention "sys = RoboticArm()"
