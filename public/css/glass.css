@@ -122,8 +122,18 @@ main[aria-busy="true"]::after {
         margin: 0;
     }
 
-    .spin-icon {
-        animation: none;
+    button .spin-icon {
+        display: none;
+    }
+
+    button:has(.spin-icon) {
+        width: auto;
+        padding: 0 12px;
+    }
+
+    button:has(.spin-icon)::after {
+        content: "Loading...";
+        font-size: 0.875rem;
     }
 }
 

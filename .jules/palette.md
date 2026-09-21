@@ -42,3 +42,7 @@
 ## 2026-09-15 - Visual Fallbacks for CSS Spinners in Reduced Motion
 **Learning:** When users enable `prefers-reduced-motion: reduce`, CSS animations (like spinners) are often halted. However, simply pausing a spinning border or icon leaves the UI looking frozen or broken, confusing users as to whether the system is actually loading or just stuck.
 **Action:** When implementing CSS spinners, always include a `@media (prefers-reduced-motion: reduce)` override that explicitly removes the animation and replaces the visual spinner with static, descriptive text (e.g., changing a spinner circle into a "Loading..." badge) to clearly communicate the busy state without motion.
+
+## 2026-09-22 - Visual Fallbacks for CSS Spinners in Reduced Motion (Button Context)
+**Learning:** When users enable `prefers-reduced-motion: reduce`, CSS animations (like spinners) inside icon-only buttons are often halted. However, simply pausing a spinning border or icon leaves the UI looking frozen or broken, and screen readers may not automatically announce the loading state if not properly configured. By hiding the icon entirely and injecting static text, we can clearly communicate the busy state.
+**Action:** When replacing animated icons (like spinners) with static text for `prefers-reduced-motion: reduce`, use the CSS `:has()` pseudo-class on the parent element (e.g., `button:has(.spin-icon)::after { content: 'Loading...'; }`) to conditionally inject descriptive text. Ensure the button's padding and width are adjusted dynamically so the injected text does not overflow.
