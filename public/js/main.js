@@ -86,7 +86,7 @@
                     navigator.clipboard.writeText(window.location.href).then(() => {
                         announcer.textContent = 'Link copied to clipboard';
 
-                        copyLinkBtn.innerHTML = `<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg><kbd id="kbd-c" class="kbd-shortcut" aria-hidden="true">C</kbd>`;
+                        copyLinkBtn.innerHTML = `<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
                         copyLinkBtn.setAttribute('title', 'Copied!');
                         copyLinkBtn.setAttribute('aria-label', 'Copied!');
                         copyLinkBtn.classList.add('is-success');
@@ -102,7 +102,7 @@
                         console.error('Failed to copy link: ', err);
                         announcer.textContent = 'Failed to copy link';
 
-                        copyLinkBtn.innerHTML = `<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg><kbd id="kbd-c" class="kbd-shortcut" aria-hidden="true">C</kbd>`;
+                        copyLinkBtn.innerHTML = `<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
                         copyLinkBtn.setAttribute('title', 'Failed to copy!');
                         copyLinkBtn.setAttribute('aria-label', 'Failed to copy!');
                         copyLinkBtn.classList.add('is-error');

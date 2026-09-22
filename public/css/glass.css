@@ -163,8 +163,8 @@ main[aria-busy="true"]::after {
     pointer-events: none;
 }
 
-#refresh-btn:focus-visible #kbd-r,
-#copy-link-btn:focus-visible #kbd-c {
+#refresh-btn:focus-visible ~ #kbd-r,
+#copy-link-btn:focus-visible ~ #kbd-c {
     opacity: 1 !important;
 }
 
@@ -173,8 +173,8 @@ label {
 }
 
 @media (hover: hover) {
-    #refresh-btn:hover #kbd-r,
-    #copy-link-btn:hover #kbd-c {
+    #refresh-btn:hover ~ #kbd-r,
+    #copy-link-btn:hover ~ #kbd-c {
         opacity: 1 !important;
     }
 
