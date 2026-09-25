@@ -23,8 +23,16 @@ class DynamicalSystem:
         k2 = dynamics(t + dt2, state + k1 * dt2, u)
         k3 = dynamics(t + dt2, state + k2 * dt2, u)
         k4 = dynamics(t + dt, state + k3 * dt, u)
-        # ⚡ Bolt: Factored out 2.0 from RK4 intermediate terms (2.0*(k2 + k3)) to save one scalar-array multiplication per inner loop.
-        return state + (dt * 0.16666666666666666) * (k1 + 2.0 * (k2 + k3) + k4)
+
+        # ⚡ Bolt: Use in-place numpy operations to eliminate multiple intermediate
+        # array allocations per RK4 step, yielding significant speedups for high-dimensional states (like meshgrids).
+        res = k2 + k3
+        res *= 2.0
+        res += k1
+        res += k4
+        res *= (dt * 0.16666666666666666)
+        res += state
+        return res
 
     def simulate(self, controller, initial_state, time_span=(0, 10), dt=0.01):
         t_values = np.arange(time_span[0], time_span[1], dt)
