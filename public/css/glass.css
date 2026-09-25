@@ -76,9 +76,14 @@ main[aria-busy="true"] {
     transition: opacity 0.3s ease;
 }
 
+/* 🎨 Palette: Global wait cursor overriding pointer-events: none */
+body:has(main[aria-busy="true"]) {
+    cursor: wait;
+}
+
 main[aria-busy="true"]::after {
     content: "";
-    position: absolute;
+    position: fixed;
     top: 50%;
     left: 50%;
     width: 48px;
