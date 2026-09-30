@@ -16,7 +16,7 @@
 }
 
 button, select {
-    background: rgba(255, 255, 255, 0.1);
+    background-color: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.2);
     color: white;
     padding: 8px 16px;
@@ -28,9 +28,21 @@ button, select {
     transition: all 0.2s ease;
 }
 
+/* 🎨 Palette: Custom theme-consistent dropdown chevron */
+select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding-right: 32px;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 16px;
+}
+
 @media (hover: hover) {
     button:hover:not(:disabled):not([aria-disabled="true"]), select:hover:not(:disabled):not([aria-disabled="true"]) {
-        background: rgba(255, 255, 255, 0.2);
+        background-color: rgba(255, 255, 255, 0.2);
     }
 }
 
@@ -41,14 +53,14 @@ button:active:not(:disabled):not([aria-disabled="true"]), select:active:not(:dis
 button:disabled, select:disabled, button[aria-disabled="true"], select[aria-disabled="true"] {
     opacity: 0.5;
     cursor: wait;
-    background: rgba(255, 255, 255, 0.05);
+    background-color: rgba(255, 255, 255, 0.05);
 }
 
 /* 🎨 Palette: Prevent generic disabled styles from dimming success states */
 button.is-success[aria-disabled="true"] {
     opacity: 1;
     cursor: default;
-    background: rgba(34, 197, 94, 0.15);
+    background-color: rgba(34, 197, 94, 0.15);
     border-color: rgba(34, 197, 94, 0.3);
 }
 
@@ -56,7 +68,7 @@ button.is-success[aria-disabled="true"] {
 button.is-error[aria-disabled="true"] {
     opacity: 1;
     cursor: default;
-    background: rgba(239, 68, 68, 0.15);
+    background-color: rgba(239, 68, 68, 0.15);
     border-color: rgba(239, 68, 68, 0.3);
 }
 
