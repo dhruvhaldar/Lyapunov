@@ -26,6 +26,8 @@ button, select {
     font-family: inherit;
     margin-right: 10px;
     transition: all 0.2s ease;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 /* 🎨 Palette: Custom theme-consistent dropdown chevron */
@@ -187,6 +189,8 @@ main[aria-busy="true"]::after {
 
 label {
     cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 @media (hover: hover) {
