@@ -178,6 +178,8 @@ canvas {
     height: 400px;
     background: rgba(0,0,0,0.2);
     border-radius: 8px;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 .viz-container-padded {
