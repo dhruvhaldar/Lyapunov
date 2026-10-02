@@ -57,3 +57,7 @@
 ## 2026-11-15 - Custom Theme Select Dropdown Arrows
 **Learning:** When styling `<select>` elements in custom UI themes (like dark mode or glassmorphism), the OS-default dropdown arrow is often visually jarring. However, simply using `background-image` to inject a custom icon can cause issues if the base styles use the `background` shorthand, as hover or active states using `background` will overwrite and erase the custom icon.
 **Action:** Always replace the visually jarring OS-default dropdown arrow by setting `appearance: none` and injecting a custom SVG chevron via `background-image`. Crucially, ensure the base and state styles use `background-color` rather than the `background` shorthand so the icon isn't overwritten by background color state changes.
+
+## 2026-11-20 - Accessible Tooltips for Icon Buttons
+**Learning:** Native `title` tooltips on icon-only buttons do not appear when an element receives keyboard focus. This creates a significant accessibility issue for sighted keyboard-only users who tab to the button but never see the tooltip explaining its action or shortcut.
+**Action:** Replace `title` attributes with a custom `data-tooltip` attribute and use CSS pseudo-elements (e.g., `::after` with `content: attr(data-tooltip)`) to render tooltips that explicitly trigger on both `:hover` and `:focus-visible`. This ensures complete accessibility parity for mouse and keyboard users while allowing the tooltip to match the application's theme.
