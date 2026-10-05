@@ -208,3 +208,7 @@
 ## 2026-08-31 - SVG Responsiveness in D3 Data Visualizations
 **Learning:** When dynamically appending SVGs (e.g., via D3.js) to a responsive container, hardcoding fixed `width` and `height` attributes based on the container's initial size causes the visualization to remain static and potentially clip or overflow on window or device resize.
 **Action:** Avoid fixed `width` and `height` attributes for responsive SVGs. Instead, use a `viewBox` attribute (e.g., `viewBox="0 0 ${width} ${height}"`), `preserveAspectRatio="xMidYMid meet"`, and set CSS `width` and `height` to `100%` to ensure the visualization seamlessly scales.
+
+## 2026-10-04 - Focusable Tooltips for Icon-Only Buttons
+**Learning:** Native `title` tooltips on icon-only buttons do not appear when an element receives keyboard focus. This breaks accessibility parity for keyboard users who rely on these tooltips to understand icon-only actions.
+**Action:** Replace `title` attributes with a custom `data-tooltip` attribute and use CSS pseudo-elements (`::after` with `content: attr(data-tooltip)`) triggered on both `:hover` and `:focus-visible` to ensure accessibility parity for mouse and keyboard users.

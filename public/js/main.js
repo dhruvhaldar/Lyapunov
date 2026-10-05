@@ -46,7 +46,7 @@
                 if (refreshBtn) {
                     refreshBtn.setAttribute('aria-label', `Restart simulation for ${originalText}`);
                     if (refreshBtn.getAttribute('aria-disabled') !== 'true') {
-                        refreshBtn.setAttribute('title', `Restart simulation for ${originalText} (R)`);
+                        refreshBtn.setAttribute('data-tooltip', `Restart simulation for ${originalText} (R)`);
                     }
                 }
 
@@ -54,7 +54,7 @@
                 if (copyLinkBtn) {
                     copyLinkBtn.setAttribute('aria-label', `Copy link to ${originalText} state`);
                     if (copyLinkBtn.getAttribute('aria-disabled') !== 'true') {
-                        copyLinkBtn.setAttribute('title', `Copy link to ${originalText} state (C)`);
+                        copyLinkBtn.setAttribute('data-tooltip', `Copy link to ${originalText} state (C)`);
                     }
                 }
             }
@@ -77,7 +77,7 @@
                     if (copyLinkBtn.getAttribute('aria-disabled') === 'true') return;
 
                     // Cache current contextual labels before overwriting them with transient states
-                    const currentTitle = copyLinkBtn.getAttribute('title');
+                    const currentTitle = copyLinkBtn.getAttribute('data-tooltip');
                     const currentAriaLabel = copyLinkBtn.getAttribute('aria-label');
 
                     // Prevent double clicks during transient success state
@@ -87,13 +87,13 @@
                         announcer.textContent = 'Link copied to clipboard';
 
                         copyLinkBtn.innerHTML = `<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
-                        copyLinkBtn.setAttribute('title', 'Copied!');
+                        copyLinkBtn.setAttribute('data-tooltip', 'Copied!');
                         copyLinkBtn.setAttribute('aria-label', 'Copied!');
                         copyLinkBtn.classList.add('is-success');
 
                         setTimeout(() => {
                             copyLinkBtn.innerHTML = originalHtml;
-                            if (currentTitle) copyLinkBtn.setAttribute('title', currentTitle);
+                            if (currentTitle) copyLinkBtn.setAttribute('data-tooltip', currentTitle);
                             if (currentAriaLabel) copyLinkBtn.setAttribute('aria-label', currentAriaLabel);
                             copyLinkBtn.removeAttribute('aria-disabled');
                             copyLinkBtn.classList.remove('is-success');
@@ -103,13 +103,13 @@
                         announcer.textContent = 'Failed to copy link';
 
                         copyLinkBtn.innerHTML = `<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
-                        copyLinkBtn.setAttribute('title', 'Failed to copy!');
+                        copyLinkBtn.setAttribute('data-tooltip', 'Failed to copy!');
                         copyLinkBtn.setAttribute('aria-label', 'Failed to copy!');
                         copyLinkBtn.classList.add('is-error');
 
                         setTimeout(() => {
                             copyLinkBtn.innerHTML = originalHtml;
-                            if (currentTitle) copyLinkBtn.setAttribute('title', currentTitle);
+                            if (currentTitle) copyLinkBtn.setAttribute('data-tooltip', currentTitle);
                             if (currentAriaLabel) copyLinkBtn.setAttribute('aria-label', currentAriaLabel);
                             copyLinkBtn.removeAttribute('aria-disabled');
                             copyLinkBtn.classList.remove('is-error');
@@ -157,14 +157,14 @@
 
                 if (refreshBtn) {
                     refreshBtn.setAttribute('aria-disabled', 'true');
-                    refreshBtn.title = "Loading...";
+                    refreshBtn.setAttribute('data-tooltip', "Loading...");
                     const svg = refreshBtn.querySelector('svg');
                     if (svg) svg.classList.add('spin-icon');
                 }
 
                 if (copyLinkBtn) {
                     copyLinkBtn.setAttribute('aria-disabled', 'true');
-                    copyLinkBtn.title = "Loading...";
+                    copyLinkBtn.setAttribute('data-tooltip', "Loading...");
                 }
 
                 announcer.textContent = `Loading system ${originalText}...`;
@@ -231,14 +231,14 @@
 
                     if (refreshBtn) {
                         refreshBtn.removeAttribute('aria-disabled');
-                        refreshBtn.title = `Restart simulation for ${originalText} (R)`;
+                        refreshBtn.setAttribute('data-tooltip', `Restart simulation for ${originalText} (R)`);
                         const svg = refreshBtn.querySelector('svg');
                         if (svg) svg.classList.remove('spin-icon');
                     }
 
                     if (copyLinkBtn) {
                         copyLinkBtn.removeAttribute('aria-disabled');
-                        copyLinkBtn.title = `Copy link to ${originalText} state (C)`;
+                        copyLinkBtn.setAttribute('data-tooltip', `Copy link to ${originalText} state (C)`);
                     }
 
                     if (mainContent) {
