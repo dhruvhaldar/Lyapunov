@@ -121,14 +121,13 @@ async def rate_limit_middleware(request: Request, call_next):
             del request_counts[k]
         last_gc_time = current_time
 
-    # Cap dictionary size to prevent OOM from IP spoofing attacks
-    # Return 429 instead of clearing to prevent attackers from bypassing
-    # rate limits by filling the dictionary and causing a cache flush.
+    # Cap dictionary size to prevent OOM from IP spoofing attacks.
+    # 🛡️ Sentinel: Fixed DoS vulnerability where an attacker spoofing IPs
+    # could fill the rate limiter dictionary and permanently lock out all
+    # legitimate users. We now evict the oldest entry instead of returning 429 globally.
     if len(request_counts) >= 10000 and client_ip not in request_counts:
-        return JSONResponse(
-            status_code=429,
-            content={"detail": "Too Many Requests"}
-        )
+        oldest_ip = next(iter(request_counts))
+        del request_counts[oldest_ip]
 
     if client_ip not in request_counts or current_time > request_counts[client_ip]["reset_time"]:
         request_counts[client_ip] = {"count": 1, "reset_time": current_time + RATE_LIMIT_WINDOW}
