@@ -57,3 +57,7 @@
 ## 2026-11-15 - Custom Theme Select Dropdown Arrows
 **Learning:** When styling `<select>` elements in custom UI themes (like dark mode or glassmorphism), the OS-default dropdown arrow is often visually jarring. However, simply using `background-image` to inject a custom icon can cause issues if the base styles use the `background` shorthand, as hover or active states using `background` will overwrite and erase the custom icon.
 **Action:** Always replace the visually jarring OS-default dropdown arrow by setting `appearance: none` and injecting a custom SVG chevron via `background-image`. Crucially, ensure the base and state styles use `background-color` rather than the `background` shorthand so the icon isn't overwritten by background color state changes.
+
+## 2026-12-05 - Suppressing Extraneous Audio Feedback for Reduced Motion
+**Learning:** When users enable `prefers-reduced-motion: reduce`, animations are globally halted. However, interactive UI elements that normally pause/resume animations on hover or focus might still blindly announce "Animation paused" or "Animation resumed" to screen readers. This is highly confusing, as the user expects the animation to already be disabled.
+**Action:** Always wrap a11y announcements related to transient animation states (like pausing/resuming) with a check for `prefers-reduced-motion`. If reduced motion is active, suppress these extraneous announcements since the visual state remains static regardless of user interaction.

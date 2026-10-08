@@ -22,9 +22,11 @@ function updatePauseState() {
 
     // 🎨 Palette: Provide explicit auditory feedback when the pause state changes
     if (isPausedByUser !== _prevPausedByUser) {
-        const announcer = document.getElementById('a11y-announcer');
-        if (announcer) {
-            announcer.textContent = isPausedByUser ? '3D Animation paused.' : '3D Animation resumed.';
+        if (!prefersReducedMotion) {
+            const announcer = document.getElementById('a11y-announcer');
+            if (announcer) {
+                announcer.textContent = isPausedByUser ? '3D Animation paused.' : '3D Animation resumed.';
+            }
         }
         _prevPausedByUser = isPausedByUser;
     }
