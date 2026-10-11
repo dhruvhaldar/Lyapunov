@@ -61,3 +61,6 @@
 ## 2026-12-05 - Suppressing Extraneous Audio Feedback for Reduced Motion
 **Learning:** When users enable `prefers-reduced-motion: reduce`, animations are globally halted. However, interactive UI elements that normally pause/resume animations on hover or focus might still blindly announce "Animation paused" or "Animation resumed" to screen readers. This is highly confusing, as the user expects the animation to already be disabled.
 **Action:** Always wrap a11y announcements related to transient animation states (like pausing/resuming) with a check for `prefers-reduced-motion`. If reduced motion is active, suppress these extraneous announcements since the visual state remains static regardless of user interaction.
+## 2026-10-11 - Accessible Custom Tooltips
+**Learning:** When creating custom tooltips using CSS pseudo-elements (`::after`), setting `opacity: 0` is insufficient for accessibility as some screen readers will still read the `content`.
+**Action:** Always combine `opacity: 0` with `visibility: hidden` (and add `visibility` to the `transition` property) to properly hide the text from the accessibility tree until `visibility: visible` is triggered on hover/focus.
