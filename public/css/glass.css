@@ -342,7 +342,8 @@ label:has(~ select:focus-visible) #kbd-s {
     white-space: nowrap;
     pointer-events: none;
     opacity: 0;
-    transition: opacity 0.2s ease, transform 0.2s ease;
+    visibility: hidden;
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
     z-index: 1000;
     border: 1px solid rgba(255, 255, 255, 0.2);
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
@@ -351,5 +352,6 @@ label:has(~ select:focus-visible) #kbd-s {
 .icon-btn[data-tooltip]:hover::after,
 .icon-btn[data-tooltip]:focus-visible::after {
     opacity: 1;
+    visibility: visible;
     transform: translateX(-50%) translateY(5px);
 }
