@@ -212,3 +212,7 @@
 ## 2026-10-04 - Focusable Tooltips for Icon-Only Buttons
 **Learning:** Native `title` tooltips on icon-only buttons do not appear when an element receives keyboard focus. This breaks accessibility parity for keyboard users who rely on these tooltips to understand icon-only actions.
 **Action:** Replace `title` attributes with a custom `data-tooltip` attribute and use CSS pseudo-elements (`::after` with `content: attr(data-tooltip)`) triggered on both `:hover` and `:focus-visible` to ensure accessibility parity for mouse and keyboard users.
+
+## 2026-10-13 - Hiding Pseudo-element Tooltips from Screen Readers
+**Learning:** When creating custom tooltips using CSS pseudo-elements (`::after`), setting `opacity: 0` is insufficient for accessibility as some screen readers will still read the `content`.
+**Action:** Always combine `opacity: 0` with `visibility: hidden` (and add `visibility` to the `transition` property) to properly hide the text from the accessibility tree until `visibility: visible` is triggered on hover/focus.
