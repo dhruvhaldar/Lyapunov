@@ -65,3 +65,7 @@
 ## 2026-12-10 - Hiding Tooltips from Screen Readers when Inactive
 **Learning:** When creating custom tooltips using CSS pseudo-elements (`::after`), setting `opacity: 0` is insufficient for accessibility as some screen readers will still read the `content`. Always combine `opacity: 0` with `visibility: hidden` (and add `visibility` to the `transition` property) to properly hide the text from the accessibility tree until `visibility: visible` is triggered on hover/focus.
 **Action:** Always include `visibility: hidden` alongside `opacity: 0` when hiding custom CSS tooltips, and toggle it to `visibility: visible` on `:hover` or `:focus-visible`.
+
+## 2026-12-15 - Excluding Native Elements from Global Escape Handlers
+**Learning:** When implementing global 'Escape' key handlers to visually dismiss focus (blur) or close custom modals, applying `.blur()` indiscriminately to `document.activeElement` breaks keyboard navigation. Specifically, native interactive elements like `<select>` use the Escape key to close their dropdown menus. If blurred instead, the user loses their place in the UI entirely.
+**Action:** Always exclude native form elements (like `INPUT`, `TEXTAREA`, and `SELECT`) when implementing global focus dismissal via the Escape key, ensuring standard browser behaviors remain intact.
