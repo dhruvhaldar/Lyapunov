@@ -283,12 +283,15 @@ def check_stability(req: StabilityRequest):
 
         # Prevent DoS from large powers during lambdify
         for node in sp.preorder_traversal(expr):
-            if node.func == sp.Pow:
-                if node.exp.has(sp.Pow) or (node.base.has(sp.Pow) and node.base.is_number):
+            if node.func in (sp.Pow, sp.exp):
+                exponent = node.exp if node.func == sp.Pow else node.args[0]
+                base = node.base if node.func == sp.Pow else sp.E
+
+                if exponent.has(sp.Pow) or exponent.has(sp.exp) or (base.has(sp.Pow) and base.is_number) or (base.has(sp.exp) and base.is_number):
                     raise HTTPException(status_code=400, detail="Expression too complex: nested powers are not allowed")
-                if node.exp.is_number:
+                if exponent.is_number:
                     try:
-                        if abs(complex(node.exp.evalf())) > 100:
+                        if abs(complex(exponent.evalf())) > 100:
                             raise HTTPException(status_code=400, detail="Expression too complex: exponents cannot exceed 100")
                     except (TypeError, ValueError):
                         raise HTTPException(status_code=400, detail="Expression too complex: invalid exponent")
