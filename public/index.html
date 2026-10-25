@@ -30,13 +30,13 @@
                 <p>Nonlinear Control Playground & Simulator</p>
             </div>
             <div class="controls header-controls">
+                <span id="system-select-shortcut-desc" class="sr-only">Press S to focus</span>
                 <label for="system-select" class="system-select-label">
                     System Model:
                     <kbd id="kbd-s" class="kbd-shortcut" aria-hidden="true">S</kbd>
-                    <span class="sr-only">Press S to focus</span>
                 </label>
                 <span id="system-select-desc" class="sr-only">Changing this option will automatically update the visualizations. Warning: Selecting an option will immediately change the page context.</span>
-                <select id="system-select" aria-keyshortcuts="s" aria-controls="main-content" aria-describedby="system-select-desc">
+                <select id="system-select" aria-keyshortcuts="s" aria-controls="main-content" aria-describedby="system-select-shortcut-desc system-select-desc">
                     <option value="VanDerPol">Van der Pol</option>
                     <option value="Pendulum">Pendulum</option>
                     <option value="Lorenz">Lorenz</option>
