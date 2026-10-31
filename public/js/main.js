@@ -1,3 +1,14 @@
+
+// 🎨 Palette: Helper to force screen reader announcements by clearing and setting text,
+// ensuring repeated identical messages are read out (e.g. repeated "Link copied")
+window.announce = function(message) {
+    const announcer = document.getElementById('a11y-announcer');
+    if (!announcer) return;
+    announcer.textContent = '';
+    setTimeout(() => {
+        announcer.textContent = message;
+    }, 50);
+};
         // Main initialization
         document.addEventListener('DOMContentLoaded', () => {
             const systemSelect = document.getElementById('system-select');
@@ -84,7 +95,7 @@
                     copyLinkBtn.setAttribute('aria-disabled', 'true');
 
                     navigator.clipboard.writeText(window.location.href).then(() => {
-                        announcer.textContent = 'Link copied to clipboard';
+                        window.announce('Link copied to clipboard');
 
                         copyLinkBtn.innerHTML = `<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
                         copyLinkBtn.setAttribute('data-tooltip', 'Copied!');
@@ -100,7 +111,7 @@
                         }, 2000);
                     }).catch(err => {
                         console.error('Failed to copy link: ', err);
-                        announcer.textContent = 'Failed to copy link';
+                        window.announce('Failed to copy link');
 
                         copyLinkBtn.innerHTML = `<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
                         copyLinkBtn.setAttribute('data-tooltip', 'Failed to copy!');
@@ -167,7 +178,7 @@
                     copyLinkBtn.setAttribute('data-tooltip', "Loading...");
                 }
 
-                announcer.textContent = `Loading system ${originalText}...`;
+                window.announce(`Loading system ${originalText}...`);
 
                 if (mainContent) {
                     mainContent.setAttribute('aria-busy', 'true');
@@ -183,7 +194,7 @@
 
                 Promise.all(promises).then(() => {
                     // Announce success
-                    announcer.textContent = `System ${originalText} loaded successfully.`;
+                    window.announce(`System ${originalText} loaded successfully.`);
                     previousValue = sys;
                     // Only push state if the hash isn't already correct, to prevent duplicate history entries
                     if (window.location.hash !== '#' + sys) {
@@ -192,7 +203,7 @@
                         window.history.replaceState(null, null, '#' + sys);
                     }
                 }).catch(error => {
-                    announcer.textContent = `Error loading system ${originalText}.`;
+                    window.announce(`Error loading system ${originalText}.`);
 
                     // 🎨 Palette: Revert UI state on failure to prevent misleading data visualization mismatches
                     if (systemSelect.value !== previousValue) {

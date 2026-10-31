@@ -69,3 +69,7 @@
 ## 2026-12-15 - Excluding Native Elements from Global Escape Handlers
 **Learning:** When implementing global 'Escape' key handlers to visually dismiss focus (blur) or close custom modals, applying `.blur()` indiscriminately to `document.activeElement` breaks keyboard navigation. Specifically, native interactive elements like `<select>` use the Escape key to close their dropdown menus. If blurred instead, the user loses their place in the UI entirely.
 **Action:** Always exclude native form elements (like `INPUT`, `TEXTAREA`, and `SELECT`) when implementing global focus dismissal via the Escape key, ensuring standard browser behaviors remain intact.
+
+## 2026-12-16 - Forcing Screen Reader Announcements for Identical Text
+**Learning:** When updating an `aria-live` region (like an announcer element) with the exact same text sequentially (e.g., a user repeatedly clicking "Copy Link", or repeatedly pausing/resuming an animation), screen readers will often ignore the update because the DOM node's actual text content hasn't changed.
+**Action:** To guarantee that identical repetitive messages are announced, first clear the element's `textContent` to an empty string, then use a brief `setTimeout` (e.g., 50ms) to inject the new message. This forces a DOM mutation that the screen reader will detect and read out.
