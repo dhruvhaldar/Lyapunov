@@ -84,7 +84,11 @@
                     copyLinkBtn.setAttribute('aria-disabled', 'true');
 
                     navigator.clipboard.writeText(window.location.href).then(() => {
-                        announcer.textContent = 'Link copied to clipboard';
+                        // 🎨 Palette: Force DOM mutation so repeated announcements are read by screen readers
+                        announcer.textContent = '';
+                        setTimeout(() => {
+                            announcer.textContent = 'Link copied to clipboard';
+                        }, 50);
 
                         copyLinkBtn.innerHTML = `<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
                         copyLinkBtn.setAttribute('data-tooltip', 'Copied!');
