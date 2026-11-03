@@ -25,7 +25,10 @@ function updatePauseState() {
         if (!prefersReducedMotion) {
             const announcer = document.getElementById('a11y-announcer');
             if (announcer) {
-                announcer.textContent = isPausedByUser ? '3D Animation paused.' : '3D Animation resumed.';
+                announcer.textContent = '';
+                setTimeout(() => {
+                    announcer.textContent = isPausedByUser ? '3D Animation paused.' : '3D Animation resumed.';
+                }, 50);
             }
         }
         _prevPausedByUser = isPausedByUser;
