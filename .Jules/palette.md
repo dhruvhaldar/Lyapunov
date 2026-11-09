@@ -216,3 +216,7 @@
 ## 2026-10-13 - Hiding Pseudo-element Tooltips from Screen Readers
 **Learning:** When creating custom tooltips using CSS pseudo-elements (`::after`), setting `opacity: 0` is insufficient for accessibility as some screen readers will still read the `content`.
 **Action:** Always combine `opacity: 0` with `visibility: hidden` (and add `visibility` to the `transition` property) to properly hide the text from the accessibility tree until `visibility: visible` is triggered on hover/focus.
+
+## 2024-11-09 - Forcing aria-live announcements for sequential identical text
+**Learning:** When updating an `aria-live` region with the exact same text sequentially (e.g., repeatedly clicking a 'Copy Link' button), screen readers may ignore the update because the `textContent` hasn't changed.
+**Action:** To guarantee the announcement is read out upon sequential actions, first clear the element's `textContent` to an empty string, then use a brief `setTimeout` (e.g., 50ms) to inject the new message, forcing a detectable DOM mutation.
