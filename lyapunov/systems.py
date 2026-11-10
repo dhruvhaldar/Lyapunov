@@ -17,20 +17,31 @@ class DynamicalSystem:
         # ⚡ Bolt: Precompute dt/2 and dt/6 to save repeated division operations inside tight RK4 simulation loop.
         # ⚡ Bolt: Use multiplication by reciprocal (0.5, 0.16666666666666666) instead of division for ~20% speedup.
         dt2 = dt * 0.5
+        dt6 = dt * 0.16666666666666666
         # ⚡ Bolt: Cache self.dynamics method lookup to avoid expensive Python LOAD_ATTR operations 4x per RK4 step.
         dynamics = self.dynamics
+
         k1 = dynamics(t, state, u)
-        k2 = dynamics(t + dt2, state + k1 * dt2, u)
-        k3 = dynamics(t + dt2, state + k2 * dt2, u)
-        k4 = dynamics(t + dt, state + k3 * dt, u)
 
         # ⚡ Bolt: Use in-place numpy operations to eliminate multiple intermediate
         # array allocations per RK4 step, yielding significant speedups for high-dimensional states (like meshgrids).
+        tmp_state = k1 * dt2
+        tmp_state += state
+        k2 = dynamics(t + dt2, tmp_state, u)
+
+        tmp_state = k2 * dt2
+        tmp_state += state
+        k3 = dynamics(t + dt2, tmp_state, u)
+
+        tmp_state = k3 * dt
+        tmp_state += state
+        k4 = dynamics(t + dt, tmp_state, u)
+
         res = k2 + k3
         res *= 2.0
         res += k1
         res += k4
-        res *= (dt * 0.16666666666666666)
+        res *= dt6
         res += state
         return res
 
